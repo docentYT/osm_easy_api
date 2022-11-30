@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osmChange version="0.6" generator="Osmosis 0.47.4">
+  <modify>
+    <node id="4222078" version="7" timestamp="2022-11-12T12:52:39Z" uid="16842649" user="oliver mr" changeset="128811655" lat="53.3814725" lon="-6.5778065"/>
+    <node id="10288507" version="8" timestamp="2022-11-12T12:08:55Z" uid="24119" user="Mauls" changeset="128810121" lat="55.7573298" lon="-3.8807238">
+      <tag k="railway" v="switch"/>
+    </node>
+    <node id="12245080" version="4" timestamp="2022-11-12T12:33:35Z" uid="15363444" user="osmscstuff" changeset="128811006" lat="51.513852" lon="0.0705852"/>
+  </modify>
+  <delete>
+    <node id="31150388" version="6" timestamp="2022-11-12T12:25:35Z" uid="549389" user="ChaireMobiliteKaligrafy" changeset="128810679" lat="45.4591516" lon="-73.4928612"/>
+  </delete>
+  <modify>
+    <node id="31150843" version="6" timestamp="2022-11-12T12:25:35Z" uid="549389" user="ChaireMobiliteKaligrafy" changeset="128810679" lat="45.4624126" lon="-73.4931253"/>
+    <node id="31670813" version="10" timestamp="2022-11-12T12:19:35Z" uid="6139645" user="ScottyThePilko" changeset="128810456" lat="-38.3545909" lon="144.9092357"/>
+    <node id="31670819" version="6" timestamp="2022-11-12T12:19:35Z" uid="6139645" user="ScottyThePilko" changeset="128810456" lat="-38.3561957" lon="144.9025727"/>
+    <node id="31670820" version="8" timestamp="2022-11-12T12:19:35Z" uid="6139645" user="ScottyThePilko" changeset="128810456" lat="-38.3565729" lon="144.9017859"/>
+    <node id="31671004" version="11" timestamp="2022-11-12T12:19:35Z" uid="6139645" user="ScottyThePilko" changeset="128810456" lat="-38.3542676" lon="144.9091186"/>
+    <node id="31671005" version="5" timestamp="2022-11-12T12:19:35Z" uid="6139645" user="ScottyThePilko" changeset="128810456" lat="-38.3536858" lon="144.9112037"/>
+    <node id="31671005" version="6" timestamp="2022-11-12T12:49:52Z" uid="6139645" user="ScottyThePilko" changeset="128811535" lat="-38.3536869" lon="144.9112008"/>
+    <way id="1112379431" version="1" timestamp="2022-11-11T21:15:26Z" uid="10420541" user="Thingummy" changeset="128793616">
+      <nd ref="10176911691"/>
+      <nd ref="10176911692"/>
+      <nd ref="10176911693"/>
+    </way>
+    <node id="31671006" version="7" timestamp="2022-11-12T12:19:35Z" uid="6139645" user="ScottyThePilko" changeset="128810456" lat="-38.3527844" lon="144.9145142"/>
+    <node id="31671007" version="6" timestamp="2022-11-12T12:19:35Z" uid="6139645" user="ScottyThePilko" changeset="128810456" lat="-38.3527289" lon="144.9149607"/>
+    <node id="31671008" version="5" timestamp="2022-11-12T12:19:35Z" uid="6139645" user="ScottyThePilko" changeset="128810456" lat="-38.3526811" lon="144.9158919">
+      <tag k="crossing" v="uncontrolled"/>
+      <tag k="highway" v="crossing"/>
+    </node>
+    <node id="32320895" version="11" timestamp="2022-11-12T12:31:48Z" uid="6491543" user="Awizonosz" changeset="128810937" lat="52.155851" lon="21.0523845">
+      <tag k="crossing" v="marked"/>
+      <tag k="highway" v="crossing"/>
+    </node>
+  </modify>
+  <create>
+    <relation id="13013122" version="2" timestamp="2022-11-11T21:15:50Z" uid="17287177" user="thomas_bo" changeset="128793623">
+      <member type="node" ref="34819782" role="stop"/>
+      <member type="way" ref="88452897" role=""/>
+      <member type="way" ref="536004622" role=""/>
+      <tag k="type" v="route"/>
+      <tag k="route" v="bus"/>
+    </relation>
+    <node id="32320897" version="11" timestamp="2022-11-12T12:31:48Z" uid="6491543" user="Awizonosz" changeset="128810937" lat="52.155851" lon="21.0523845">
+      <tag k="crossing" v="marked"/>
+      <tag k="highway" v="crossing"/>
+    </node>
+    <node id="32320898" version="11" timestamp="2022-11-12T12:31:48Z" uid="6491543" user="Awizonosz" changeset="128810937" lat="52.155851" lon="21.0523845">
+      <tag k="highway" v="crossing"/>
+    </node>
+  </create>
+</osmChange>

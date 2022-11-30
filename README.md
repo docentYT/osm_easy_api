@@ -1,0 +1,94 @@
+# osm-python-api
+Python package for parsing osm diffs.
+
+# Installation
+//TODO
+
+# Documentation
+You can view documentation online [URL HERE]
+
+Documentation is build using [pdoc](https://pdoc.dev).
+To run docs on your machine use preffered command: `pdoc --docformat google --no-show-source src !src.utils`.
+
+# Examples
+## Print trees
+```py
+from src import Node
+from src.diff import Diff, Frequency
+
+# Download diff from last hour.
+d = Diff(Frequency.HOUR)
+
+# Get Meta namedtuple for diff metadata and generator that parse diff file.
+meta, gen = d.get(tags="natural")
+
+# Print all created, modyfied and deleted Nodes with natural=tree tag.
+for action, element in gen:
+    if type(element) == Node and element.tags.get("natural") == "tree":
+        print(action, element.id)
+```
+
+## Print incorrectly tagged single tress
+```py
+from src import Node, Action
+from src.diff import Diff, Frequency
+
+d = Diff(Frequency.DAY)
+
+meta, gen = d.get(tags="natural")
+
+for action, element in gen:
+    if type(element) == Node:
+        if action == Action.CREATE or action == Action.MODIFY:
+            if element.tags.get("natural") == "wood":
+                print(element)
+```
+Example output:
+```
+Node(id = 10208486717, visible = None, version = 1, changeset_id = 129216075, timestamp = 2022-11-22T00:16:44Z, user_id = 17471721, tags = {'leaf_type': 'broadleaved', 'natural': 'wood'}, latitude = 48.6522286, longitude = 12.583809, )
+```
+
+# Notes
+Note that the following codes do the same thing
+```py
+from src.diff import Diff, Frequency
+
+d = Diff(Frequency.DAY)
+
+meta, gen = d.get()
+
+for action, element in gen:
+    if element.tags.get("shop") == "convenience":
+        print(element)
+```
+```py
+from src import Tags
+from src.diff import Diff, Frequency
+
+d = Diff(Frequency.DAY)
+
+meta, gen = d.get(tags=Tags({"shop": "convenience"}))
+
+for action, element in gen:
+        print(element)
+```
+but the second seems to be faster.
+
+Also you can use OsmChange object if you don't want to use generator
+```py
+from src import Node, Action
+from src.diff import Diff, Frequency
+
+d = Diff(Frequency.MINUTE)
+
+osmChange = d.get(generator=False)
+
+deleted_nodes = osmChange.get(Node, Action.DELETE)
+for node in deleted_nodes:
+    print(node.id)
+```
+but it can consume large amounts of ram and use of this method is not recommended for large diff's.
+
+# Tests
+You will need to install requirements: `install_test_depediences.bat`.
+To run tests use `run_tests.bat`.
