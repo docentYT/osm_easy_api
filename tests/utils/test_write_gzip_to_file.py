@@ -19,7 +19,12 @@ class TestMiscWriteGzipToFile(unittest.TestCase):
         two = self._parse_file(second)
         for i in one:
             n = next(two)
-            if i.tag != n.tag or i.attrib != n.attrib: return False
+            if i.tag != n.tag or i.attrib != n.attrib: 
+                first.close()
+                second.close()
+                return False
+        first.close()
+        second.close()
         return True
 
     def test_write(self):
@@ -30,3 +35,4 @@ class TestMiscWriteGzipToFile(unittest.TestCase):
         write_gzip_to_file(f_from, f_to_path)
 
         self.assertTrue(self._compare_files(f_from_path, f_to_path))
+        os.remove(f_to_path)
