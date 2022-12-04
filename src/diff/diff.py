@@ -89,7 +89,7 @@ class Diff():
         """Gets compressed diff file from server.
 
         Args:
-            sequence_number (str, optional): Sequnecence number to download from. If no provided the newest diff will be downloaded.
+            sequence_number (str, optional): Sequence number to download from. If no provided the newest diff will be downloaded.
             file_to (str, optional): Path to .xml.gz file where downloaded compressed data will be saved. Defaults get() method will no save file.
             file_from (str, optional): Path to .xml.gz file to parse data from.
             tags (Tags, optional): Useful if you want to prefetch specific tags. Other tags will be ignored.
