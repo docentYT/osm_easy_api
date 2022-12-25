@@ -1,9 +1,9 @@
-MISC
-GET /api/versions - API versions supported by this instance.
-GET /api/capabilities - Capabilities and limitations of the current API.
+MISC ✅
+✅ GET /api/versions - API versions supported by this instance.
+✅ GET /api/capabilities - Capabilities and limitations of the current API.
 
-GET /api/0.6/map?bbox=Left,Bottom,Right,Top - Retrieving map data by bounding box.
-GET /api/0.6/permissions - Returns the permissions granted to the current API connection.
+✅ GET /api/0.6/map?bbox=Left,Bottom,Right,Top - Retrieving map data by bounding box.
+✅ GET /api/0.6/permissions - Returns the permissions granted to the current API connection.
 
 CHANGESETS
 PUT /api/0.6/changeset/create - Creates changeset
