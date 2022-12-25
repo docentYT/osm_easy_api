@@ -19,7 +19,7 @@ class Misc:
             Returns:
                 list: List of supported versions by instance.
             """
-            gen = self.outer._get_generator(self.outer.url.misc["versions"])
+            gen = self.outer._get_generator(self.outer._url.misc["versions"])
             versions = []
             for event, element in gen:
                 if element.tag == "version" and event == "start": versions.append(element.text)
@@ -53,7 +53,7 @@ class Misc:
                             dict["policy"]["imagery"]["blacklist_regex"].append(blacklist.attrib["regex"])
 
             HEAD_TAGS = ("osm", "api", "policy")
-            gen = self.outer._get_generator(self.outer.url.misc["capabilities"])
+            gen = self.outer._get_generator(self.outer._url.misc["capabilities"])
             return_dict = {}
 
             for event, element in gen:
@@ -78,7 +78,7 @@ class Misc:
                 Node | Way | Relation
             """
             param = f"?bbox={left},{bottom},{right},{top}"
-            stream = self.outer._request_raw_stream(self.outer.url.misc["map"] + param)
+            stream = self.outer._request_raw_stream(self.outer._url.misc["map"] + param)
             gen = OsmChange_parser_generator(stream, None)
             next(gen) # for meta data
             for action, element in gen: # type: ignore
@@ -90,7 +90,7 @@ class Misc:
             Returns:
                 list: List of permissions names.
             """
-            gen = self.outer._get_generator(self.outer.url.misc["permissions"])
+            gen = self.outer._get_generator(self.outer._url.misc["permissions"])
             return_permission_list = []
 
             for event, element in gen:
