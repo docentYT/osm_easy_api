@@ -17,7 +17,7 @@ class Misc:
                 ValueError: [ERROR::API::MISC::versions] CAN'T FIND version
 
             Returns:
-                _type_: _description_
+                list: List of supported versions by instance.
             """
             gen = self.outer._get_generator(self.outer.url.misc["versions"])
             versions = []
@@ -26,20 +26,25 @@ class Misc:
             if len(versions) == 0: raise ValueError("[ERROR::API::MISC::versions] CAN'T FIND version")
             return versions
         
-        def capabilities(self):
-            def osm_parser(dict: dict, osm_element: "ElementTree.Element"):
+        def capabilities(self) -> dict:
+            """Retuns dictionary of capabilities and limitations of the current API.
+
+            Returns:
+                dict: Capabilites and limitations of the current API.
+            """
+            def osm_parser(dict: dict, osm_element: "ElementTree.Element") -> None:
                 dict.update({"osm": {}})
                 for attribute in osm_element.attrib:
                         dict["osm"].update({
                             attribute: osm_element.attrib[attribute]
                         })
             
-            def api_parser(dict: dict, api_element: "ElementTree.Element"):
+            def api_parser(dict: dict, api_element: "ElementTree.Element") -> None:
                 dict.update({"api": {}})
                 for child in api_element:
                     dict["api"].update({child.tag: child.attrib})
 
-            def policy_parser(dict: dict, policy_element: "ElementTree.Element"):
+            def policy_parser(dict: dict, policy_element: "ElementTree.Element") -> None:
                 dict.update({"policy": {}})
                 for child in policy_element:
                     if child.tag == "imagery":
@@ -61,6 +66,17 @@ class Misc:
             return return_dict
 
         def get_map_in_bbox(self, left: float, bottom: float, right: float, top: float) -> Generator["Node | Way | Relation", None, None]:
+            """Returns generator of map data in border box. See https://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_map_data_by_bounding_box:_GET_/api/0.6/map for more info. 
+
+            Args:
+                left (float)
+                bottom (float)
+                right (float)
+                top (float)
+
+            Yields:
+                Node | Way | Relation
+            """
             param = f"?bbox={left},{bottom},{right},{top}"
             stream = self.outer._request_raw_stream(self.outer.url.misc["map"] + param)
             gen = OsmChange_parser_generator(stream, None)
@@ -68,7 +84,12 @@ class Misc:
             for action, element in gen: # type: ignore
                 yield element           # type: ignore
 
-        def permissions(self):
+        def permissions(self) -> list:
+            """Returns list of permissions granted to the current API connection.
+
+            Returns:
+                list: List of permissions names.
+            """
             gen = self.outer._get_generator(self.outer.url.misc["permissions"])
             return_permission_list = []
 
