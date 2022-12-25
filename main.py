@@ -1,10 +1,8 @@
-from src import Node, Action
-from src.diff import Diff, Frequency
+from src import Api
 
-d = Diff(Frequency.MINUTE)
+api = Api()
+print(api.misc.versions())
+print(api.misc.capabilities())
 
-osmChange = d.get(generator=False)
-
-deleted_nodes = osmChange.get(Node, Action.DELETE)
-for node in deleted_nodes:
-    print(node.id)
+api_master = Api("https://api.openstreetmap.org")
+api_master.misc.get_map_in_bbox(21.104935, 52.245671, 21.106024, 52.246393)
