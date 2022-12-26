@@ -6,10 +6,6 @@ from src import Api
 class TestApi(unittest.TestCase):
     api = Api("https://test.pl")
 
-    def test__request_raw_stream(self):
-        with self.assertRaises(ValueError):
-            self.api._request_raw_stream("https://master.apis.dev.openstreetmap.org/api/wegwegwegwe")
-
 class TestApiMisc(unittest.TestCase):
     api = Api("https://test.pl")
 

@@ -78,8 +78,9 @@ class Misc:
                 Node | Way | Relation
             """
             param = f"?bbox={left},{bottom},{right},{top}"
-            stream = self.outer._request_raw_stream(self.outer._url.misc["map"] + param)
-            gen = OsmChange_parser_generator(stream, None)
+            stream = self.outer._request(self.outer._url.misc["map"] + param, self.outer.Requirement.OPTIONAL, True)
+            stream.decode = True
+            gen = OsmChange_parser_generator(stream.raw, None)
             next(gen) # for meta data
             for action, element in gen: # type: ignore
                 yield element           # type: ignore
