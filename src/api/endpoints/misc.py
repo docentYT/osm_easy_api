@@ -2,13 +2,15 @@ from typing import TYPE_CHECKING, Generator
 if TYPE_CHECKING:
     from xml.etree import ElementTree
     from src import Node, Way, Relation
+    from api import Api
 
+from src.api import exceptions
 # TODO: Update OsmChange_parser_generator to have more general usage
 from src.diff.diff_parser import OsmChange_parser_generator
 
-class Misc:
+class Misc_Container:
         def __init__(self, outer):
-            self.outer = outer
+            self.outer: Api = outer
 
         def versions(self) -> list:
             """Returns API versions supported by this instance.
@@ -78,12 +80,25 @@ class Misc:
                 Node | Way | Relation
             """
             param = f"?bbox={left},{bottom},{right},{top}"
-            stream = self.outer._request(self.outer._url.misc["map"] + param, self.outer.Requirement.OPTIONAL, True)
-            stream.decode = True
-            gen = OsmChange_parser_generator(stream.raw, None)
-            next(gen) # for meta data
-            for action, element in gen: # type: ignore
-                yield element           # type: ignore
+            response = self.outer._request(method=self.outer.RequestMethods.GET,
+                url=self.outer._url.misc["map"] + param,
+                auth_requirement=self.outer.Requirement.OPTIONAL,
+                stream=True,
+                auto_status_code_handling=False
+            )
+
+            match response.status_code:
+                case 200: pass
+                case 400: raise exceptions.LimitsExceeded("You are trying to download too much data.")
+                case 509: raise exceptions.LimitsExceeded("You have downloaded too much data. Please try again later. See https://wiki.openstreetmap.org/wiki/Developer_FAQ#I've_been_blocked_from_the_API_for_downloading_too_much._Now_what?")
+            
+            response.raw.decode_content = True
+            def generator():
+                gen = OsmChange_parser_generator(response.raw, None)
+                next(gen) # for meta data
+                for action, element in gen: # type: ignore
+                    yield element           # type: ignore
+            return generator()
 
         def permissions(self) -> list:
             """Returns list of permissions granted to the current API connection.

@@ -1,3 +1,6 @@
+from xml.dom import minidom
+from typing import Generator
+
 class Tags(dict):
     # def __init__(self):
     #     super().__init__()
@@ -13,6 +16,14 @@ class Tags(dict):
 
     def remove(self, k:str):
         self.pop(k)
+
+    def _to_xml(self) -> Generator[minidom.Element, None, None]:
+        root = minidom.Document()
+        for key, value in self.items():
+            tag_element = root.createElement("tag")
+            tag_element.setAttribute("k", key)
+            tag_element.setAttribute("v", value)
+            yield tag_element
 
     # def __getitem__(self, key):
     #     try:

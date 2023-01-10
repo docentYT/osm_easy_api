@@ -1,1 +1,2 @@
-responses
+responses == 0.22.0
+python-dotenv == 0.21.0

@@ -1,6 +1,9 @@
 @echo off
 
 :: data_classes
+echo ### test_osm_object_primitive ###
+python -m unittest tests/data_classes/test_osmObjectPrimitive.py
+
 echo ### test_node ###
 python -m unittest tests/data_classes/test_node.py
 
