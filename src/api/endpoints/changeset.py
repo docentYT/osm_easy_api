@@ -78,8 +78,8 @@ class Changeset_Container:
         xml.appendChild(changeset)
         xml_str = root.toprettyxml(indent="\t")
 
-        response = self.outer._request(self.outer.RequestMethods.PUT,
-            self.outer._url.changeset["create"], self.outer.Requirement.YES, body=xml_str)
+        response = self.outer._request(self.outer._RequestMethods.PUT,
+            self.outer._url.changeset["create"], self.outer._Requirement.YES, body=xml_str)
         return response.text
 
     def get(self, id: str, include_discussion: bool = False) -> Changeset:
@@ -99,7 +99,7 @@ class Changeset_Container:
         param = f"{id}?include_discussion={include_discussion_text}"
         status_code, generator = self.outer._get_generator(
             url=join_url(self.outer._url.changeset["get"], param),
-            auth_requirement=self.outer.Requirement.NO,
+            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
 
         match status_code:
@@ -145,8 +145,8 @@ class Changeset_Container:
         xml.appendChild(changeset)
         xml_str = root.toprettyxml(indent="\t")
 
-        response = self.outer._request(self.outer.RequestMethods.PUT,
-            self.outer._url.changeset["update"].format(id=id), self.outer.Requirement.YES, body=xml_str, stream=True, auto_status_code_handling = False)
+        response = self.outer._request(self.outer._RequestMethods.PUT,
+            self.outer._url.changeset["update"].format(id=id), self.outer._Requirement.YES, body=xml_str, stream=True, auto_status_code_handling = False)
 
         match response.status_code:
             case 200: pass
@@ -166,7 +166,7 @@ class Changeset_Container:
             exceptions.IdNotFoundError: There is no changeset with given ID.
             exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor: The changeset was already closer or you are not the author.
         """
-        response = self.outer._request(self.outer.RequestMethods.PUT, self.outer._url.changeset["close"].format(id = id), self.outer.Requirement.YES, auto_status_code_handling = False)
+        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.changeset["close"].format(id = id), self.outer._Requirement.YES, auto_status_code_handling = False)
         match response.status_code:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
@@ -184,7 +184,7 @@ class Changeset_Container:
         Yields:
             Generator: Diff generator like in 'diff' module.
         """
-        stream = self.outer._request(self.outer.RequestMethods.GET, self.outer._url.changeset["download"].format(id=id), self.outer.Requirement.NO, stream=True, auto_status_code_handling = False)
+        stream = self.outer._request(self.outer._RequestMethods.GET, self.outer._url.changeset["download"].format(id=id), self.outer._Requirement.NO, stream=True, auto_status_code_handling = False)
 
         match stream.status_code:
             case 200: pass
@@ -214,9 +214,9 @@ class Changeset_Container:
             ValueError: Unexpected but correct error.
         """
         response = self.outer._request(
-            method=self.outer.RequestMethods.POST,
+            method=self.outer._RequestMethods.POST,
             url=self.outer._url.changeset["upload"].format(id=changeset_id),
-            auth_requirement=self.outer.Requirement.YES,
+            auth_requirement=self.outer._Requirement.YES,
             body = osmChange._to_xml(changeset_id),
             auto_status_code_handling=False
         )

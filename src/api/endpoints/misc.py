@@ -80,9 +80,9 @@ class Misc_Container:
                 Node | Way | Relation
             """
             param = f"?bbox={left},{bottom},{right},{top}"
-            response = self.outer._request(method=self.outer.RequestMethods.GET,
+            response = self.outer._request(method=self.outer._RequestMethods.GET,
                 url=self.outer._url.misc["map"] + param,
-                auth_requirement=self.outer.Requirement.OPTIONAL,
+                auth_requirement=self.outer._Requirement.OPTIONAL,
                 stream=True,
                 auto_status_code_handling=False
             )

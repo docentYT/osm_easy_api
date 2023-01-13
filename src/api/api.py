@@ -12,12 +12,13 @@ from ._URLs import URLs
 from .endpoints import Misc_Container, Changeset_Container
 
 class Api():
-    class Requirement(Enum):
+    """Class used to communicate with API."""
+    class _Requirement(Enum):
         YES = 0,
         NO = 1,
         OPTIONAL = 2
 
-    class RequestMethods(Enum):
+    class _RequestMethods(Enum):
         GET = 0,
         PUT = 1,
         POST = 2
@@ -35,14 +36,14 @@ class Api():
         else:
             self._auth = None
 
-    def _request(self, method: RequestMethods, url: str, auth_requirement: Requirement = Requirement.OPTIONAL, stream: bool = False, auto_status_code_handling: bool = True, body = None) -> "Response":
+    def _request(self, method: _RequestMethods, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, stream: bool = False, auto_status_code_handling: bool = True, body = None) -> "Response":
         match auth_requirement:
-            case self.Requirement.YES:
+            case self._Requirement.YES:
                 if not self._auth: raise ValueError("No creditentials provided during class initalization!")
                 response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body)
-            case self.Requirement.OPTIONAL:
+            case self._Requirement.OPTIONAL:
                 response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body)
-            case self.Requirement.NO:
+            case self._Requirement.NO:
                 response = requests.request(str(method), url, stream=stream, data=body)
                 
         if auto_status_code_handling: assert response.status_code == 200, f"Invalid and unexpected response code {response.status_code} for {url}"
@@ -55,8 +56,8 @@ class Api():
             yield(event, element)
             element.clear()
     
-    def _get_generator(self, url: str, auth_requirement: Requirement = Requirement.OPTIONAL, auto_status_code_handling: bool = True) -> Generator[Tuple[str, ElementTree.Element], None, None] | Tuple[int, Generator[Tuple[str, ElementTree.Element], None, None]]:
-        response = self._request(self.RequestMethods.GET, url, auth_requirement, auto_status_code_handling=auto_status_code_handling, stream=True)
+    def _get_generator(self, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, auto_status_code_handling: bool = True) -> Generator[Tuple[str, ElementTree.Element], None, None] | Tuple[int, Generator[Tuple[str, ElementTree.Element], None, None]]:
+        response = self._request(self._RequestMethods.GET, url, auth_requirement, auto_status_code_handling=auto_status_code_handling, stream=True)
         response.raw.decode_content = True
         if auto_status_code_handling:
             return self._raw_stream_parser(response.raw)

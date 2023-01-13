@@ -1,3 +1,4 @@
+"""Exceptions thrown by API module."""
 class IdNotFoundError(Exception):
     def __init__(self, message=None):
         self.message = message
