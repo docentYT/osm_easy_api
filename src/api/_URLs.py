@@ -7,7 +7,7 @@ class URLs:
         self.misc: Dict[str, str] = {
             "versions": base_url + "/api/versions",
             "capabilities": base_url + "/api/capabilities",
-            "map": base_url + "/api/0.6/map",
+            "map": base_url + "/api/0.6/map?bbox={left},{bottom},{right},{top}",
             "permissions": base_url + "/api/0.6/permissions"
         }
 

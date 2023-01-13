@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Generator, Tuple
 if TYPE_CHECKING:
     from xml.etree import ElementTree
     from src import Node, Way, Relation
@@ -21,7 +21,7 @@ class Misc_Container:
             Returns:
                 list: List of supported versions by instance.
             """
-            gen = self.outer._get_generator(self.outer._url.misc["versions"])
+            gen: Generator[Tuple[str, 'ElementTree.Element'], None, None] = self.outer._get_generator(self.outer._url.misc["versions"])
             versions = []
             for event, element in gen:
                 if element.tag == "version" and event == "start": versions.append(element.text)
@@ -55,7 +55,7 @@ class Misc_Container:
                             dict["policy"]["imagery"]["blacklist_regex"].append(blacklist.attrib["regex"])
 
             HEAD_TAGS = ("osm", "api", "policy")
-            gen = self.outer._get_generator(self.outer._url.misc["capabilities"])
+            gen: Generator[Tuple[str, 'ElementTree.Element'], None, None] = self.outer._get_generator(self.outer._url.misc["capabilities"])
             return_dict = {}
 
             for event, element in gen:
@@ -67,7 +67,7 @@ class Misc_Container:
 
             return return_dict
 
-        def get_map_in_bbox(self, left: float, bottom: float, right: float, top: float) -> Generator["Node | Way | Relation", None, None]:
+        def get_map_in_bbox(self, left: float, bottom: float, right: float, top: float) -> Generator["Node | Way | Relation | str", None, None]:
             """Returns generator of map data in border box. See https://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_map_data_by_bounding_box:_GET_/api/0.6/map for more info. 
 
             Args:
@@ -79,9 +79,8 @@ class Misc_Container:
             Yields:
                 Node | Way | Relation
             """
-            param = f"?bbox={left},{bottom},{right},{top}"
             response = self.outer._request(method=self.outer._RequestMethods.GET,
-                url=self.outer._url.misc["map"] + param,
+                url=self.outer._url.misc["map"].format(left=left, bottom=bottom, right=right, top=top),
                 auth_requirement=self.outer._Requirement.OPTIONAL,
                 stream=True,
                 auto_status_code_handling=False
@@ -106,7 +105,7 @@ class Misc_Container:
             Returns:
                 list: List of permissions names.
             """
-            gen = self.outer._get_generator(self.outer._url.misc["permissions"])
+            gen: Generator[Tuple[str, 'ElementTree.Element'], None, None] = self.outer._get_generator(self.outer._url.misc["permissions"])
             return_permission_list = []
 
             for event, element in gen:
