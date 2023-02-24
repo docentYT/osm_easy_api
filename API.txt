@@ -16,11 +16,11 @@ CHANGESETS
 ✅ GET /api/0.6/changesets - Get changesets for provided parameters
 
 changeset discussion
-POST /api/0.6/changeset/#id/comment - Add a comment to a closed changeset.
-POST /api/0.6/changeset/#id/subscribe - Subscribe to receive notifications for a new comments.
-POST /api/0.6/changeset/#id/unsubscribe - Unsubscribe to stop receiving notifinactions for a new comments.
-MO: POST /api/0.6/changeset/comment/#comment_id/hide - Hide comment from changeset.
-MO: POST /api/0.6/changeset/comment/#comment_id/unhide - Unhide comment from changeset.
+✅ POST /api/0.6/changeset/#id/comment - Add a comment to a closed changeset.
+✅ POST /api/0.6/changeset/#id/subscribe - Subscribe to receive notifications for a new comments.
+✅ POST /api/0.6/changeset/#id/unsubscribe - Unsubscribe to stop receiving notifinactions for a new comments.
+✅ MO: POST /api/0.6/changeset/comment/#comment_id/hide - Hide comment from changeset.
+✅ MO: POST /api/0.6/changeset/comment/#comment_id/unhide - Unhide comment from changeset.
 
 ELEMENTS
 PUT /api/0.6/[node|way|relation]/create - Create new element.

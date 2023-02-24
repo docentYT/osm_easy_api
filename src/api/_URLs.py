@@ -18,5 +18,13 @@ class URLs:
             "get_query": base_url + "/api/0.6/changesets",
             "close": base_url + "/api/0.6/changeset/{id}/close",
             "download": base_url + "/api/0.6/changeset/{id}/download",
-            "upload": base_url + "/api/0.6/changeset/{id}/upload"
+            "upload": base_url + "/api/0.6/changeset/{id}/upload",
+        }
+
+        self.changeset_discussion: Dict[str, str] = {
+            "comment": base_url + "/api/0.6/changeset/{id}/comment?text={text}",
+            "subscribe": base_url + "/api/0.6/changeset/{id}/subscribe",
+            "unsubscribe": base_url + "/api/0.6/changeset/{id}/unsubscribe",
+            "hide": base_url + "/api/0.6/changeset/comment/{comment_id}/hide",
+            "unhide": base_url + "/api/0.6/changeset/comment/{comment_id}/unhide"
         }

@@ -170,7 +170,6 @@ class Changeset_Container:
             case 404: raise exceptions.IdNotFoundError()
 
         return self._xml_to_changeset(generator) # type: ignore
-
     
     def update(self, id: str, comment: str | None = None, tags: Tags | None = None) -> Changeset:
         """Updates the changeset with new comment or tags or both.

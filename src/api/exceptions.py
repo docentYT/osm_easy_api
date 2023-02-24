@@ -9,6 +9,9 @@ class ChangesetAlreadyClosedOrUserIsNotAnAuthor(Exception):
         self.message = message
         super().__init__(self.message)
 
+class ChangesetNotClosed(Exception):
+    pass
+
 class LimitsExceeded(Exception):
     def __init__(self, message):
         self.message = message
@@ -20,4 +23,13 @@ class ErrorWhenParsingXML(Exception):
         super().__init__(self.message)
     
 class EmptyResult(Exception):
+    pass
+
+class AlreadySubscribed(Exception):
+    pass
+
+class NotSubscribed(Exception):
+    pass
+
+class NotAModerator(Exception):
     pass

@@ -8,3 +8,6 @@ python -m unittest tests/api/test_api_misc.py
 
 echo ### test_api_changeset ###
 python -m unittest tests/api/test_api_changeset.py
+
+echo ### test_api_changeset_discussion ###
+python -m unittest tests/api/test_api_changeset_discussion.py
