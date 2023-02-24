@@ -3,28 +3,29 @@ from typing import Dict
 class URLs:
     def __init__(self, base_url: str):
         self.base_url = base_url
+        six_url = base_url + "/api/0.6"
 
         self.misc: Dict[str, str] = {
             "versions": base_url + "/api/versions",
             "capabilities": base_url + "/api/capabilities",
-            "map": base_url + "/api/0.6/map?bbox={left},{bottom},{right},{top}",
-            "permissions": base_url + "/api/0.6/permissions"
+            "map": six_url + "/map?bbox={left},{bottom},{right},{top}",
+            "permissions": six_url + "/permissions"
         }
 
         self.changeset: Dict[str, str] = {
-            "create": base_url + "/api/0.6/changeset/create",
-            "update": base_url + "/api/0.6/changeset/{id}",
-            "get": base_url + "/api/0.6/changeset",
-            "get_query": base_url + "/api/0.6/changesets",
-            "close": base_url + "/api/0.6/changeset/{id}/close",
-            "download": base_url + "/api/0.6/changeset/{id}/download",
-            "upload": base_url + "/api/0.6/changeset/{id}/upload",
+            "create": six_url + "/changeset/create",
+            "update": six_url + "/changeset/{id}",
+            "get": six_url + "/changeset",
+            "get_query": six_url + "/changesets",
+            "close": six_url + "/changeset/{id}/close",
+            "download": six_url + "/changeset/{id}/download",
+            "upload": six_url + "/changeset/{id}/upload",
         }
 
         self.changeset_discussion: Dict[str, str] = {
-            "comment": base_url + "/api/0.6/changeset/{id}/comment?text={text}",
-            "subscribe": base_url + "/api/0.6/changeset/{id}/subscribe",
-            "unsubscribe": base_url + "/api/0.6/changeset/{id}/unsubscribe",
-            "hide": base_url + "/api/0.6/changeset/comment/{comment_id}/hide",
-            "unhide": base_url + "/api/0.6/changeset/comment/{comment_id}/unhide"
+            "comment": six_url + "/changeset/{id}/comment?text={text}",
+            "subscribe": six_url + "/changeset/{id}/subscribe",
+            "unsubscribe": six_url + "/changeset/{id}/unsubscribe",
+            "hide": six_url + "/changeset/comment/{comment_id}/hide",
+            "unhide": six_url + "/changeset/comment/{comment_id}/unhide"
         }
