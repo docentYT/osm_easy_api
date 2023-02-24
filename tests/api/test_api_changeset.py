@@ -81,6 +81,54 @@ class TestApiChangeset(unittest.TestCase):
         
         self.assertRaises(ApiExceptions.IdNotFoundError, get)
 
+    @responses.activate
+    def test_get_query(self):
+        body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+    <changeset id="111" created_at="2023-01-10T16:49:30Z" open="false" comments_count="0" changes_count="3" closed_at="2023-01-10T16:52:52Z" min_lat="52.2423700" min_lon="21.1171000" max_lat="52.2423700" max_lon="21.1171000" uid="18179" user="kwiatek_123 bot">
+        <tag k="comment" v="Upload relation test"/>
+    </changeset>
+    <changeset id="222" created_at="2023-01-10T16:48:58Z" open="false" comments_count="0" changes_count="0" closed_at="2023-01-10T17:48:58Z" uid="18179" user="kwiatek_123 bot">
+        <tag k="comment" v="Upload relation test"/>
+    </changeset>
+</osm>
+        """
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/changesets/?user=18179;",
+            "body": body,
+            "status": 200
+        })
+
+        api = Api("https://test.pl", LOGIN, PASSWORD)
+        changeset = Changeset(
+            "222",
+            "2023-01-10T16:48:58Z",
+            False,
+            "18179",
+            "0",
+            "0",
+            Tags({"comment": "Upload relation test"})
+        )
+
+        testing_changeset = api.changeset.get_query(user_id="18179")[1]
+        self.assertEqual(testing_changeset.id, changeset.id)
+        self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
+        self.assertEqual(testing_changeset.open, changeset.open)
+        self.assertEqual(testing_changeset.user_id, changeset.user_id)
+        self.assertEqual(testing_changeset.comments_count, changeset.comments_count)
+        self.assertEqual(testing_changeset.changes_count, changeset.changes_count)
+        self.assertEqual(testing_changeset.tags, changeset.tags)
+
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/changeset/111?include_discussion=true",
+            "status": 404
+        })
+
+        def get():
+            return api.changeset.get("111", True)
+        
+        self.assertRaises(ApiExceptions.IdNotFoundError, get)
 
     @responses.activate
     def test_update(self):

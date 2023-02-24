@@ -13,13 +13,16 @@ from src.data_classes import Changeset, OsmChange
 from src.api import exceptions
 from src.diff.diff_parser import OsmChange_parser_generator
 
+from .changeset_discussion import Changeset_Discussion_Container
+
 
 class Changeset_Container:
     def __init__(self, outer):
         self.outer: "Api" = outer
+        self.discussion = Changeset_Discussion_Container(outer)
 
     @staticmethod
-    def _xml_to_changeset(generator: Generator[Tuple[str, 'ElementTree.Element'], None, None], include_discussion: bool = False) -> Changeset:
+    def _xml_to_changeset(generator: Generator[Tuple[str, 'ElementTree.Element'], None, None], include_discussion: bool = False) -> list[Changeset]:
         """Creates Changeset instance from xml provided by API
 
         Args:
@@ -27,22 +30,25 @@ class Changeset_Container:
             include_discussion (bool, optional): Whether xml from generator has included discussion or not. Defaults to False.
 
         Returns:
-            Changeset: Changeset object.
+            list[Changeset]: list of Changeset objects.
         """
+        changeset_list = []
+
         tags = Tags()
         discussion = []
         changeset_element = None
         for event, element in generator:
             if element.tag == "changeset" and event == "start":
+                tags = Tags()
                 changeset_element = copy(element)
             elif element.tag == "tag" and event == "start":
                 tags.update({element.attrib["k"]: element.attrib["v"]})
             elif include_discussion and element.tag == "discussion" and event == "start":
                 for comment in element:
                     discussion.append({"date": comment.attrib["date"], "user_id": comment.attrib["uid"], "text": comment[0].text})
-
-        assert changeset_element, "No changeset element in API response for get changeset. Should not happen."
-        return Changeset(
+            if element.tag == "changeset" and event == "end":
+                assert changeset_element, "No changeset element in API response for get changeset. Should not happen."
+                changeset_list.append(Changeset(
                 changeset_element.attrib["id"],
                 changeset_element.attrib["created_at"],
                 True if changeset_element.attrib["open"] == "true" else False,
@@ -51,7 +57,10 @@ class Changeset_Container:
                 changeset_element.attrib["changes_count"],
                 tags,
                 discussion if include_discussion else None
-            )
+            ))
+
+        if (len(changeset_list) == 0): raise exceptions.EmptyResult()
+        return changeset_list
 
     def create(self, comment: str, tags: Tags | None = None) -> str:
         """Creates new changeset.
@@ -106,15 +115,62 @@ class Changeset_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
 
-        return self._xml_to_changeset(generator, include_discussion) # type: ignore
+        return self._xml_to_changeset(generator, include_discussion)[0] # type: ignore
 
-    # def get_query(self, left: float | None = None, bottom: float | None = None, right: float | None = None, top: float | None = None,
-    # user_id: str | None = None, display_name: str | None = None,
-    # time_one: str | None = None, time_two: str | None = None,
-    # open: bool = False, closed: bool = False,
-    # changesets_id: list[str] | None = None
-    # ):
-    #     pass
+    def get_query(self, left: float | None = None, bottom: float | None = None, right: float | None = None, top: float | None = None,
+    user_id: str | None = None, display_name: str | None = None,
+    time_one: str | None = None, time_two: str | None = None,
+    open: bool = False, closed: bool = False,
+    changesets_id: list[str] | None = None
+    ) -> list[Changeset]:
+        """Get changesets with given criteria.
+
+        Args:
+            left (float | None, optional): Left side of bounding box (min_lon / west) Use left, bottom, right, top togheter. Defaults to None.
+            bottom (float | None, optional): Bottom side of bounding box (min_lat / south). Use left, bottom, right, top togheter. Defaults to None.
+            right (float | None, optional): Right side of bounding box (max_lon / east). Use left, bottom, right, top togheter. Defaults to None.
+            top (float | None, optional): Top side of bounding box (max_lat / north). Use left, bottom, right, top togheter. Defaults to None.
+            user_id (str | None, optional): User id. Defaults to None.
+            display_name (str | None, optional): User display name. Defaults to None.
+            time_one (str | None, optional): Find changesets closed after time_one. Defaults to None.
+            time_two (str | None, optional): Requires time_one. Find changesets created before time_two. (Range time_one - time_two). Defaults to None.
+            open (bool, optional): Find only open changesets. Defaults to False.
+            closed (bool, optional): Find only closed changesets. Defaults to False.
+            changesets_id (list[str] | None, optional): List of ids to search for. Defaults to None.
+
+        Raises:
+            ValueError: Invalid arguments.
+            exceptions.IdNotFoundError: user_id or display_name not found.
+
+        Returns:
+            list[Changeset]: List of Changeset objects.
+        """
+        param = "?"
+        if (left or bottom or right or top): param += f"bbox={left},{bottom},{right},{top};"
+        if (user_id): param += f"user={user_id};"
+        if (display_name): param += f"display_name={display_name};"
+        if (time_one): param += f"time={time_one};"
+        if (time_two): param += f",{time_two};"
+        if (open): param += f"open={open};"
+        if (closed): param += f"closed={closed};"
+        if (changesets_id):
+            param += f"changesets={changesets_id[0]}"
+            changesets_id.pop(0)
+            for id in changesets_id:
+                param += f",{id}"
+
+        status_code, generator = self.outer._get_generator(
+            url=join_url(self.outer._url.changeset["get_query"], param),
+            auth_requirement=self.outer._Requirement.NO,
+            auto_status_code_handling=False)
+
+        match status_code:
+            case 200: pass
+            case 400: raise ValueError("Invalid arguments. See https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets for more info.")
+            case 404: raise exceptions.IdNotFoundError()
+
+        return self._xml_to_changeset(generator) # type: ignore
+
     
     def update(self, id: str, comment: str | None = None, tags: Tags | None = None) -> Changeset:
         """Updates the changeset with new comment or tags or both.
@@ -162,7 +218,7 @@ class Changeset_Container:
             case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.text)
 
         response.raw.decode_content = True
-        return self._xml_to_changeset(self.outer._raw_stream_parser(response.raw), True)
+        return self._xml_to_changeset(self.outer._raw_stream_parser(response.raw), True)[0]
 
     def close(self, id: str) -> None:
         """Close changeset by ID.

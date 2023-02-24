@@ -15,6 +15,7 @@ class URLs:
             "create": base_url + "/api/0.6/changeset/create",
             "update": base_url + "/api/0.6/changeset/{id}",
             "get": base_url + "/api/0.6/changeset",
+            "get_query": base_url + "/api/0.6/changesets",
             "close": base_url + "/api/0.6/changeset/{id}/close",
             "download": base_url + "/api/0.6/changeset/{id}/download",
             "upload": base_url + "/api/0.6/changeset/{id}/upload"

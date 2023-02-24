@@ -13,7 +13,7 @@ CHANGESETS
 ✅ GET /api/0.6/changeset/#id/download - OsmChange (nice) for chosen changeset
 ✅ POST /api/0.6/changeset/#id/upload - Upload OsmChange
 
-GET /api/0.6/changesets - Get changesets for provided parameters
+✅ GET /api/0.6/changesets - Get changesets for provided parameters
 
 changeset discussion
 POST /api/0.6/changeset/#id/comment - Add a comment to a closed changeset.
