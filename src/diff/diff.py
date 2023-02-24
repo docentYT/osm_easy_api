@@ -22,9 +22,10 @@ def frequency_to_str(frequency: Frequency) -> str:
         case Frequency.DAY:     return "day"
 
 class Diff():
-    def __init__(self, frequency: Frequency, url: str = "https://planet.openstreetmap.org/replication"):
+    def __init__(self, frequency: Frequency, url: str = "https://planet.openstreetmap.org/replication", standard_url_frequency_format: bool = True):
         self.url = url
         self.frequency = frequency
+        self.standard_url_frequency_format = standard_url_frequency_format
 
     @staticmethod
     def _get_sequence_number_from_state(state_txt: str) -> str:
@@ -48,7 +49,9 @@ class Diff():
 
     def _get_state(self) -> str:
         """Downloads state.txt file content from diff server."""
-        response = requests.get(join_url(self.url, frequency_to_str(self.frequency), "state.txt"))
+        if (self.standard_url_frequency_format): url = join_url(self.url, frequency_to_str(self.frequency), "state.txt")
+        else: url = join_url(self.url, "state.txt")
+        response = requests.get(url)
         if response.status_code != 200: raise ValueError(f"[ERROR::DIFF::_GET_STATE] API RESPONSE STATUS CODE: {response.status_code}")
         return response.text
 
@@ -61,7 +64,7 @@ class Diff():
         return self._get_sequence_number_from_state(self._get_state())
 
     @staticmethod
-    def _build_url(url: str, frequency: Frequency, sequence_number: str) -> str:
+    def _build_url(url: str, frequency: Frequency | None, sequence_number: str) -> str:
         """Builds diff url.
 
         Args:
@@ -73,8 +76,10 @@ class Diff():
             str: Url to .osc.gz file.
         """
         sequence_number = sequence_number.zfill(9)
-        return join_url(url, frequency_to_str(frequency), sequence_number[:3], sequence_number[3:6], sequence_number[6:9] + ".osc.gz")
-
+        if (frequency):
+            return join_url(url, frequency_to_str(frequency), sequence_number[:3], sequence_number[3:6], sequence_number[6:9] + ".osc.gz")
+        else:
+            return join_url(url, sequence_number[:3], sequence_number[3:6], sequence_number[6:9] + ".osc.gz")
     @staticmethod
     def _return_generator_or_OsmChange(file: gzip.GzipFile, tags: Tags | str, sequence_number: str | None, generator: bool) -> tuple[Meta, Generator[Node | Way | Relation, None, None]] | OsmChange:
         """Returns tuple(Meta, generator) or OsmChange class depending on generator boolean."""
@@ -105,7 +110,8 @@ class Diff():
 
         if not sequence_number: sequence_number = self.get_sequence_number()
 
-        url = self._build_url(self.url, self.frequency, sequence_number)
+        if (self.standard_url_frequency_format): url = self._build_url(self.url, self.frequency, sequence_number)
+        else: url = self._build_url(self.url, None, sequence_number)
         response = requests.get(url, stream=True)
 
         file = gzip.GzipFile(fileobj=response.raw)

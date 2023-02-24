@@ -107,6 +107,14 @@ class Changeset_Container:
             case 404: raise exceptions.IdNotFoundError()
 
         return self._xml_to_changeset(generator, include_discussion) # type: ignore
+
+    # def get_query(self, left: float | None = None, bottom: float | None = None, right: float | None = None, top: float | None = None,
+    # user_id: str | None = None, display_name: str | None = None,
+    # time_one: str | None = None, time_two: str | None = None,
+    # open: bool = False, closed: bool = False,
+    # changesets_id: list[str] | None = None
+    # ):
+    #     pass
     
     def update(self, id: str, comment: str | None = None, tags: Tags | None = None) -> Changeset:
         """Updates the changeset with new comment or tags or both.
