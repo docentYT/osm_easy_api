@@ -91,11 +91,11 @@ class Changeset_Container:
             self.outer._url.changeset["create"], self.outer._Requirement.YES, body=xml_str)
         return int(response.text)
 
-    def get(self, id: str, include_discussion: bool = False) -> Changeset:
+    def get(self, id: int, include_discussion: bool = False) -> Changeset:
         """Get changeset data from OSM server.
 
         Args:
-            id (str): Changeset ID.
+            id (int): Changeset ID.
             include_discussion (bool, optional): Include discussion or not. Defaults to False.
 
         Raises:
@@ -121,7 +121,7 @@ class Changeset_Container:
     user_id: str | None = None, display_name: str | None = None,
     time_one: str | None = None, time_two: str | None = None,
     open: bool = False, closed: bool = False,
-    changesets_id: list[str] | None = None
+    changesets_id: list[int] | None = None
     ) -> list[Changeset]:
         """Get changesets with given criteria.
 
@@ -136,7 +136,7 @@ class Changeset_Container:
             time_two (str | None, optional): Requires time_one. Find changesets created before time_two. (Range time_one - time_two). Defaults to None.
             open (bool, optional): Find only open changesets. Defaults to False.
             closed (bool, optional): Find only closed changesets. Defaults to False.
-            changesets_id (list[str] | None, optional): List of ids to search for. Defaults to None.
+            changesets_id (list[int] | None, optional): List of ids to search for. Defaults to None.
 
         Raises:
             ValueError: Invalid arguments.
@@ -171,11 +171,11 @@ class Changeset_Container:
 
         return self._xml_to_changeset(generator) # type: ignore
     
-    def update(self, id: str, comment: str | None = None, tags: Tags | None = None) -> Changeset:
+    def update(self, id: int, comment: str | None = None, tags: Tags | None = None) -> Changeset:
         """Updates the changeset with new comment or tags or both.
 
         Args:
-            id (str): Changeset ID.
+            id (int): Changeset ID.
             comment (str | None, optional): New changeset description. Defaults to None.
             tags (Tags | None, optional): New changeset tags. Defaults to None.
 
@@ -219,11 +219,11 @@ class Changeset_Container:
         response.raw.decode_content = True
         return self._xml_to_changeset(self.outer._raw_stream_parser(response.raw), True)[0]
 
-    def close(self, id: str) -> None:
+    def close(self, id: int) -> None:
         """Close changeset by ID.
 
         Args:
-            id (str): Changeset ID.
+            id (int): Changeset ID.
 
         Raises:
             exceptions.IdNotFoundError: There is no changeset with given ID.
@@ -235,11 +235,11 @@ class Changeset_Container:
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.text)
 
-    def download(self, id: str) -> Generator[Tuple['Action', 'Node | Way | Relation'], None, None]:
+    def download(self, id: int) -> Generator[Tuple['Action', 'Node | Way | Relation'], None, None]:
         """Download changes made in changeset. Like in 'diff' module.
 
         Args:
-            id (str): Changeset ID.
+            id (int): Changeset ID.
 
         Raises:
             exceptions.IdNotFoundError: There is no changeset with given ID.
@@ -262,12 +262,12 @@ class Changeset_Container:
                 yield (action, element) # type: ignore (We checked if it is Action)
         return generator()
 
-    def upload(self, changeset_id: str, osmChange: OsmChange):
+    def upload(self, changeset_id: int, osmChange: OsmChange):
         # TODO: Parse returned xml
         """Upload OsmChange to OSM. You must provide changeset ID for open changeset.
 
         Args:
-            changeset_id (str): Open changeset ID.
+            changeset_id (int): Open changeset ID.
             osmChange (OsmChange): OsmChange instance with changes you want to upload.
 
         Raises:

@@ -8,11 +8,11 @@ class Changeset_Discussion_Container:
     def __init__(self, outer):
         self.outer: "Api" = outer
 
-    def comment(self, changeset_id: str, text: str) -> None:
+    def comment(self, changeset_id: int, text: str) -> None:
         """Add a comment to a changeset.
 
         Args:
-            changeset_id (str): Changeset id.
+            changeset_id (int): Changeset id.
             text (str): The comment text.
 
         Raises:
@@ -24,11 +24,11 @@ class Changeset_Discussion_Container:
             case 200: pass
             case 409: raise exceptions.ChangesetNotClosed()
 
-    def subscribe(self, changeset_id: str) -> None:
+    def subscribe(self, changeset_id: int) -> None:
         """Subscribe to the discussion to recive notifications for new comments.
 
         Args:
-            changeset_id (str): Changeset id.
+            changeset_id (int): Changeset id.
 
         Raises:
             exceptions.AlreadySubscribed: You are already subscribed to this changeset.
@@ -39,11 +39,11 @@ class Changeset_Discussion_Container:
             case 200: pass
             case 409: raise exceptions.AlreadySubscribed()
 
-    def unsubscribe(self, changeset_id: str) -> None:
+    def unsubscribe(self, changeset_id: int) -> None:
         """Unsubscribe from discussion to stop reciving notifications.
 
         Args:
-            changeset_id (str): Changeset id.
+            changeset_id (int): Changeset id.
 
         Raises:
             exceptions.NotSubscribed: You are not subscribed to this changeset.
@@ -54,11 +54,11 @@ class Changeset_Discussion_Container:
             case 200: pass
             case 404: raise exceptions.NotSubscribed()
 
-    def hide(self, comment_id: str) -> None:
+    def hide(self, comment_id: int) -> None:
         """Set visible flag on changeset comment to false. MODERATOR ONLY!
 
         Args:
-            comment_id (str): Comment id.
+            comment_id (int): Comment id.
 
         Raises:
             exceptions.NotAModerator: You are not a moderator.
@@ -71,11 +71,11 @@ class Changeset_Discussion_Container:
             case 403: raise exceptions.NotAModerator()
             case 404: raise exceptions.IdNotFoundError()
 
-    def unhide(self, comment_id: str) -> None:
+    def unhide(self, comment_id: int) -> None:
         """Set visible flag on changeset comment to true. MODERATOR ONLY!
 
         Args:
-            comment_id (str): Comment id.
+            comment_id (int): Comment id.
 
         Raises:
             exceptions.NotAModerator: You are not a moderator.
