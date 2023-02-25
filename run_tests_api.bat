@@ -14,3 +14,6 @@ python -m unittest tests/api/test_api_changeset_discussion.py
 
 echo ### test_api_elements ###
 python -m unittest tests/api/test_api_elements.py
+
+echo ### test_api_user ###
+python -m unittest tests/api/test_api_user.py

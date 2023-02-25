@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from requests.models import Response
 
 from ._URLs import URLs
-from .endpoints import Misc_Container, Changeset_Container, Elements_Container, Gpx_Container
+from .endpoints import Misc_Container, Changeset_Container, Elements_Container, Gpx_Container, User_Container
 
 class Api():
     """Class used to communicate with API."""
@@ -33,6 +33,7 @@ class Api():
         self.changeset = Changeset_Container(self)
         self.elements = Elements_Container(self)
         self.gpx = Gpx_Container(self)
+        self.user = User_Container(self)
 
         if username and password:
             self._auth = HTTPBasicAuth(username, password)

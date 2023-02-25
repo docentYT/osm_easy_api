@@ -47,3 +47,10 @@ class URLs:
         self.gpx: Dict[str, str] = {
             "get": six_url + "/trackpoints?bbox={left},{bottom},{right},{top}&page={page_number}"
         }
+
+        self.user: Dict[str, str] = {
+            "get": six_url + "/user/{id}",
+            "get_query": six_url + "/users?users=",
+            "get_current": six_url + "/user/details",
+            "preferences": six_url + "/user/preferences"
+        }
