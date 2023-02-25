@@ -49,7 +49,7 @@ class Changeset_Container:
             if element.tag == "changeset" and event == "end":
                 assert changeset_element, "No changeset element in API response for get changeset. Should not happen."
                 changeset_list.append(Changeset(
-                changeset_element.attrib["id"],
+                int(changeset_element.attrib["id"]),
                 changeset_element.attrib["created_at"],
                 True if changeset_element.attrib["open"] == "true" else False,
                 changeset_element.attrib["uid"],
