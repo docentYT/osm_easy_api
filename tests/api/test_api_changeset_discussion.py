@@ -10,7 +10,7 @@ LOGIN, PASSWORD = os.getenv("login"), os.getenv("password")
 from src import Api
 from src.api import exceptions as ApiExceptions
 
-class TestApiChangeset(unittest.TestCase):
+class TestApiChangesetDiscussion(unittest.TestCase):
 
     @responses.activate
     def test_subscribe_unsubscribe(self):
@@ -68,7 +68,7 @@ class TestApiChangeset(unittest.TestCase):
         self.assertRaises(ApiExceptions.IdNotFoundError, hide)
 
     @responses.activate
-    def test_hide(self):
+    def test_unhide(self):
         responses.add(**{
             "method": responses.POST,
             "url": "https://test.pl/api/0.6/changeset/comment/111/unhide",

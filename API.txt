@@ -23,17 +23,17 @@ changeset discussion
 ✅ MO: POST /api/0.6/changeset/comment/#comment_id/unhide - Unhide comment from changeset.
 
 ELEMENTS
-PUT /api/0.6/[node|way|relation]/create - Create new element.
-GET /api/0.6/[node|way|relation]/#id - Get element with id.
-PUT /api/0.6/[node|way|relation]/#id - Update element with id.
-DELETE /api/0.6/[node|way|relation]/#id - Delete element with id.
-GET /api/0.6/[node|way|relation]/#id/history - Get old versions of an element.
-GET /api/0.6/[node|way|relation]/#id/#version - Get specific version of element.
-GET /api/0.6/[nodes|ways|relations]?#parameters - Get multpile elements on one request.
-GET /api/0.6/[node|way|relation]/#id/relations - Get relations for element.
-GET /api/0.6/node/#id/ways - Get ways for node.
-GET /api/0.6/[way|relation]/#id/full - Get ALL DATA for element (way => all nodes with data, relation => all members)
-MO: POST /api/0.6/[node|way|relation]/#id/#version/redact?redaction=#redaction_id - Hide element with data privacy or copyright infringements.
+✅ PUT /api/0.6/[node|way|relation]/create - Create new element.
+✅ GET /api/0.6/[node|way|relation]/#id - Get element with id.
+✅ PUT /api/0.6/[node|way|relation]/#id - Update element with id.
+✅ DELETE /api/0.6/[node|way|relation]/#id - Delete element with id.
+✅ GET /api/0.6/[node|way|relation]/#id/history - Get old versions of an element.
+✅ GET /api/0.6/[node|way|relation]/#id/#version - Get specific version of element.
+✅ GET /api/0.6/[nodes|ways|relations]?#parameters - Get multpile elements on one request.
+✅ GET /api/0.6/[node|way|relation]/#id/relations - Get relations for element.
+✅ GET /api/0.6/node/#id/ways - Get ways for node.
+✅ GET /api/0.6/[way|relation]/#id/full - Get ALL DATA for element (way => all nodes with data, relation => all members)
+✅ MO: POST /api/0.6/[node|way|relation]/#id/#version/redact?redaction=#redaction_id - Hide element with data privacy or copyright infringements.
 
 GPS TRACES
 GET /api/0.6/trackpoints?bbox=left,bottom,right,top&page=pageNumber - Get GPS tracks that are inside a given bbox

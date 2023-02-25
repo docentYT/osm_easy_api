@@ -62,7 +62,7 @@ class Changeset_Container:
         if (len(changeset_list) == 0): raise exceptions.EmptyResult()
         return changeset_list
 
-    def create(self, comment: str, tags: Tags | None = None) -> str:
+    def create(self, comment: str, tags: Tags | None = None) -> int:
         """Creates new changeset.
 
         Args:
@@ -70,7 +70,7 @@ class Changeset_Container:
             tags (Tags | None, optional): Tags for changeset. Defaults to None.
 
         Returns:
-            str: Changeset ID.
+            int: Changeset ID.
         """
         root = minidom.Document()
         xml = root.createElement("osm")
@@ -89,7 +89,7 @@ class Changeset_Container:
 
         response = self.outer._request(self.outer._RequestMethods.PUT,
             self.outer._url.changeset["create"], self.outer._Requirement.YES, body=xml_str)
-        return response.text
+        return int(response.text)
 
     def get(self, id: str, include_discussion: bool = False) -> Changeset:
         """Get changeset data from OSM server.

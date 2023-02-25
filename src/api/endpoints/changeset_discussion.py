@@ -55,6 +55,15 @@ class Changeset_Discussion_Container:
             case 404: raise exceptions.NotSubscribed()
 
     def hide(self, comment_id: str) -> None:
+        """Set visible flag on changeset comment to false. MODERATOR ONLY!
+
+        Args:
+            comment_id (str): Comment id.
+
+        Raises:
+            exceptions.NotAModerator: You are not a moderator.
+            exceptions.IdNotFoundError: Comment with provided id not found.
+        """
         response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["hide"].format(comment_id=comment_id), self.outer._Requirement.YES, auto_status_code_handling=False)
         
         match response.status_code:
@@ -63,6 +72,15 @@ class Changeset_Discussion_Container:
             case 404: raise exceptions.IdNotFoundError()
 
     def unhide(self, comment_id: str) -> None:
+        """Set visible flag on changeset comment to true. MODERATOR ONLY!
+
+        Args:
+            comment_id (str): Comment id.
+
+        Raises:
+            exceptions.NotAModerator: You are not a moderator.
+            exceptions.IdNotFoundError: Comment with provided id not found.
+        """
         response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unhide"].format(comment_id=comment_id), self.outer._Requirement.YES, auto_status_code_handling=False)
         
         match response.status_code:

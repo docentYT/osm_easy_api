@@ -33,3 +33,6 @@ class NotSubscribed(Exception):
 
 class NotAModerator(Exception):
     pass
+
+class ElementDeleted(Exception):
+    pass

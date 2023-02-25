@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from requests.models import Response
 
 from ._URLs import URLs
-from .endpoints import Misc_Container, Changeset_Container
+from .endpoints import Misc_Container, Changeset_Container, Elements_Container
 
 class Api():
     """Class used to communicate with API."""
@@ -21,7 +21,8 @@ class Api():
     class _RequestMethods(Enum):
         GET = 0,
         PUT = 1,
-        POST = 2
+        POST = 2,
+        DELETE = 3
 
         def __str__(self):
             return self.name
@@ -30,6 +31,7 @@ class Api():
         self._url = URLs(url)
         self.misc = Misc_Container(self)
         self.changeset = Changeset_Container(self)
+        self.elements = Elements_Container(self)
 
         if username and password:
             self._auth = HTTPBasicAuth(username, password)
@@ -46,7 +48,7 @@ class Api():
             case self._Requirement.NO:
                 response = requests.request(str(method), url, stream=stream, data=body)
                 
-        if auto_status_code_handling: assert response.status_code == 200, f"Invalid and unexpected response code {response.status_code} for {url}"
+        if auto_status_code_handling: assert response.status_code == 200, f"Invalid (and unexpected) response code {response.status_code} for {url}"
         return response
 
     @staticmethod

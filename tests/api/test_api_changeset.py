@@ -23,7 +23,7 @@ class TestApiChangeset(unittest.TestCase):
         })
 
         api = Api("https://test.pl", LOGIN, PASSWORD)
-        self.assertEqual(api.changeset.create("ABC"), "111")
+        self.assertEqual(api.changeset.create("ABC"), 111)
 
     @responses.activate
     def test_get(self):

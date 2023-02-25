@@ -29,3 +29,17 @@ class URLs:
             "hide": six_url + "/changeset/comment/{comment_id}/hide",
             "unhide": six_url + "/changeset/comment/{comment_id}/unhide"
         }
+
+        self.elements: Dict[str, str] = {
+            "create": six_url + "/{element_type}/create",
+            "read": six_url + "/{element_type}/{id}",
+            "update": six_url + "/{element_type}/{id}",
+            "delete": six_url + "/{element_type}/{id}",
+            "history": six_url + "/{element_type}/{id}/history",
+            "version": six_url + "/{element_type}/{id}/{version}",
+            "multi_fetch": six_url + "/{element_type}",
+            "relations": six_url + "/{element_type}/{id}/relations",
+            "ways": six_url + "/node/{id}/ways",
+            "full": six_url + "/{element_type}/{id}/full",
+            "redaction": six_url + "/{element_type}/{id}/{version}/redact?redaction={redaction_id}"
+        }
