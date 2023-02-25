@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, TypeVar
 if TYPE_CHECKING:
     from api import Api
     from xml.etree import ElementTree
@@ -9,6 +9,9 @@ from src.api import exceptions
 from src.data_classes import Node, Way, Relation
 from src.data_classes.relation import Member
 from src.diff.diff_parser import _element_to_osm_object
+
+Node_Way_Relation = TypeVar("Node_Way_Relation", Node, Way, Relation)
+Way_Relation = TypeVar("Way_Relation", Way, Relation)
 
 class Elements_Container:
     def __init__(self, outer):
@@ -40,12 +43,12 @@ class Elements_Container:
             case 412: raise ValueError(response.content)
         
         return int(response.text)
-    
-    def get(self, element: type[Node | Way | Relation], id: int) -> Node | Way | Relation:
-        """Get element by id
+
+    def get(self, element: type[Node_Way_Relation], id: int) -> Node_Way_Relation :
+        """""Get element by id
 
         Args:
-            element (type[Node  |  Way  |  Relation]): Element type.
+            element (type[Node_Way_Relation]): Element type.
             id (int): Element id.
 
         Raises:
@@ -54,7 +57,7 @@ class Elements_Container:
 
         Returns:
             Node | Way | Relation: Representation of element.
-        """
+        """""
         element_name = element.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
         status_code, generator = self.outer._get_generator(
@@ -134,11 +137,11 @@ class Elements_Container:
             case 412: raise ValueError(response.content)
         return int(response.content)
     
-    def history(self, element: type[Node | Way | Relation], id: int) -> list[Node | Way | Relation]:
+    def history(self, element: type[Node_Way_Relation], id: int) -> list[Node_Way_Relation]:
         """Returns all old versions of element.
 
         Args:
-            element (type[Node  |  Way  |  Relation]): Element type to search for.
+            element (type[Node_Way_Relation]): Element type to search for.
             id (int): Element id.
 
         Raises:
@@ -165,11 +168,11 @@ class Elements_Container:
             
         return objects_list
     
-    def version(self, element: type[Node | Way | Relation], id: int, version: int) -> Node | Way | Relation:
+    def version(self, element: type[Node_Way_Relation], id: int, version: int) -> Node_Way_Relation:
         """Returns specific version of element.
 
         Args:
-            element (type[Node  |  Way  |  Relation]): Element type.
+            element (type[Node_Way_Relation]): Element type.
             id (int): Element id.
             version (int): Version number you are looking for.
 
@@ -198,7 +201,7 @@ class Elements_Container:
                 return object
         assert False, "[ERROR::API::ENDPOINTS::ELEMENTS::version] Cannot create an element."
     
-    def get_query(self, element: type[Node | Way | Relation], ids: list[int]) -> list[Node | Way | Relation]:
+    def get_query(self, element: type[Node_Way_Relation], ids: list[int]) -> list[Node_Way_Relation]:
         """Allows fetch multiple elements at once.
 
         Args:
@@ -282,11 +285,11 @@ class Elements_Container:
             
         return ways_list
     
-    def full(self, element: type[Way | Relation], id: int) -> Way | Relation:
+    def full(self, element: type[Way_Relation], id: int) -> Way_Relation:
         """Retrieves a way or relation and all other elements referenced by it. See https://wiki.openstreetmap.org/wiki/API_v0.6#Full:_GET_/api/0.6/[way|relation]/#id/full for more info.
 
         Args:
-            element (type[Way  |  Relation]): Type of element.
+            element (type[Way_Relation]): Type of element.
             id (int): Element id.
 
         Raises:

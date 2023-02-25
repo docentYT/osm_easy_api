@@ -26,8 +26,8 @@ class TestApiChangesetDiscussion(unittest.TestCase):
         })
 
         api = Api("https://test.pl", LOGIN, PASSWORD)
-        def subscribe(): return api.changeset.discussion.subscribe("111")
-        def unsubscribe(): return api.changeset.discussion.unsubscribe("111")
+        def subscribe(): return api.changeset.discussion.subscribe(111)
+        def unsubscribe(): return api.changeset.discussion.unsubscribe(111)
         subscribe()
         responses.add(**{
             "method": responses.POST,
@@ -52,7 +52,7 @@ class TestApiChangesetDiscussion(unittest.TestCase):
         })
 
         api = Api("https://test.pl", LOGIN, PASSWORD)
-        def hide(): return api.changeset.discussion.hide("111")
+        def hide(): return api.changeset.discussion.hide(111)
         hide()
         responses.add(**{
             "method": responses.POST,
@@ -76,7 +76,7 @@ class TestApiChangesetDiscussion(unittest.TestCase):
         })
 
         api = Api("https://test.pl", LOGIN, PASSWORD)
-        def unhide(): return api.changeset.discussion.unhide("111")
+        def unhide(): return api.changeset.discussion.unhide(111)
         unhide()
         responses.add(**{
             "method": responses.POST,

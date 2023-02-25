@@ -50,7 +50,7 @@ class TestApiChangeset(unittest.TestCase):
 
         api = Api("https://test.pl", LOGIN, PASSWORD)
         changeset = Changeset(
-            "111",
+            111,
             "2022-12-26T13:33:40Z",
             False,
             "18179",
@@ -60,7 +60,7 @@ class TestApiChangeset(unittest.TestCase):
             [{"date": "2022-12-26T14:22:22Z", "user_id": "18179", "text": "abc"}]
         )
 
-        testing_changeset = api.changeset.get("111", True)
+        testing_changeset = api.changeset.get(111, True)
         self.assertEqual(testing_changeset.id, changeset.id)
         self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
         self.assertEqual(testing_changeset.open, changeset.open)
@@ -77,7 +77,7 @@ class TestApiChangeset(unittest.TestCase):
         })
 
         def get():
-            return api.changeset.get("111", True)
+            return api.changeset.get(111, True)
         
         self.assertRaises(ApiExceptions.IdNotFoundError, get)
 
@@ -101,7 +101,7 @@ class TestApiChangeset(unittest.TestCase):
 
         api = Api("https://test.pl", LOGIN, PASSWORD)
         changeset = Changeset(
-            "222",
+            222,
             "2023-01-10T16:48:58Z",
             False,
             "18179",
@@ -126,7 +126,7 @@ class TestApiChangeset(unittest.TestCase):
         })
 
         def get():
-            return api.changeset.get("111", True)
+            return api.changeset.get(111, True)
         
         self.assertRaises(ApiExceptions.IdNotFoundError, get)
 
@@ -154,7 +154,7 @@ class TestApiChangeset(unittest.TestCase):
         })
 
         changeset = Changeset(
-            "111",
+            111,
             "2022-12-26T13:33:40Z",
             False,
             "18179",
@@ -166,7 +166,7 @@ class TestApiChangeset(unittest.TestCase):
 
         api = Api("https://test.pl", LOGIN, PASSWORD)
 
-        testing_changeset = api.changeset.update("111", "BBB")
+        testing_changeset = api.changeset.update(111, "BBB")
         self.assertEqual(testing_changeset.id, changeset.id)
         self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
         self.assertEqual(testing_changeset.open, changeset.open)
@@ -177,7 +177,7 @@ class TestApiChangeset(unittest.TestCase):
         self.assertEqual(testing_changeset.discussion, changeset.discussion)
 
         def update():
-            return api.changeset.update("111", "BBB")
+            return api.changeset.update(111, "BBB")
         responses.add(**{
             "method": responses.PUT,
             "url": "https://test.pl/api/0.6/changeset/111",
@@ -258,7 +258,7 @@ class TestApiChangeset(unittest.TestCase):
 
         api = Api("https://test.pl")
 
-        generator = api.changeset.download("111")
+        generator = api.changeset.download(111)
         
         second_node = None
         for action, element in generator:
@@ -276,6 +276,6 @@ class TestApiChangeset(unittest.TestCase):
         })
 
         def download():
-            return api.changeset.download("111")
+            return api.changeset.download(111)
         
         self.assertRaises(ApiExceptions.IdNotFoundError, download)
