@@ -2,3 +2,4 @@
 from .misc import Misc_Container
 from .changeset import Changeset_Container
 from .elements import Elements_Container
+from .gpx import Gpx_Container

@@ -36,7 +36,7 @@ ELEMENTS
 ✅ MO: POST /api/0.6/[node|way|relation]/#id/#version/redact?redaction=#redaction_id - Hide element with data privacy or copyright infringements.
 
 GPS TRACES
-GET /api/0.6/trackpoints?bbox=left,bottom,right,top&page=pageNumber - Get GPS tracks that are inside a given bbox
+✅❓ GET /api/0.6/trackpoints?bbox=left,bottom,right,top&page=pageNumber - Get GPS tracks that are inside a given bbox
 POST /api/0.6/gpx/create - Create new GPS trace from GPX file
 OO: PUT /api/0.6/gpx/#id - Update gps trace
 OO: DELETE /api/0.6/gpx/#id - Delete gps trace
@@ -69,3 +69,4 @@ CL = Current logged user
 
 ✅ - Done
 ❗ - No error code handling
+❓ - No tests

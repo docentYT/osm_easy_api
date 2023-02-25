@@ -43,3 +43,7 @@ class URLs:
             "full": six_url + "/{element_type}/{id}/full",
             "redaction": six_url + "/{element_type}/{id}/{version}/redact?redaction={redaction_id}"
         }
+
+        self.gpx: Dict[str, str] = {
+            "get": six_url + "/trackpoints?bbox={left},{bottom},{right},{top}&page={page_number}"
+        }
