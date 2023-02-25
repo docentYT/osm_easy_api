@@ -18,3 +18,6 @@ python -m unittest tests/data_classes/test_tags.py
 
 echo ### test_osmChange ###
 python -m unittest tests/data_classes/test_osmChange.py
+
+echo ### test_user ###
+python -m unittest tests/data_classes/test_user.py
