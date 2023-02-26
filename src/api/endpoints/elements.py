@@ -60,6 +60,7 @@ class Elements_Container:
         """""
         element_name = element.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
+        print(url)
         status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
@@ -71,7 +72,7 @@ class Elements_Container:
             case 410: raise exceptions.ElementDeleted()
         
         for event, elem in generator:
-            if elem.tag in ("node", "way", "relation"):
+            if elem.tag in ("node", "way", "relation") and event == "start":
                 object = _element_to_osm_object(elem)
                 return object
             

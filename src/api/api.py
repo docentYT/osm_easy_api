@@ -45,12 +45,11 @@ class Api():
         match auth_requirement:
             case self._Requirement.YES:
                 if not self._auth: raise ValueError("No creditentials provided during class initalization!")
-                response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body)
+                response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body.encode('utf-8') if body else None)
             case self._Requirement.OPTIONAL:
-                response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body)
+                response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body.encode('utf-8') if body else None)
             case self._Requirement.NO:
-                response = requests.request(str(method), url, stream=stream, data=body)
-                
+                response = requests.request(str(method), url, stream=stream, data=body.encode('utf-8') if body else None)
         if auto_status_code_handling: assert response.status_code == 200, f"Invalid (and unexpected) response code {response.status_code} for {url}"
         return response
 
