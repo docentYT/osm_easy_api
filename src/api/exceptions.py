@@ -36,3 +36,9 @@ class NotAModerator(Exception):
 
 class ElementDeleted(Exception):
     pass
+
+class NoteAlreadyClosed(Exception):
+    pass
+
+class NoteAlreadyOpen(Exception):
+    pass

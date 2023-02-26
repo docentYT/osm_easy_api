@@ -4,11 +4,11 @@ from src.data_classes import User
 
 class Comment():
     def __init__(self,
-                comment_created_at: str,
-                user: User,
-                action: str,
-                text: str,
-                html: str
+                comment_created_at: str | None = None,
+                user: User | None = None,
+                action: str | None = None,
+                text: str | None = None,
+                html: str | None = None
         ):
         self.comment_created_at = comment_created_at
         self.user = user

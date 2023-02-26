@@ -13,4 +13,5 @@ class TestNote(unittest.TestCase):
         self.assertEqual(note.note_created_at, "123")
         self.assertEqual(note.open, True)
         self.assertEqual(note.comments[0].comment_created_at, "123")
+        assert note.comments[0].user, "No user exist"
         self.assertEqual(note.comments[0].user.id, 123)

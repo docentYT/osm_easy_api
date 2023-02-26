@@ -45,22 +45,22 @@ GET /api/0.6/gpx/#id/data - Get GPX file for trace OO: if private
 OO: GET /api/0.6/user/gpx_files - Get all traces for owner account
 
 USERS
-✅ GET /api/0.6/user/#id - Get user data by id.
-✅ GET /api/0.6/users?users=#id1,#id2,...,#idn - Get user data for mulptile users on one request.
-✅ CL: GET /api/0.6/user/details - Get user data
-✅ CL: GET /api/0.6/user/preferences - Get user preferences
-✅ CL: PUT /api/0.6/user/preferences - Update user preferences
-✅ CL: DELETE /api/0.6/user/preferences - Delete user preference
+comment✅ GET /api/0.6/user/#id - Get user data by id.
+comment✅ GET /api/0.6/users?users=#id1,#id2,...,#idn - Get user data for mulptile users on one request.
+comment✅ CL: GET /api/0.6/user/details - Get user data
+comment✅ CL: GET /api/0.6/user/preferences - Get user preferences
+comment✅ CL: PUT /api/0.6/user/preferences - Update user preferences
+comment✅ CL: DELETE /api/0.6/user/preferences - Delete user preference
 
 NOTES
-GET /api/0.6/notes?bbox=Left,Bottom,Right,Top - Get all notes in bbox
-GET /api/0.6/notes/#id - Get note by id
-POST /api/0.6/notes - Create new note
-POST /api/0.6/notes/#id/comment - Create new comment to note
-POST /api/0.6/notes/#id/close - Close note
-POST /api/0.6/notes/#id/reopen - Reopen note
-GET /api/0.6/notes/search - Search for notes
-GET /api/0.6/notes/feed?bbox=Left,Bottom,Right,Top - Get RSS feed for notes in bbox
+✅ GET /api/0.6/notes?bbox=Left,Bottom,Right,Top - Get all notes in bbox
+✅ GET /api/0.6/notes/#id - Get note by id
+✅❓ POST /api/0.6/notes - Create new note
+✅❓ POST /api/0.6/notes/#id/comment - Create new comment to note
+✅❓ POST /api/0.6/notes/#id/close - Close note
+✅❓ POST /api/0.6/notes/#id/reopen - Reopen note
+✅❓ GET /api/0.6/notes/search - Search for notes
+X GET /api/0.6/notes/feed?bbox=Left,Bottom,Right,Top - Get RSS feed for notes in bbox
 
 
 *

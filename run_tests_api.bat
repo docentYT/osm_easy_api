@@ -17,3 +17,6 @@ python -m unittest tests/api/test_api_elements.py
 
 echo ### test_api_user ###
 python -m unittest tests/api/test_api_user.py
+
+echo ### test_api_notes ###
+python -m unittest tests/api/test_api_notes.py

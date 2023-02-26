@@ -6,21 +6,22 @@ class User():
                 display_name: str | None = None,
                 account_created_at: str | None = None,
                 description: str | None = None,
-                contributor_terms_agreed: bool = False,
+                contributor_terms_agreed: bool | None = None,
                 img_url: str | None = None,
-                roles: list[str] = [],
-                changesets_count: int = 0,
-                traces_count: int = 0,
-                blocks: Dict[str, Dict[str, int]] = {
-                    "received": {
-                        "count": 0,
-                        "active": 0
-                    },
-                    "issued": {
-                        "count": 0,
-                        "active": 0
-                    }
-                }
+                roles: list[str] | None = None,
+                changesets_count: int | None = None,
+                traces_count: int | None = None,
+                blocks: Dict[str, Dict[str, int]] | None = None
+                # = {
+                #     "received": {
+                #         "count": 0,
+                #         "active": 0
+                #     },
+                #     "issued": {
+                #         "count": 0,
+                #         "active": 0
+                #     }
+                # }
         ):
         self.id = id
         self.display_name = display_name

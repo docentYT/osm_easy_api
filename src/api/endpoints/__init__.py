@@ -4,3 +4,4 @@ from .changeset import Changeset_Container
 from .elements import Elements_Container
 from .gpx import Gpx_Container
 from .user import User_Container
+from .notes import Notes_Container

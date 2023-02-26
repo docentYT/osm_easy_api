@@ -29,6 +29,7 @@ class User_Container:
                     case "img":
                         temp_user.img_url = element.attrib["href"]
                     case "roles":
+                        temp_user.roles = []
                         for role in element:
                             temp_user.roles.append(role.tag)
                     case "changesets":
@@ -37,6 +38,7 @@ class User_Container:
                         temp_user.traces_count = int(element.attrib["count"])
                     case "blocks":
                         for block_type in element:
+                            temp_user.blocks = {"received": {"count": 0, "active": 0}, "issued": {"count": 0, "active": 0}}
                             if block_type.tag == "received":
                                 temp_user.blocks["received"]["count"] = int(block_type.attrib["count"])
                                 temp_user.blocks["received"]["active"] = int(block_type.attrib["active"])

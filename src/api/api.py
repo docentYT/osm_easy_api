@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from requests.models import Response
 
 from ._URLs import URLs
-from .endpoints import Misc_Container, Changeset_Container, Elements_Container, Gpx_Container, User_Container
+from .endpoints import Misc_Container, Changeset_Container, Elements_Container, Gpx_Container, User_Container, Notes_Container
 
 class Api():
     """Class used to communicate with API."""
@@ -34,6 +34,7 @@ class Api():
         self.elements = Elements_Container(self)
         self.gpx = Gpx_Container(self)
         self.user = User_Container(self)
+        self.notes = Notes_Container(self)
 
         if username and password:
             self._auth = HTTPBasicAuth(username, password)
@@ -62,6 +63,14 @@ class Api():
     
     def _get_generator(self, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, auto_status_code_handling: bool = True) -> Generator[Tuple[str, ElementTree.Element], None, None] | Tuple[int, Generator[Tuple[str, ElementTree.Element], None, None]]:
         response = self._request(self._RequestMethods.GET, url, auth_requirement, auto_status_code_handling=auto_status_code_handling, stream=True)
+        response.raw.decode_content = True
+        if auto_status_code_handling:
+            return self._raw_stream_parser(response.raw)
+        else:
+            return (response.status_code, self._raw_stream_parser(response.raw))
+        
+    def _post_generator(self, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, auto_status_code_handling: bool = True) -> Generator[Tuple[str, ElementTree.Element], None, None] | Tuple[int, Generator[Tuple[str, ElementTree.Element], None, None]]:
+        response = self._request(self._RequestMethods.POST, url, auth_requirement, auto_status_code_handling=auto_status_code_handling, stream=True)
         response.raw.decode_content = True
         if auto_status_code_handling:
             return self._raw_stream_parser(response.raw)
