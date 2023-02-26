@@ -21,3 +21,6 @@ python -m unittest tests/data_classes/test_osmChange.py
 
 echo ### test_user ###
 python -m unittest tests/data_classes/test_user.py
+
+echo ### test_note ###
+python -m unittest tests/data_classes/test_note.py
