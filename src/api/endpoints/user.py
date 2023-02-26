@@ -53,6 +53,14 @@ class User_Container:
         return user_list
 
     def get(self, id: int) -> User:
+        """Get user data by id.
+
+        Args:
+            id (int): User id.
+
+        Returns:
+            User: User object.
+        """
         generator = self.outer._get_generator(
             url=self.outer._url.user["get"].format(id=id),
             auth_requirement=self.outer._Requirement.NO,
@@ -61,6 +69,14 @@ class User_Container:
         return self._xml_to_user(generator)[0]
     
     def get_query(self, ids: list[int]) -> list[User]:
+        """Search for multiple users on one call.
+
+        Args:
+            ids (list[int]): List of users ids.
+
+        Returns:
+            list[User]: List of User objects.
+        """
         param = ""
         for id in ids:
             param += f"{id},"
@@ -73,6 +89,11 @@ class User_Container:
         return self._xml_to_user(generator)
     
     def get_current(self) -> User:
+        """Get User object for current authenticated user.
+
+        Returns:
+            User: User object.
+        """
         generator = self.outer._get_generator(
             url=self.outer._url.user["get_current"],
             auth_requirement=self.outer._Requirement.YES,
@@ -81,6 +102,17 @@ class User_Container:
         return self._xml_to_user(generator)[0]
     
     def get_preferences(self, key: str | None = None) -> dict[str, str]:
+        """Get preferences for current logged user.
+
+        Args:
+            key (str | None, optional): Key to search for. Defaults to None (Returns all preferences).
+
+        Raises:
+            ValueError: Preference not found if key was provided
+
+        Returns:
+            dict[str, str]: Dictionary of preferences
+        """
         url = self.outer._url.user["preferences"]
         if key:
             url += f"/{key}"
@@ -101,6 +133,11 @@ class User_Container:
         return preferences
     
     def set_preferences(self, preferences: dict[str, str]) -> None:
+        """Changes all preferences to new dict.
+
+        Args:
+            preferences (dict[str, str]): New preferences.
+        """
         root = minidom.Document()
         preferences_element = root.createElement("preferences")
         for preference in preferences:
@@ -114,6 +151,14 @@ class User_Container:
         self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.user["preferences"], self.outer._Requirement.YES, stream=True, body=xml_str)
         
     def delete_preference(self, key: str) -> None:
+        """Deletes only one preference with given key.
+
+        Args:
+            key (str): Key to delete.
+
+        Raises:
+            ValueError: Preference not found.
+        """
         url = self.outer._url.user["preferences"]
         url += f"/{key}"
         response = self.outer._request(self.outer._RequestMethods.DELETE, url, self.outer._Requirement.YES, auto_status_code_handling=False)
