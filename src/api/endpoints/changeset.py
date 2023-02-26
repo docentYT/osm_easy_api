@@ -268,7 +268,7 @@ class Changeset_Container:
 
         Args:
             changeset_id (int): Open changeset ID.
-            osmChange (OsmChange): OsmChange instance with changes you want to upload.
+            osmChange (OsmChange): OsmChange instance with changes you want to upload. Action cannot be empty!
 
         Raises:
             exceptions.ErrorWhenParsingXML: Incorrect OsmChange object. Maybe missing elements attributes.
