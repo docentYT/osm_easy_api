@@ -60,7 +60,6 @@ class Elements_Container:
         """""
         element_name = element.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
-        print(url)
         status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
