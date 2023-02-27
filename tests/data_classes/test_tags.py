@@ -32,3 +32,17 @@ class TestTags(unittest.TestCase):
         self.assertEqual(tags.get("building"), "yes")
         self.assertEqual(tags.get("roof:levels"), "1")
         self.assertEqual(tags.get("natural"), None)
+
+    def test__to_xml(self):
+        tags = Tags({"building": "yes", "building:levels": "3", "roof:levels": "1"})
+        xml = tags._to_xml()
+        
+        nxt = next(xml)
+        self.assertEqual(nxt.getAttribute("k"), "building")
+        self.assertEqual(nxt.getAttribute("v"), "yes")
+        nxt = next(xml)
+        self.assertEqual(nxt.getAttribute("k"), "building:levels")
+        self.assertEqual(nxt.getAttribute("v"), "3")
+        nxt = next(xml)
+        self.assertEqual(nxt.getAttribute("k"), "roof:levels")
+        self.assertEqual(nxt.getAttribute("v"), "1")

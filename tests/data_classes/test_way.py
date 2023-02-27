@@ -1,6 +1,6 @@
 import unittest
 
-from src import Way, Node
+from src import Way, Node, Tags
 
 class TestWay(unittest.TestCase):
     def test_basic_initalization(self):
@@ -46,4 +46,43 @@ class TestWay(unittest.TestCase):
         self.assertEqual(way_one.nodes, [node_two])
         self.assertEqual(way_two.nodes, [node_one])
 
+    def test__to_xml(self):
+        way = Way(
+            id=123,
+            version=1, 
+            changeset_id=321,
+            timestamp="2022-11-11T21:15:26Z", 
+            user_id=111,
+            tags=Tags({"ABC": "CBA"})
+        )
+        node_one = Node(1)
+        node_two = Node(2)
 
+        way.nodes.append(node_one)
+        way.nodes.append(node_two)
+
+        element = way._to_xml(999)
+        self.assertEqual(element.tagName, "way")
+        self.assertEqual(element.getAttribute("id"),          str(123))
+        self.assertEqual(element.getAttribute("version"),     str(1))
+        self.assertEqual(element.getAttribute("changeset"),   str(999))
+
+        self.assertEqual(element.childNodes[0].tagName, "nd")
+        self.assertEqual(element.childNodes[0].getAttribute("ref"), str(1))
+
+        self.assertEqual(element.childNodes[1].tagName, "nd")
+        self.assertEqual(element.childNodes[1].getAttribute("ref"), str(2))
+        
+        self.assertEqual(element.childNodes[2].tagName, "tag")
+        self.assertEqual(element.childNodes[2].getAttribute("k"), "ABC")
+        self.assertEqual(element.childNodes[2].getAttribute("v"), "CBA")
+
+        element = way._to_xml(999, member_version=True)
+        self.assertEqual(element.tagName, "member")
+        self.assertEqual(element.getAttribute("ref"), str(123))
+        self.assertEqual(element.getAttribute("role"), "")
+
+        element = way._to_xml(999, member_version=True, role="ABC")
+        self.assertEqual(element.tagName, "member")
+        self.assertEqual(element.getAttribute("ref"), str(123))
+        self.assertEqual(element.getAttribute("role"), "ABC")

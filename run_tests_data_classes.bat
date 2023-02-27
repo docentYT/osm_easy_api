@@ -1,13 +1,9 @@
 @echo off
 
-:: utils
-echo ### test_join_url ###
-python -m unittest tests/utils/test_join_url.py
-
-echo ### test_write_gzip_to_file ###
-python -m unittest tests/utils/test_write_gzip_to_file.py
-
 :: data_classes
+echo ### test_osm_object_primitive ###
+python -m unittest tests/data_classes/test_osmObjectPrimitive.py
+
 echo ### test_node ###
 python -m unittest tests/data_classes/test_node.py
 
@@ -23,9 +19,8 @@ python -m unittest tests/data_classes/test_tags.py
 echo ### test_osmChange ###
 python -m unittest tests/data_classes/test_osmChange.py
 
-:: diff
-echo ### test_diff_parser ###
-python -m unittest tests/diff/test_diff_parser.py
+echo ### test_user ###
+python -m unittest tests/data_classes/test_user.py
 
-echo ### test_diff ###
-python -m unittest tests/diff/test_diff.py
+echo ### test_note ###
+python -m unittest tests/data_classes/test_note.py

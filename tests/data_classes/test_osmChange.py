@@ -1,6 +1,6 @@
 import unittest
 
-from src import Node, Way, OsmChange, Action
+from src import Node, Way, OsmChange, Action, Tags, Relation
 
 class TestOsmChange(unittest.TestCase):
     def test_basic_initalization(self):
@@ -53,3 +53,13 @@ class TestOsmChange(unittest.TestCase):
         self.assertEqual(osmChange.get(Way), [way_one])
         osmChange.remove(way_one)
         self.assertEqual(osmChange.get(Way), [])
+
+    def test__to_xml(self):
+        # TODO: Check if xml is well made
+        osmChange = OsmChange("0.1", "unittest", "123")
+        osmChange.add(Node(id=123))
+        osmChange.add(Node(id=321, version=1, latitude="55", longitude="66", tags=Tags({"natural": "tree"})), Action.CREATE)
+        osmChange.add(Way(id=234, nodes=[Node(1), Node(2)]), Action.MODIFY)
+        osmChange.add(Relation(id=11), Action.MODIFY)
+        self.maxDiff = None
+        osmChange._to_xml(999)

@@ -11,7 +11,8 @@ Documentation is build using [pdoc](https://pdoc.dev).
 To run docs on your machine use preffered command: `pdoc --docformat google --no-show-source src !src.utils`.
 
 # Examples
-## Print trees
+## DIFF
+### Print trees
 ```py
 from src import Node
 from src.diff import Diff, Frequency
@@ -28,7 +29,7 @@ for action, element in gen:
         print(action, element.id)
 ```
 
-## Print incorrectly tagged single tress
+### Print incorrectly tagged single tress
 ```py
 from src import Node, Action
 from src.diff import Diff, Frequency
@@ -46,6 +47,21 @@ for action, element in gen:
 Example output:
 ```
 Node(id = 10208486717, visible = None, version = 1, changeset_id = 129216075, timestamp = 2022-11-22T00:16:44Z, user_id = 17471721, tags = {'leaf_type': 'broadleaved', 'natural': 'wood'}, latitude = 48.6522286, longitude = 12.583809, )
+```
+
+## API
+### Add missing wikidata tag
+```py
+from src import Api, Node, Tags
+
+api = Api("https://master.apis.dev.openstreetmap.org", LOGIN, PASSWORD)
+
+node = api.elements.get(Node, 4296460336) # We are getting Node with id 4296460336 where we want to add a new tag to
+node.tags.add("wikidata", "Qexample") # Add a new tag to node.
+
+my_changeset = api.changeset.create("Add missing wikidata tag", Tags({"automatic": "yes"})) # Create new changeset with description and tag
+api.elements.update(node, my_changeset) # Send new version of a node to osm
+api.changeset.close(my_changeset) # Close changeset.
 ```
 
 # Notes
@@ -90,5 +106,5 @@ for node in deleted_nodes:
 but it can consume large amounts of ram and use of this method is not recommended for large diff's.
 
 # Tests
-You will need to install requirements: `install_test_depediences.bat`.
-To run tests use `run_tests.bat`.
+You will need to install requirements: `install_test_depediences.bat`. To test API module you will need `.env` file with `LOGIN` and `PASSWORD` field.
+To run tests use `run_tests_<module>.bat`.

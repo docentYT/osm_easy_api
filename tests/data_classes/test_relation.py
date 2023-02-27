@@ -1,6 +1,7 @@
 import unittest
 
-from src import Relation, Way, Node
+from src import Relation, Way, Node, Tags
+from src.data_classes.relation import Member as RelationMember
 
 class TestRelation(unittest.TestCase):
     def test_basic_initalization(self):
@@ -49,4 +50,44 @@ class TestRelation(unittest.TestCase):
         self.assertEqual(relation_one.members, [node_two])
         self.assertEqual(relation_two.members, [node_one])
 
+    def test__to_xml(self):
+        relation = Relation(
+            id=123,
+            version=1, 
+            changeset_id=321,
+            timestamp="2022-11-11T21:15:26Z", 
+            user_id=111
+        )
 
+        relation.members.append(RelationMember(Node(123, tags=Tags({"natural": "tree"})), "ROLA"))
+        relation.members.append(RelationMember(Way(123, tags=Tags({"highway": "footway"})), "WAYAY"))
+
+        element = relation._to_xml(999, member_version=True)
+        self.assertEqual(element.tagName, "member")
+        self.assertEqual(element.getAttribute("type"), "relation")
+        self.assertEqual(element.getAttribute("ref"), str(123))
+        self.assertEqual(element.getAttribute("role"), "")
+
+        element = relation._to_xml(999, member_version=True, role="ABC")
+        self.assertEqual(element.tagName, "member")
+        self.assertEqual(element.getAttribute("type"), "relation")
+        self.assertEqual(element.getAttribute("ref"), str(123))
+        self.assertEqual(element.getAttribute("role"), "ABC")
+
+        element = relation._to_xml(999)
+        self.assertEqual(element.tagName, "relation")
+        self.assertEqual(element.getAttribute("id"), str(123))
+        self.assertEqual(element.getAttribute("version"), str(1))
+        self.assertEqual(element.getAttribute("changeset"), str(999))
+
+        node = element.childNodes[0]
+        self.assertEqual(node.tagName, "member")
+        self.assertEqual(node.getAttribute("type"), "node")
+        self.assertEqual(node.getAttribute("role"), "ROLA")
+        self.assertIsNone(node.firstChild)
+
+        way = element.childNodes[1]
+        self.assertEqual(way.tagName, "member")
+        self.assertEqual(way.getAttribute("type"), "way")
+        self.assertEqual(way.getAttribute("role"), "WAYAY")
+        self.assertIsNone(node.firstChild)

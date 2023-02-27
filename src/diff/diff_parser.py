@@ -83,8 +83,8 @@ def _create_node_from_attributes(attributes: dict) -> Node:
         timestamp =     str(    attributes["timestamp"] ),
         user_id =       int(    attributes["uid"]       ),
         changeset_id =  int(    attributes["changeset"] ),
-        latitude =      str(    attributes["lat"]       ),
-        longitude =     str(    attributes["lon"]       )
+        latitude =      str(    attributes.get("lat")       ),
+        longitude =     str(    attributes.get("lon")       )
     )
 
 def _create_way_from_attributes(attributes: dict) -> Way:
@@ -106,17 +106,23 @@ def _create_relation_from_attributes(attributes: dict) -> Relation:
     )
 
 def _element_to_osm_object(element: ElementTree.Element) -> Node | Way | Relation:
+    def append_tags(element: ElementTree.Element, append_to: Node | Way | Relation):
+        for tag in element:
+                    if tag.tag == "tag": append_to.tags.add(tag.attrib["k"], tag.attrib["v"])
     match element.tag:
         case "node": 
             node = _create_node_from_attributes(element.attrib)
+            append_tags(element, node)
             return node
         case "way": 
             way = _create_way_from_attributes(element.attrib)
             _add_nodes_to_way_from_element(way, element)
+            append_tags(element, way)
             return way
         case "relation":
             relation = _create_relation_from_attributes(element.attrib)
             _add_members_to_relation_from_element(relation, element)
+            append_tags(element, relation)
             return relation
         case _: raise ValueError("[ERROR::DIFF_PARSER::_ELEMENT_TO_OSM_OBJECT] Unkown element tag:", element.tag)
 
@@ -132,7 +138,9 @@ def OsmChange_parser_generator(file: gzip.GzipFile, sequence_number: str | None,
         Generator[Meta | Node | Way | Relation, None, None]: First yield will be Meta namedtuple with data about diff. Next yields will be osm data classes.
     """
     action_string = ""
-    file.seek(0)
+    try:
+        file.seek(0)
+    except: pass
     iterator = ElementTree.iterparse(file, events=('start', 'end'))
     _, root = next(iterator)
     yield Meta(version=root.attrib["version"], generator=root.attrib["generator"], sequence_number=sequence_number or "")
@@ -146,8 +154,8 @@ def OsmChange_parser_generator(file: gzip.GzipFile, sequence_number: str | None,
                 node_way_relation = _element_to_osm_object(element)
                 assert node_way_relation, "[ERROR::DIFF_PARSER::OSMCHANGE_PARSER_GENERATOR] node_way_relation is equal to None!"
                 
-                for tag in element:
-                    if tag.tag == "tag": node_way_relation.tags.add(tag.attrib["k"], tag.attrib["v"])
+                # for tag in element:
+                #     if tag.tag == "tag": node_way_relation.tags.add(tag.attrib["k"], tag.attrib["v"])
 
                 action = _string_to_action(action_string)
                 yield(action, node_way_relation)

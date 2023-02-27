@@ -1,4 +1,5 @@
 from enum import Enum
+from xml.dom import minidom
 from collections import namedtuple
 from typing import NamedTuple
 
@@ -42,6 +43,35 @@ class OsmChange():
         temp += f"Delete({len(self.elements[Relation][Action.DELETE])}), "
         temp += f"None({len(self.elements[Relation][Action.NONE])})."
         return temp
+
+    def _to_xml(self, changeset_id):
+        root = minidom.Document()
+        xml = root.createElement("osmChange")
+        xml.setAttribute("version", self.meta.version)
+        xml.setAttribute("generator", self.meta.generator)
+        root.appendChild(xml)
+
+        def append_elements__to_master_element(main_element, master_name, elements):
+            if not elements: return
+            master = root.createElement(master_name)
+            for element in elements:
+                master.appendChild(element._to_xml(changeset_id))
+            xml.appendChild(master)
+            
+        append_elements__to_master_element(xml, "create", self.get(Node, Action.CREATE))
+        append_elements__to_master_element(xml, "modify", self.get(Node, Action.MODIFY))
+        append_elements__to_master_element(xml, "delete", self.get(Node, Action.DELETE))
+
+        append_elements__to_master_element(xml, "create", self.get(Way, Action.CREATE))
+        append_elements__to_master_element(xml, "modify", self.get(Way, Action.MODIFY))
+        append_elements__to_master_element(xml, "delete", self.get(Way, Action.DELETE))
+
+        append_elements__to_master_element(xml, "create", self.get(Relation, Action.CREATE))
+        append_elements__to_master_element(xml, "modify", self.get(Relation, Action.MODIFY))
+        append_elements__to_master_element(xml, "delete", self.get(Relation, Action.DELETE))
+
+        xml_str = root.toprettyxml(indent="\t")
+        return xml_str
 
     def get(self, type: type[Node | Way | Relation], action: Action = Action.NONE) -> list[Node | Way | Relation]:
         """Gets list of elements with provided type and action.
