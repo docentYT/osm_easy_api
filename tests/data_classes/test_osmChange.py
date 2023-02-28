@@ -1,6 +1,6 @@
 import unittest
 
-from src import Node, Way, OsmChange, Action, Tags, Relation
+from osm_easy_api import Node, Way, OsmChange, Action, Tags, Relation
 
 class TestOsmChange(unittest.TestCase):
     def test_basic_initalization(self):

@@ -1,6 +1,6 @@
 from typing import Dict
 
-from src.data_classes import User
+from ..data_classes import User
 
 class Comment():
     def __init__(self,

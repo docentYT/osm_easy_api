@@ -1,14 +1,14 @@
 from typing import TYPE_CHECKING, TypeVar
 if TYPE_CHECKING:
-    from api import Api
+    from ...api import Api
     from xml.etree import ElementTree
 
 from copy import deepcopy
 
-from src.api import exceptions
-from src.data_classes import Node, Way, Relation
-from src.data_classes.relation import Member
-from src.diff.diff_parser import _element_to_osm_object
+from ...api import exceptions
+from ...data_classes import Node, Way, Relation
+from ...data_classes.relation import Member
+from ...diff.diff_parser import _element_to_osm_object
 
 Node_Way_Relation = TypeVar("Node_Way_Relation", Node, Way, Relation)
 Way_Relation = TypeVar("Way_Relation", Way, Relation)

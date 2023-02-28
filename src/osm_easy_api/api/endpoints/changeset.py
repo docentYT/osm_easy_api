@@ -4,14 +4,14 @@ from copy import copy
 from typing import TYPE_CHECKING, Generator, Tuple
 if TYPE_CHECKING:
     from xml.etree import ElementTree
-    from api import Api
-    from src import Node, Way, Relation
+    from ...api import Api
+    from ...data_classes import Node, Way, Relation
 
-from src import Tags, Action
-from src.utils import join_url
-from src.data_classes import Changeset, OsmChange
-from src.api import exceptions
-from src.diff.diff_parser import OsmChange_parser_generator
+from ... import Tags, Action
+from ...utils import join_url
+from ...data_classes import Changeset, OsmChange
+from ...api import exceptions
+from ...diff.diff_parser import OsmChange_parser_generator
 
 from .changeset_discussion import Changeset_Discussion_Container
 

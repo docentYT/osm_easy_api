@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 LOGIN, PASSWORD = os.getenv("login"), os.getenv("password")
 
-from src import Api
+from osm_easy_api import Api
 
 class TestApiElements(unittest.TestCase):
 

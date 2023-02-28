@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from api import Api
+    from ...api import Api
 
-from src.api import exceptions
+from ...api import exceptions
 
 class Changeset_Discussion_Container:
     def __init__(self, outer):

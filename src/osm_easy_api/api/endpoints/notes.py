@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING, Generator, Tuple
 if TYPE_CHECKING:
     from xml.etree import ElementTree
-    from api import Api
+    from ...api import Api
 
-from src.api import exceptions
-from src.data_classes import User, Note, Comment
+from ...api import exceptions
+from ...data_classes import User, Note, Comment
 
 from copy import copy, deepcopy
 from xml.dom import minidom

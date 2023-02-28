@@ -2,7 +2,7 @@ import unittest
 import responses
 import os
 
-import src.diff as diff
+import osm_easy_api.diff as diff
 
 
 class TestDiff(unittest.TestCase):

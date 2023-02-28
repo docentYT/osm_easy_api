@@ -1,6 +1,6 @@
 import unittest
 
-from src.utils import join_url
+from osm_easy_api.utils import join_url
 
 class TestMiscJoinUrl(unittest.TestCase):
     def test_join(self):

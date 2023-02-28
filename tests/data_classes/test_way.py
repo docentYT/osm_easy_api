@@ -1,6 +1,6 @@
 import unittest
 
-from src import Way, Node, Tags
+from osm_easy_api import Way, Node, Tags
 
 class TestWay(unittest.TestCase):
     def test_basic_initalization(self):

@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
 import shutil
 if TYPE_CHECKING:
-    from api import Api
+    from ...api import Api
 
-from src.api import exceptions
+from ...api import exceptions
 
 # TODO: GPX full support and parser
 

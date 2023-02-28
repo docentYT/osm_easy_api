@@ -1,6 +1,6 @@
 import unittest
 
-from src.data_classes import Note, Comment, User
+from osm_easy_api.data_classes import Note, Comment, User
 
 class TestNote(unittest.TestCase):
     def test_basic_initalization(self):

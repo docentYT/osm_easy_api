@@ -1,7 +1,7 @@
 import unittest
 
-from src import Tags
-from src.data_classes.osm_object_primitive import osm_object_primitive
+from osm_easy_api import Tags
+from osm_easy_api.data_classes.osm_object_primitive import osm_object_primitive
 
 class TestOsmObjectPrimitive(unittest.TestCase):
     def test_basic_initalization(self):

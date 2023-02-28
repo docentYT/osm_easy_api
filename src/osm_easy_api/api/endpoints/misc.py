@@ -1,12 +1,12 @@
 from typing import TYPE_CHECKING, Generator, Tuple
 if TYPE_CHECKING:
     from xml.etree import ElementTree
-    from src import Node, Way, Relation
-    from api import Api
+    from ... import Node, Way, Relation
+    from ... import Api
 
-from src.api import exceptions
+from ...api import exceptions
 # TODO: Update OsmChange_parser_generator to have more general usage
-from src.diff.diff_parser import OsmChange_parser_generator
+from ...diff.diff_parser import OsmChange_parser_generator
 
 class Misc_Container:
         def __init__(self, outer):

@@ -2,9 +2,9 @@ import unittest
 import gzip
 import os
 
-from src.diff.diff_parser import OsmChange_parser, _string_to_action
-from src import Node, Way, Relation, Action, Tags
-from src.data_classes.relation import Member
+from osm_easy_api.diff.diff_parser import OsmChange_parser, _string_to_action
+from osm_easy_api import Node, Way, Relation, Action, Tags
+from osm_easy_api.data_classes.relation import Member
 
 class TestDiffParser(unittest.TestCase):
     def test__string_to_action(self):

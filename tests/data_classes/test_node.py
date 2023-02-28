@@ -1,6 +1,6 @@
 import unittest
 
-from src import Node, Tags
+from osm_easy_api import Node, Tags
 
 class TestNode(unittest.TestCase):
     def test_basic_initalization(self):

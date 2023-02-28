@@ -1,6 +1,6 @@
 import unittest
 
-from src import Tags
+from osm_easy_api import Tags
 
 class TestTags(unittest.TestCase):
     def test_add_method(self):

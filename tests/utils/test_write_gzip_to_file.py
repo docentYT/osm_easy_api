@@ -3,7 +3,7 @@ import gzip
 import os
 from xml.etree import ElementTree
 
-from src.utils import write_gzip_to_file
+from osm_easy_api.utils import write_gzip_to_file
 
 class TestMiscWriteGzipToFile(unittest.TestCase):
     def _parse_file(self, file):

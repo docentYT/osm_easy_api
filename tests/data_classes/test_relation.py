@@ -1,7 +1,7 @@
 import unittest
 
-from src import Relation, Way, Node, Tags
-from src.data_classes.relation import Member as RelationMember
+from osm_easy_api import Relation, Way, Node, Tags
+from osm_easy_api.data_classes.relation import Member as RelationMember
 
 class TestRelation(unittest.TestCase):
     def test_basic_initalization(self):

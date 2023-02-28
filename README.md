@@ -1,4 +1,4 @@
-# osm-python-api
+# osm_easy_api
 Python package for parsing osm diffs and communicating with the osm api. See API.txt for list of supported endpoints.
 
 ## What's the point of this package?
@@ -110,4 +110,4 @@ but it can consume large amounts of ram and use of this method is not recommende
 
 # Tests
 You will need to install requirements: `install_test_depediences.bat`. To test API module you will need `.env` file with `LOGIN` and `PASSWORD` field.
-To run tests use `run_tests_<module>.bat`.
+To run tests use `python -m unittest discover` or `run_tests_<module>.bat`.
