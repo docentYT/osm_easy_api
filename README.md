@@ -106,5 +106,6 @@ for node in deleted_nodes:
 but it can consume large amounts of ram and use of this method is not recommended for large diff's.
 
 # Tests
-You will need to install requirements: `install_test_depediences.bat`. To test API module you will need `.env` file with `login` and `password` field.
-To run tests use `python -m unittest discover` or `run_tests_<module>.bat`.
+You will need to install `test-requirements.txt`. To test API module you will need `.env` file with `login` and `password` field.
+You can use tox.
+To run tests manually use `python -m unittest discover` or `run_tests_<module>.bat`.
