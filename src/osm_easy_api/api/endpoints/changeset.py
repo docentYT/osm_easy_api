@@ -2,7 +2,7 @@ from xml.dom import minidom
 from copy import copy
 
 from typing import TYPE_CHECKING, Generator, Tuple
-if TYPE_CHECKING:
+if TYPE_CHECKING: # pragma: no cover
     from xml.etree import ElementTree
     from ...api import Api
     from ...data_classes import Node, Way, Relation
