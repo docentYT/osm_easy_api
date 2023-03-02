@@ -1,3 +1,4 @@
 responses == 0.22.0
 python-dotenv == 1.0.0
 tox == 4.4.6
+coverage == 7.2.1
