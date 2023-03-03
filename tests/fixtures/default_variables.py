@@ -1,0 +1,2 @@
+LOGIN = "abc"
+PASSWORD = "123"

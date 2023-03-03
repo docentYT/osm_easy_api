@@ -1,10 +1,7 @@
 import unittest
 import responses
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
-LOGIN, PASSWORD = os.getenv("login"), os.getenv("password")
+from ..fixtures.default_variables import LOGIN, PASSWORD
 
 from osm_easy_api import Api
 

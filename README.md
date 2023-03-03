@@ -120,6 +120,5 @@ but it can consume large amounts of ram and use of this method is not recommende
 
 # Tests
 
-You will need to install `test-requirements.txt`. To test API module you will need `.env` file with `login` and `password` field.
-You can use tox.
+You will need to install `test-requirements.txt`. You can use tox.
 To run tests manually use `python -m unittest discover` or `run_tests_<module>.bat`.
