@@ -8,7 +8,7 @@ on:
     - '**.md'
     - '**.bat'
     - '**.svg'
-  - pull_request
+  pull_request:
 
 jobs:
   test:
