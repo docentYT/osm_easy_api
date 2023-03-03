@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 import gzip
 from typing import Generator
@@ -5,7 +6,7 @@ from typing import Generator
 import requests
 
 from .diff_parser import OsmChange_parser, OsmChange_parser_generator
-from ..data_classes import Tags, Node, Way, Relation, OsmChange
+from ..data_classes import Tags, Node, Way, Relation, OsmChange, Action
 from ..data_classes.OsmChange import Meta
 
 from ..utils import join_url, write_gzip_to_file
@@ -81,7 +82,7 @@ class Diff():
         else:
             return join_url(url, sequence_number[:3], sequence_number[3:6], sequence_number[6:9] + ".osc.gz")
     @staticmethod
-    def _return_generator_or_OsmChange(file: gzip.GzipFile, tags: Tags | str, sequence_number: str | None, generator: bool) -> tuple[Meta, Generator[Node | Way | Relation, None, None]] | OsmChange:
+    def _return_generator_or_OsmChange(file: gzip.GzipFile, tags: Tags | str, sequence_number: str | None, generator: bool) -> tuple[Meta, Generator[tuple[Action, Node | Way | Relation], None, None]] | OsmChange:
         """Returns tuple(Meta, generator) or OsmChange class depending on generator boolean."""
         if not generator: return OsmChange_parser(file, sequence_number, tags)
 
@@ -90,7 +91,7 @@ class Diff():
         # FIXME type problem below
         return (meta, gen_to_return) # type: ignore (First generator return will be Meta data. Idk why this is not working for typing.) 
 
-    def get(self, sequence_number: str | None = None, file_to: str | None = None, file_from: str | None = None, tags: Tags | str = Tags(), generator: bool = True) -> tuple[Meta, Generator[Node | Way | Relation, None, None]] | OsmChange:
+    def get(self, sequence_number: str | None = None, file_to: str | None = None, file_from: str | None = None, tags: Tags | str = Tags(), generator: bool = True) -> tuple[Meta, Generator[tuple[Action, Node | Way | Relation], None, None]] | OsmChange:
         """Gets compressed diff file from server.
 
         Args:
