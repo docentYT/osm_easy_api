@@ -13,7 +13,11 @@ This package was created to provide an easy way to create automated scripts and 
 # Installation
 
 Works on python >= 3.10. (Due to new typehints standard)
-//TODO
+
+Install `osm_easy_api` from [PyPi](https://pypi.org/project/osm-easy-api/):
+```
+pip install osm_easy_api
+``` 
 
 # Documentation
 
