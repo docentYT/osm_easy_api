@@ -26,6 +26,7 @@ jobs:
 
       # ADJUST THIS: install all dependencies (including pdoc)
       - run: python -m pip install --upgrade pip
+      - run: pip install -e .
       - run: pip install pdoc
       # ADJUST THIS: build your documentation into docs/.
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
