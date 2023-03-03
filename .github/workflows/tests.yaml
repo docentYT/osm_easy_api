@@ -19,15 +19,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Create env
+        env:
+          LOGIN: ${{ secrets.LOGIN }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          touch .env
+          echo LOGIN="$LOGIN" >> .env
+          echo PASSWORD="$PASSWORD" >> .env
+          cat .env
       - name: Install depedencies
         run: |
           python -m pip install --upgrade pip
           pip install tox tox-gh-actions
-      - name: Create .env
-        run: |
-          touch .env
-          echo LOGIN=${{ secrets.LOGIN }} >> .env
-          echo PASSWORD=${{ secrets.PASSWORD }} >> .env
-          cat .env
       - name: Test with tox
         run: tox
