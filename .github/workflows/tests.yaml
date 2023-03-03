@@ -1,7 +1,13 @@
 name: Tests
 
 on:
-  - push
+  push:
+    branches:
+      - main
+    paths-ignore:
+    - '**.md'
+    - '**.bat'
+    - '**.svg'
   - pull_request
 
 jobs:
