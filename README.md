@@ -10,6 +10,9 @@ Python package for parsing osm diffs and communicating with the osm api. See API
 
 This package was created to provide an easy way to create automated scripts and programs that use diff and/or osm api. The main advantage is the classes (data_classes) that provide data of elements (node, way, relation, OsmChange, etc.) in a readable way and the possibility to use them in diff and api without worrying about missing data or dictionaries. You can easily find nodes in diff, add a tag to them and send the corrected version to osm.
 
+## What next?
+The plan is to optimise and improve the code, add support for gpx traces, rss support and overpass api.
+
 # Installation
 
 Works on python >= 3.10. (Due to new typehints standard)
