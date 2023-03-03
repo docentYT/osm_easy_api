@@ -25,12 +25,11 @@ jobs:
           python-version: '3.11'
 
       # ADJUST THIS: install all dependencies (including pdoc)
-        run: |
-        python -m pip install --upgrade pip
-        pip install pdoc
-        pdoc --docformat google --no-show-source src !src.utils
+      - run: python -m pip install --upgrade pip
+      - run: pip install pdoc
       # ADJUST THIS: build your documentation into docs/.
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
+      - run: pdoc --docformat google --no-show-source src !src.utils
 
       - uses: actions/upload-pages-artifact@v1
         with:
