@@ -1,7 +1,7 @@
 # osm_easy_api
 
 ![Tests](https://github.com/docentYT/automated-python-tests-testing-repo/actions/workflows/tests.yaml/badge.svg)
-![coverage](https://github.com/docentYT/osm_easy_api/blob/main/coverage-badge.svg)
+![coverage](https://raw.githubusercontent.com/docentYT/osm_easy_api/0ccbb839a128ad6f69f7e0d160c4eb32d273389a/coverage-badge.svg)
 [![PyPI version](https://badge.fury.io/py/osm_easy_api.svg)](https://badge.fury.io/py/osm_easy_api)
 
 Python package for parsing osm diffs and communicating with the osm api. See API.txt for list of supported endpoints.

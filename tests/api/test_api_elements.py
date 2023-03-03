@@ -25,9 +25,10 @@ class TestApiElements(unittest.TestCase):
 
     @responses.activate
     def test_get(self):
-        should_be = "Node(id = 1, visible = None, version = 110, changeset_id = 232293, timestamp = 2022-02-22T11:31:20Z, user_id = 12342, tags = {'name': 'ali', 'source': 'local knowledge', 'start_date': '2022', 'traffic_calming': 'hump'}, latitude = 53.7573714, longitude = -0.4465657, )"
+        self.maxDiff = None
+        should_be = "Node(id = 1, visible = False, version = 110, changeset_id = 232293, timestamp = 2022-02-22T11:31:20Z, user_id = 12342, tags = {'name': 'ali', 'source': 'local knowledge', 'start_date': '2022', 'traffic_calming': 'hump'}, latitude = 53.7573714, longitude = -0.4465657, )"
         body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
-<node id="1" visible="true" version="110" changeset="232293" timestamp="2022-02-22T11:31:20Z" user="alisvndk88" uid="12342" lat="53.7573714" lon="-0.4465657">
+<node id="1" visible="false" version="110" changeset="232293" timestamp="2022-02-22T11:31:20Z" user="alisvndk88" uid="12342" lat="53.7573714" lon="-0.4465657">
 <tag k="name" v="ali"/>
 <tag k="source" v="local knowledge"/>
 <tag k="start_date" v="2022"/>
@@ -48,7 +49,8 @@ class TestApiElements(unittest.TestCase):
 
     @responses.activate
     def test_update(self):
-        should_be = "Node(id = 1, visible = None, version = 1, changeset_id = 232293, timestamp = 2022-02-22T11:31:20Z, user_id = 12342, tags = {'name': 'ali', 'source': 'local knowledge', 'start_date': '2022', 'traffic_calming': 'hump'}, latitude = 1, longitude = -0.4465657, )"
+        self.maxDiff = None
+        should_be = "Node(id = 1, visible = True, version = 1, changeset_id = 232293, timestamp = 2022-02-22T11:31:20Z, user_id = 12342, tags = {'name': 'ali', 'source': 'local knowledge', 'start_date': '2022', 'traffic_calming': 'hump'}, latitude = 1, longitude = -0.4465657, )"
         body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
 <node id="1" visible="true" version="1" changeset="232293" timestamp="2022-02-22T11:31:20Z" user="alisvndk88" uid="12342" lat="1" lon="-0.4465657">
 <tag k="name" v="ali"/>
@@ -115,6 +117,7 @@ class TestApiElements(unittest.TestCase):
         history = api.elements.history(Node, 123)
         self.assertEqual(len(history), 4)
         self.assertEqual(history[3].user_id, 10688)
+        self.assertEqual(history[3].visible, True)
 
     @responses.activate
     def test_version(self):

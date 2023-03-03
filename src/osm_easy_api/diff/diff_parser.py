@@ -77,19 +77,27 @@ def _if_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
     # return good_tags_count == len(tags)
 
 def _create_node_from_attributes(attributes: dict) -> Node:
+    visible = None
+    if attributes.get("visible"):
+        visible = True if attributes["visible"] == "true" else False
     return Node(
         id =            int(    attributes["id"]        ),
+        visible =       visible,
         version =       int(    attributes["version"]   ),
         timestamp =     str(    attributes["timestamp"] ),
         user_id =       int(    attributes["uid"]       ),
         changeset_id =  int(    attributes["changeset"] ),
-        latitude =      str(    attributes.get("lat")       ),
-        longitude =     str(    attributes.get("lon")       )
+        latitude =      str(    attributes.get("lat")   ),
+        longitude =     str(    attributes.get("lon")   )
     )
 
 def _create_way_from_attributes(attributes: dict) -> Way:
+    visible = None
+    if attributes.get("visible"):
+        visible = True if attributes["visible"] == "true" else False
     return Way(
         id              = int(  attributes["id"]        ),
+        visible =       visible,
         version         = int(  attributes["version"]   ),
         timestamp       = str(  attributes["timestamp"] ),
         user_id         = int(  attributes["uid"]       ),
@@ -97,8 +105,12 @@ def _create_way_from_attributes(attributes: dict) -> Way:
     )
 
 def _create_relation_from_attributes(attributes: dict) -> Relation:
+    visible = None
+    if attributes.get("visible"):
+        visible = True if attributes["visible"] == "true" else False
     return Relation(
         id              = int(  attributes["id"]        ),
+        visible =       visible,
         version         = int(  attributes["version"]   ),
         timestamp       = str(  attributes["timestamp"] ),
         user_id         = int(  attributes["uid"]       ),
