@@ -29,7 +29,7 @@ jobs:
       - run: pip install pdoc
       # ADJUST THIS: build your documentation into docs/.
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
-      - run: pdoc --docformat google --no-show-source src !src.utils
+      - run: pdoc --docformat google --no-show-source osm_easy_api !osm_easy_api.utils
 
       - uses: actions/upload-pages-artifact@v1
         with:
