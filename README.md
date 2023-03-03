@@ -44,7 +44,7 @@ d = Diff(Frequency.HOUR)
 # Get Meta namedtuple for diff metadata and generator that parse diff file.
 meta, gen = d.get(tags="natural")
 
-# Print all created, modyfied and deleted Nodes with natural=tree tag.
+# Print all created, modified and deleted Nodes with natural=tree tag.
 for action, element in gen:
     if type(element) == Node and element.tags.get("natural") == "tree":
         print(action, element.id)
