@@ -1,22 +1,31 @@
 # osm_easy_api
+
+![coverage](coverage-badge.svg)
+
 Python package for parsing osm diffs and communicating with the osm api. See API.txt for list of supported endpoints.
 
 ## What's the point of this package?
+
 This package was created to provide an easy way to create automated scripts and programs that use diff and/or osm api. The main advantage is the classes (data_classes) that provide data of elements (node, way, relation, OsmChange, etc.) in a readable way and the possibility to use them in diff and api without worrying about missing data or dictionaries. You can easily find nodes in diff, add a tag to them and send the corrected version to osm.
 
 # Installation
+
 Works on python >= 3.10. (Due to new typehints standard)
 //TODO
 
 # Documentation
+
 You can view documentation on github-pages [URL HERE]
 
 Documentation is build using [pdoc](https://pdoc.dev).
 To run docs on your machine use preffered command: `pdoc --docformat google --no-show-source src !src.utils`.
 
 # Examples
+
 ## DIFF
+
 ### Print trees
+
 ```py
 from osm_easy_api import Node, Diff, Frequency
 
@@ -33,6 +42,7 @@ for action, element in gen:
 ```
 
 ### Print incorrectly tagged single tress
+
 ```py
 from osm_easy_api import Diff, Frequency, Action, Node
 
@@ -52,7 +62,9 @@ Node(id = 10208486717, visible = None, version = 1, changeset_id = 129216075, ti
 ```
 
 ## API
+
 ### Add missing wikidata tag
+
 ```py
 from osm_easy_api import Api, Node, Tags
 
@@ -67,6 +79,7 @@ api.changeset.close(my_changeset) # Close changeset.
 ```
 
 # Notes
+
 Note that the following codes do the same thing
 ```py
 from osm_easy_api import Diff, Frequency
@@ -106,6 +119,7 @@ for node in deleted_nodes:
 but it can consume large amounts of ram and use of this method is not recommended for large diff's.
 
 # Tests
+
 You will need to install `test-requirements.txt`. To test API module you will need `.env` file with `login` and `password` field.
 You can use tox.
 To run tests manually use `python -m unittest discover` or `run_tests_<module>.bat`.
