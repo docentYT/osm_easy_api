@@ -4,7 +4,4 @@ def join_url(*args) -> str:
     Returns:
         str: url (without anything in front of)
     """
-    temp = ""
-    for i in args: temp = temp + '/' + str(i)
-    temp = temp[1:]
-    return temp
+    return "/".join(map(str, args))
