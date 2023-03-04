@@ -25,7 +25,7 @@ class Changeset_Discussion_Container:
             case 409: raise exceptions.ChangesetNotClosed()
 
     def subscribe(self, changeset_id: int) -> None:
-        """Subscribe to the discussion to recive notifications for new comments.
+        """Subscribe to the discussion to receive notifications for new comments.
 
         Args:
             changeset_id (int): Changeset id.
@@ -40,7 +40,7 @@ class Changeset_Discussion_Container:
             case 409: raise exceptions.AlreadySubscribed()
 
     def unsubscribe(self, changeset_id: int) -> None:
-        """Unsubscribe from discussion to stop reciving notifications.
+        """Unsubscribe from discussion to stop receiving notifications.
 
         Args:
             changeset_id (int): Changeset id.

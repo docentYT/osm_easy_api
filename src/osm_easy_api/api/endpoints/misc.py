@@ -29,10 +29,10 @@ class Misc_Container:
             return versions
         
         def capabilities(self) -> dict:
-            """Retuns dictionary of capabilities and limitations of the current API.
+            """Returns dictionary of capabilities and limitations of the current API.
 
             Returns:
-                dict: Capabilites and limitations of the current API.
+                dict: Capabilities and limitations of the current API.
             """
             def osm_parser(dict: dict, osm_element: "ElementTree.Element") -> None:
                 dict.update({"osm": {}})

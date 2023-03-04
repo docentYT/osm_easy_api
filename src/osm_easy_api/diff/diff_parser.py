@@ -136,7 +136,7 @@ def _element_to_osm_object(element: ElementTree.Element) -> Node | Way | Relatio
             _add_members_to_relation_from_element(relation, element)
             append_tags(element, relation)
             return relation
-        case _: raise ValueError("[ERROR::DIFF_PARSER::_ELEMENT_TO_OSM_OBJECT] Unkown element tag:", element.tag)
+        case _: raise ValueError("[ERROR::DIFF_PARSER::_ELEMENT_TO_OSM_OBJECT] Unknown element tag:", element.tag)
 
 def OsmChange_parser_generator(file: gzip.GzipFile, sequence_number: str | None, required_tags: Tags | str = Tags()) -> Generator[tuple[Action, Node | Way | Relation] | Meta, None, None]:
     """Generator with elements in diff file. First yield will be Meta namedtuple.

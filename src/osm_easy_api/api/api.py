@@ -44,7 +44,7 @@ class Api():
     def _request(self, method: _RequestMethods, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, stream: bool = False, auto_status_code_handling: bool = True, body = None) -> "Response":
         match auth_requirement:
             case self._Requirement.YES:
-                if not self._auth: raise ValueError("No creditentials provided during class initalization!")
+                if not self._auth: raise ValueError("No credentials provided during class initialization!")
                 response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body.encode('utf-8') if body else None)
             case self._Requirement.OPTIONAL:
                 response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body.encode('utf-8') if body else None)
