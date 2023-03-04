@@ -220,11 +220,11 @@ class Notes_Container:
         """Search for notes with initial text and comments.
 
         Args:
-            text (str): Text to search for in inital text and comments.
+            text (str): Text to search for in initial text and comments.
             limit (int, optional): Limit of returned notes. Defaults to 100.
             closed_days (int, optional): Days a note needs to be closed to no longer be returned. Defaults to 7.
             user_id (int | None, optional): Search for notes created by user. Defaults to None.
-            from_date (str | None, optional): Begining of a date range (ISO 8601). Defaults to None.
+            from_date (str | None, optional): Beginning of a date range (ISO 8601). Defaults to None.
             to_date (str | None, optional): End of a date range (ISO 8601). Defaults to None.
             sort (str, optional): Which value should be used to sort notes ("updated_at" or "created_at"). Defaults to "updated_at".
             order (str, optional): Order of returned notes ("newset" or "oldest"). Defaults to "newest".

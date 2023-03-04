@@ -81,8 +81,8 @@ class TestApiNotes(unittest.TestCase):
 <user>keith</user>
 <user_url>https://master.apis.dev.openstreetmap.org/user/keith</user_url>
 <action>opened</action>
-<text>#OSMyBiz Address: Spółdzielców 8, 05-085 Kampinos, Poland Category: sdf Name: sdfs Wheelchair accessible: Note: BUSINES DONT EXST </text>
-<html><p>#OSMyBiz <br /> <br />Address: Spółdzielców 8, 05-085 Kampinos, Poland <br />Category: sdf <br />Name: sdfs <br />Wheelchair accessible: <br />Note: BUSINES DONT EXST </p></html>
+<text>#OSMyBiz Address: Spółdzielców 8, 05-085 Kampinos, Poland Category: sdf Name: sdfs Wheelchair accessible: Note: BUSINESS DONT EXST </text>
+<html><p>#OSMyBiz <br /> <br />Address: Spółdzielców 8, 05-085 Kampinos, Poland <br />Category: sdf <br />Name: sdfs <br />Wheelchair accessible: <br />Note: BUSINESS DONT EXST </p></html>
 </comment>
 </comments>
 </note>
@@ -99,7 +99,7 @@ class TestApiNotes(unittest.TestCase):
         self.assertEqual(notes[0].id, 37970)
         self.assertEqual(notes[1].id, 13742)
         self.assertEqual(notes[0].comments[0].text, "test")
-        self.assertEqual(notes[1].comments[0].text, "#OSMyBiz Address: Spółdzielców 8, 05-085 Kampinos, Poland Category: sdf Name: sdfs Wheelchair accessible: Note: BUSINES DONT EXST ")
+        self.assertEqual(notes[1].comments[0].text, "#OSMyBiz Address: Spółdzielców 8, 05-085 Kampinos, Poland Category: sdf Name: sdfs Wheelchair accessible: Note: BUSINESS DONT EXST ")
         assert notes[0].comments[0].user, "User1 not exist"
         self.assertEqual(notes[0].comments[0].user.id, 18179)
         assert notes[1].comments[0].user, "User2 not exist"

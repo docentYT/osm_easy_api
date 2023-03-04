@@ -126,10 +126,10 @@ class Changeset_Container:
         """Get changesets with given criteria.
 
         Args:
-            left (float | None, optional): Left side of bounding box (min_lon / west) Use left, bottom, right, top togheter. Defaults to None.
-            bottom (float | None, optional): Bottom side of bounding box (min_lat / south). Use left, bottom, right, top togheter. Defaults to None.
-            right (float | None, optional): Right side of bounding box (max_lon / east). Use left, bottom, right, top togheter. Defaults to None.
-            top (float | None, optional): Top side of bounding box (max_lat / north). Use left, bottom, right, top togheter. Defaults to None.
+            left (float | None, optional): Left side of bounding box (min_lon / west) Use left, bottom, right, top together. Defaults to None.
+            bottom (float | None, optional): Bottom side of bounding box (min_lat / south). Use left, bottom, right, top together. Defaults to None.
+            right (float | None, optional): Right side of bounding box (max_lon / east). Use left, bottom, right, top together. Defaults to None.
+            top (float | None, optional): Top side of bounding box (max_lat / north). Use left, bottom, right, top together. Defaults to None.
             user_id (str | None, optional): User id. Defaults to None.
             display_name (str | None, optional): User display name. Defaults to None.
             time_one (str | None, optional): Find changesets closed after time_one. Defaults to None.
