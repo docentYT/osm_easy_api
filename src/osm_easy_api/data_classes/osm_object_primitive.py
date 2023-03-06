@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from xml.dom import minidom
+from copy import copy
 
 from ..data_classes.tags import Tags
 
@@ -36,3 +37,14 @@ class osm_object_primitive():
             element.setAttribute("changeset",   str(changeset_id))
             return element
         
+    def _to_dict(self):
+        return_dict = copy(self.__dict__)
+        return_dict.update({"type": self.__class__.__name__})
+        return return_dict
+    
+    @classmethod
+    def _from_dict(cls, dict):
+        node = cls()
+        dict.pop("type")
+        node.__dict__ = copy(dict)
+        return node
