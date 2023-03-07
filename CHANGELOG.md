@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- Added `to_dict()` method and `from_dict()` class method to osm_object_primitive. (An object that is inherited by a Node, Way, Relation). Idea from [@matkoniecz](https://github.com/matkoniecz)
+
 ## [0.1.4] - 2023-03-05
 
 ### Fixed
@@ -34,5 +37,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial import
-
-[0.1.0]: todo
