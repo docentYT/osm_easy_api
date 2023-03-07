@@ -91,3 +91,21 @@ class TestRelation(unittest.TestCase):
         self.assertEqual(way.getAttribute("type"), "way")
         self.assertEqual(way.getAttribute("role"), "WAYAY")
         self.assertIsNone(node.firstChild)
+
+    def test_to_from_dict(self):
+        relation = Relation(
+            id=123,
+            version=1, 
+            changeset_id=321,
+            timestamp="2022-11-11T21:15:26Z", 
+            user_id=111
+        )
+
+        relation.members.append(RelationMember(Node(123, tags=Tags({"natural": "tree"})), "ROLA"))
+        relation.members.append(RelationMember(Way(123, tags=Tags({"highway": "footway"})), "WAYAY"))
+
+        dict = relation.to_dict()
+        relation_from_dict = Relation.from_dict(dict)
+        self.assertEqual(relation, relation_from_dict)
+        self.assertEqual(type(relation_from_dict.tags), Tags)
+        self.assertNotEqual(id(relation), id(relation_from_dict))

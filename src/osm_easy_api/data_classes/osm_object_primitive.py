@@ -57,7 +57,10 @@ class osm_object_primitive():
         Returns:
             Node | Way | Relation: The class object selected by the 'type' key in the dictionary.
         """
+        if dict["type"] != cls.__name__:
+            raise ValueError(f'You used incorrect class to create object from given dictionary. Use {dict["type"]}.from_dict() instead of {cls.__name__}.from_dict()')
         node = cls()
-        dict.pop("type")
-        node.__dict__ = copy(dict)
+        temp_dict = copy(dict)
+        temp_dict.pop("type")
+        node.__dict__ = temp_dict
         return node

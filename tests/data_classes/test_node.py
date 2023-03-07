@@ -68,3 +68,23 @@ class TestNode(unittest.TestCase):
         self.assertEqual(element.tagName, "member")
         self.assertEqual(element.getAttribute("ref"), str(123))
         self.assertEqual(element.getAttribute("role"), "ABC")
+
+    def test_to_from_dict(self):
+        node = Node(
+            id=123,
+            visible=True, 
+            version=1, 
+            changeset_id=321,
+            timestamp="2022-11-11T21:15:26Z", 
+            user_id=111,
+            latitude="50.54321",
+            longitude="20.12345",
+            tags=Tags({"natural": "tree"})
+        )
+
+        dict = node.to_dict()
+        node_from_dict = Node.from_dict(dict)
+        self.assertEqual(node, node_from_dict)
+        self.assertEqual(node.tags, node_from_dict.tags)
+        self.assertEqual(type(node_from_dict.tags), Tags)
+        self.assertNotEqual(id(node), id(node_from_dict))

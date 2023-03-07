@@ -86,3 +86,29 @@ class TestWay(unittest.TestCase):
         self.assertEqual(element.tagName, "member")
         self.assertEqual(element.getAttribute("ref"), str(123))
         self.assertEqual(element.getAttribute("role"), "ABC")
+
+    def test_to_from_dict(self):
+        way = Way(
+            id=123,
+            version=1, 
+            changeset_id=321,
+            timestamp="2022-11-11T21:15:26Z", 
+            user_id=111,
+            tags=Tags({"ABC": "CBA"})
+        )
+        node_one = Node(1)
+        node_two = Node(2)
+
+        way.nodes.append(node_one)
+        way.nodes.append(node_two)
+
+        dict = way.to_dict()
+        way_from_dict = Way.from_dict(dict)
+        self.assertEqual(way, way_from_dict)
+        self.assertEqual(way.tags, way_from_dict.tags)
+        self.assertEqual(type(way_from_dict.tags), Tags)
+        self.assertNotEqual(id(way), id(way_from_dict))
+        
+        def node_from_dict():
+            return Node.from_dict(dict)
+        self.assertRaises(ValueError, node_from_dict)
