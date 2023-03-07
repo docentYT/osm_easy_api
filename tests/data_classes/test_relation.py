@@ -37,18 +37,18 @@ class TestRelation(unittest.TestCase):
 
         self.assertEqual(relation_one.members, [])
         self.assertEqual(relation_two.members, [])
-        relation_one.members.append(node_one)
-        self.assertEqual(relation_one.members, [node_one])
+        relation_one.members.append(RelationMember(node_one, "MemberOne"))
+        self.assertEqual(relation_one.members, [RelationMember(node_one, "MemberOne")])
         self.assertEqual(relation_two.members, [])
-        relation_one.members.append(node_two)
-        self.assertEqual(relation_one.members, [node_one, node_two])
+        relation_one.members.append(RelationMember(node_two, "MemberTwo"))
+        self.assertEqual(relation_one.members, [RelationMember(node_one, "MemberOne"), RelationMember(node_two, "MemberTwo")])
         self.assertEqual(relation_two.members, [])
-        relation_two.members.append(node_one)
-        self.assertEqual(relation_one.members, [node_one, node_two])
-        self.assertEqual(relation_two.members, [node_one])
-        relation_one.members.remove(node_one)
-        self.assertEqual(relation_one.members, [node_two])
-        self.assertEqual(relation_two.members, [node_one])
+        relation_two.members.append(RelationMember(node_one, "MemberOne"))
+        self.assertEqual(relation_one.members, [RelationMember(node_one, "MemberOne"), RelationMember(node_two, "MemberTwo")])
+        self.assertEqual(relation_two.members, [RelationMember(node_one, "MemberOne")])
+        relation_one.members.remove(RelationMember(node_one, "MemberOne"))
+        self.assertEqual(relation_one.members, [RelationMember(node_two, "MemberTwo")])
+        self.assertEqual(relation_two.members, [RelationMember(node_one, "MemberOne")])
 
     def test__to_xml(self):
         relation = Relation(
