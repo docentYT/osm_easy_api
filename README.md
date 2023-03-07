@@ -4,6 +4,8 @@
 ![coverage](https://raw.githubusercontent.com/docentYT/osm_easy_api/0ccbb839a128ad6f69f7e0d160c4eb32d273389a/coverage-badge.svg)
 [![PyPI version](https://badge.fury.io/py/osm_easy_api.svg)](https://badge.fury.io/py/osm_easy_api)
 
+[Me on openstreetmap](https://www.openstreetmap.org/user/kwiatek_123)
+
 Python package for parsing osm diffs and communicating with the osm api. See API.txt for list of supported endpoints.
 
 ## What's the point of this package?
