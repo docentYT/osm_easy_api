@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Added `to_dict()` method and `from_dict()` class method to osm_object_primitive. (An object that is inherited by a Node, Way, Relation). [#3](https://github.com/docentYT/osm_easy_api/issues/3)
+
+### Added
+- `to_dict()` method and `from_dict()` class method to osm_object_primitive. (An object that is inherited by a Node, Way, Relation). [#3](https://github.com/docentYT/osm_easy_api/issues/3)
+- Support for historical anonymous edits and edits made by deleted accounts. [#4](https://github.com/docentYT/osm_easy_api/issues/4)
 
 ## [0.1.4] - 2023-03-05
 

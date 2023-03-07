@@ -457,3 +457,17 @@ class TestApiElements(unittest.TestCase):
         self.assertEqual(way.nodes[0].latitude, "58.5769849")
         self.assertEqual(way.nodes[0].longitude, "26.2733110")
         self.assertEqual(way.nodes[1].latitude, "58.5769093")
+
+    @responses.activate
+    def test_no_uid(self):
+        body = """<node id="25733488" visible="true" version="1" changeset="212047" timestamp="2007-02-09T17:03:06Z" lat="49.3726600" lon="8.7023620"/>"""
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/node/123/history",
+            "body": body,
+            "status": 200
+        })
+
+        api = Api("https://test.pl", LOGIN, PASSWORD)
+        history = api.elements.history(Node, 123)
+        self.assertEqual(history[0].user_id, -1)

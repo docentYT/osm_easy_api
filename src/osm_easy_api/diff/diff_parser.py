@@ -80,12 +80,16 @@ def _create_node_from_attributes(attributes: dict) -> Node:
     visible = None
     if attributes.get("visible"):
         visible = True if attributes["visible"] == "true" else False
+    
+    user_id = -1
+    if attributes.get("uid"):
+        user_id = int(attributes["uid"])
     return Node(
         id =            int(    attributes["id"]        ),
         visible =       visible,
         version =       int(    attributes["version"]   ),
         timestamp =     str(    attributes["timestamp"] ),
-        user_id =       int(    attributes["uid"]       ),
+        user_id =       user_id,
         changeset_id =  int(    attributes["changeset"] ),
         latitude =      str(    attributes.get("lat")   ),
         longitude =     str(    attributes.get("lon")   )
@@ -95,12 +99,16 @@ def _create_way_from_attributes(attributes: dict) -> Way:
     visible = None
     if attributes.get("visible"):
         visible = True if attributes["visible"] == "true" else False
+
+    user_id = -1
+    if attributes.get("uid"):
+        user_id = int(attributes["uid"])
     return Way(
         id              = int(  attributes["id"]        ),
         visible =       visible,
         version         = int(  attributes["version"]   ),
         timestamp       = str(  attributes["timestamp"] ),
-        user_id         = int(  attributes["uid"]       ),
+        user_id         = user_id,
         changeset_id    = int(  attributes["changeset"] )
     )
 
@@ -108,12 +116,16 @@ def _create_relation_from_attributes(attributes: dict) -> Relation:
     visible = None
     if attributes.get("visible"):
         visible = True if attributes["visible"] == "true" else False
+
+    user_id = -1
+    if attributes.get("uid"):
+        user_id = int(attributes["uid"])
     return Relation(
         id              = int(  attributes["id"]        ),
         visible =       visible,
         version         = int(  attributes["version"]   ),
         timestamp       = str(  attributes["timestamp"] ),
-        user_id         = int(  attributes["uid"]       ),
+        user_id         = user_id,
         changeset_id    = int(  attributes["changeset"] )
     )
 
