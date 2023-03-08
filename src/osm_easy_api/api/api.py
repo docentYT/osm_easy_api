@@ -27,7 +27,7 @@ class Api():
         def __str__(self):
             return self.name
 
-    def __init__(self, url: str = "https://master.apis.dev.openstreetmap.org", username: str | None = None, password: str | None = None):
+    def __init__(self, url: str = "https://master.apis.dev.openstreetmap.org", username: str | None = None, password: str | None = None, user_agent: str | None = None):
         self._url = URLs(url)
         self.misc = Misc_Container(self)
         self.changeset = Changeset_Container(self)
@@ -41,15 +41,21 @@ class Api():
         else:
             self._auth = None
 
+        if user_agent:
+            self._user_agent = user_agent
+
     def _request(self, method: _RequestMethods, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, stream: bool = False, auto_status_code_handling: bool = True, body = None) -> "Response":
+        headers = {}
+        if hasattr(self, "_user_agent"):
+            headers.update({"User-Agent": self._user_agent})
         match auth_requirement:
             case self._Requirement.YES:
                 if not self._auth: raise ValueError("No credentials provided during class initialization!")
-                response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body.encode('utf-8') if body else None)
+                response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body.encode('utf-8') if body else None, headers=headers)
             case self._Requirement.OPTIONAL:
-                response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body.encode('utf-8') if body else None)
+                response = requests.request(str(method), url, stream=stream, auth=self._auth, data=body.encode('utf-8') if body else None, headers=headers)
             case self._Requirement.NO:
-                response = requests.request(str(method), url, stream=stream, data=body.encode('utf-8') if body else None)
+                response = requests.request(str(method), url, stream=stream, data=body.encode('utf-8') if body else None, headers=headers)
         if auto_status_code_handling: assert response.status_code == 200, f"Invalid (and unexpected) response code {response.status_code} for {url}"
         return response
 
