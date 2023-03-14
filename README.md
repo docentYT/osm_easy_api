@@ -1,7 +1,7 @@
 # osm_easy_api
 
 ![Tests](https://github.com/docentYT/automated-python-tests-testing-repo/actions/workflows/tests.yaml/badge.svg)
-![coverage](https://raw.githubusercontent.com/docentYT/osm_easy_api/0ccbb839a128ad6f69f7e0d160c4eb32d273389a/coverage-badge.svg)
+![coverage](https://raw.githubusercontent.com/docentYT/osm_easy_api/91c529874d37cec3555d4dfe3402220728cad8aa/coverage-badge.svg)
 [![PyPI version](https://badge.fury.io/py/osm_easy_api.svg)](https://badge.fury.io/py/osm_easy_api)
 
 [Me on openstreetmap](https://www.openstreetmap.org/user/kwiatek_123)
