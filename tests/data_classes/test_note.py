@@ -15,3 +15,10 @@ class TestNote(unittest.TestCase):
         self.assertEqual(note.comments[0].comment_created_at, "123")
         assert note.comments[0].user, "No user exist"
         self.assertEqual(note.comments[0].user.id, 123)
+
+    def test_comment__str__(self):
+        user = User(id=123, display_name="abc")
+        comment = Comment("123", user, action="opened", text="ABC", html="ABC")
+
+        should_print = """Comment(comment_created_at = 123, user = User(id = 123, display_name = abc, account_created_at = None, description = None, contributor_terms_agreed = None, img_url = None, roles = None, changesets_count = None, traces_count = None, blocks = None, ), action = opened, text = ABC, html = ABC, )"""
+        self.assertEqual(comment.__str__(), should_print)

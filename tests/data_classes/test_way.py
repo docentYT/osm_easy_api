@@ -108,7 +108,11 @@ class TestWay(unittest.TestCase):
         self.assertEqual(way.tags, way_from_dict.tags)
         self.assertEqual(type(way_from_dict.tags), Tags)
         self.assertNotEqual(id(way), id(way_from_dict))
-        
-        def node_from_dict():
-            return Node.from_dict(dict)
-        self.assertRaises(ValueError, node_from_dict)
+
+        def from_empty_dict():
+            return Way.from_dict({})
+        self.assertRaises(ValueError, from_empty_dict)
+
+        def from_type_dict():
+            return Way.from_dict({"type": "changeset"})
+        self.assertRaises(ValueError, from_type_dict)

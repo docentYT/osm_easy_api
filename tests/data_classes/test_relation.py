@@ -109,3 +109,11 @@ class TestRelation(unittest.TestCase):
         self.assertEqual(relation, relation_from_dict)
         self.assertEqual(type(relation_from_dict.tags), Tags)
         self.assertNotEqual(id(relation), id(relation_from_dict))
+
+        def from_empty_dict():
+            return Relation.from_dict({})
+        self.assertRaises(ValueError, from_empty_dict)
+
+        def from_type_dict():
+            return Relation.from_dict({"type": "changeset"})
+        self.assertRaises(ValueError, from_type_dict)
