@@ -23,10 +23,13 @@ def frequency_to_str(frequency: Frequency) -> str:
         case Frequency.DAY:     return "day"
 
 class Diff():
-    def __init__(self, frequency: Frequency, url: str = "https://planet.openstreetmap.org/replication", standard_url_frequency_format: bool = True):
+    def __init__(self, frequency: Frequency, url: str = "https://planet.openstreetmap.org/replication", standard_url_frequency_format: bool = True, user_agent: str | None = None):
         self.url = url
         self.frequency = frequency
         self.standard_url_frequency_format = standard_url_frequency_format
+
+        if user_agent:
+            self._user_agent = user_agent
 
     @staticmethod
     def _get_sequence_number_from_state(state_txt: str) -> str:
@@ -52,7 +55,10 @@ class Diff():
         """Downloads state.txt file content from diff server."""
         if (self.standard_url_frequency_format): url = join_url(self.url, frequency_to_str(self.frequency), "state.txt")
         else: url = join_url(self.url, "state.txt")
-        response = requests.get(url)
+        headers = {}
+        if hasattr(self, "_user_agent"):
+            headers.update({"User-Agent": self._user_agent})
+        response = requests.get(url, headers=headers)
         if response.status_code != 200: raise ValueError(f"[ERROR::DIFF::_GET_STATE] API RESPONSE STATUS CODE: {response.status_code}")
         return response.text
 
@@ -113,7 +119,10 @@ class Diff():
 
         if (self.standard_url_frequency_format): url = self._build_url(self.url, self.frequency, sequence_number)
         else: url = self._build_url(self.url, None, sequence_number)
-        response = requests.get(url, stream=True)
+        headers = {}
+        if hasattr(self, "_user_agent"):
+            headers.update({"User-Agent": self._user_agent})
+        response = requests.get(url, stream=True, headers=headers)
 
         file = gzip.GzipFile(fileobj=response.raw)
 

@@ -88,3 +88,11 @@ class TestNode(unittest.TestCase):
         self.assertEqual(node.tags, node_from_dict.tags)
         self.assertEqual(type(node_from_dict.tags), Tags)
         self.assertNotEqual(id(node), id(node_from_dict))
+
+        def from_empty_dict():
+            return Node.from_dict({})
+        self.assertRaises(ValueError, from_empty_dict)
+
+        def from_type_dict():
+            return Node.from_dict({"type": "changeset"})
+        self.assertRaises(ValueError, from_type_dict)

@@ -19,9 +19,37 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
+        def create_node():
+            return api.elements.create(node, 123)
+
         api = Api("https://test.pl", LOGIN, PASSWORD)
         node = Node(latitude="123", longitude="321")
-        self.assertEqual(api.elements.create(node, 123), 1)
+        self.assertEqual(create_node(), 1)
+
+        responses.add(**{
+            "method": responses.PUT,
+            "url": "https://test.pl/api/0.6/node/create",
+            "body": "1",
+            "status": 400
+        })
+        self.assertRaises(ValueError, create_node)
+
+        responses.add(**{
+            "method": responses.PUT,
+            "url": "https://test.pl/api/0.6/node/create",
+            "body": "1",
+            "status": 409
+        })
+        self.assertRaises(ApiExceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor, create_node)
+
+        responses.add(**{
+            "method": responses.PUT,
+            "url": "https://test.pl/api/0.6/node/create",
+            "body": "1",
+            "status": 412
+        })
+        self.assertRaises(ValueError, create_node)
+
 
     @responses.activate
     def test_get(self):
@@ -43,9 +71,28 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
+        def get_node():
+            return api.elements.get(Node, 123)
+
         api = Api("https://test.pl", LOGIN, PASSWORD)
-        node = api.elements.get(Node, 123)
+        node = get_node()
         self.assertEqual(str(node), should_be)
+
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/node/123",
+            "body": body,
+            "status": 404
+        })
+        self.assertRaises(ApiExceptions.IdNotFoundError, get_node)
+
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/node/123",
+            "body": body,
+            "status": 410
+        })
+        self.assertRaises(ApiExceptions.ElementDeleted, get_node)
 
     @responses.activate
     def test_update(self):
