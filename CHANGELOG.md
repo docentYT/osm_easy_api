@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `Note` can now be imported from package.
 - `Comment` can now be imported from package.
+- `User` can now be imported from package.
 
 ## [0.3.0] - 2023-03-14
 
