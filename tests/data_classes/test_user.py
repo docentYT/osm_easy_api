@@ -45,3 +45,48 @@ class TestUser(unittest.TestCase):
             "active": 1
             }
             })
+        
+    def test_to_from_dict(self):
+        user = User(
+            id = 123,
+            display_name="abc",
+            account_created_at="221133",
+            description="desc",
+            contributor_terms_agreed=True,
+            img_url="test.pl",
+            roles = ["a", "b"],
+            changesets_count=3,
+            traces_count=4,
+            blocks=None
+        )
+
+        dict = user.to_dict()
+        user_from_dict = User.from_dict(dict)
+        self.assertEqual(user, user_from_dict)
+        self.assertNotEqual(id(user), id(user_from_dict))
+
+        user_none = User(
+            id = 123,
+            display_name="abc",
+            account_created_at="221133",
+            description="desc",
+            contributor_terms_agreed=None,
+            img_url=None,
+            roles = None,
+            changesets_count=3,
+            traces_count=4,
+            blocks=None
+        )
+
+        dict = user_none.to_dict()
+        user_from_dict = User.from_dict(dict)
+        self.assertEqual(user_none, user_from_dict)
+        self.assertNotEqual(id(user_none), id(user_from_dict))
+
+        def from_empty_dict():
+            return User.from_dict({})
+        self.assertRaises(ValueError, from_empty_dict)
+
+        def from_type_dict():
+            return User.from_dict({"type": "changeset"})
+        self.assertRaises(ValueError, from_type_dict)
