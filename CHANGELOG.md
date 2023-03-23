@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Note` can now be imported from package.
 - `Comment` can now be imported from package.
 - `User` can now be imported from package.
+- `Member` can now be imported from package.
+
+### Changed
+- Changed imports in `Relation.py` to use importing through a module rather than directly from a file.
+- Added `sample_dataclasses.py` file in tests fixtures to reduce code duplication.
 
 ## [0.3.0] - 2023-03-14
 

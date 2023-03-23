@@ -1,6 +1,7 @@
 import unittest
 
 from osm_easy_api import Node, Tags
+from ..fixtures import sample_dataclasses
 
 class TestNode(unittest.TestCase):
     def test_basic_initalization(self):
@@ -18,7 +19,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(str(node), should_print)
 
     def test_tags(self):
-        node = Node(123)
+        node = sample_dataclasses.node("simple_1")
         node.tags.add("building", "yes")
         node.tags.add("building:levels", "3")
         self.assertEqual(node.tags, {"building": "yes", "building:levels": "3"})
@@ -29,17 +30,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(node.tags, {"building": "yes", "roof:levels": "1"})
 
     def test__to_xml(self):
-        node = Node(
-            id=123,
-            visible=True, 
-            version=1, 
-            changeset_id=321,
-            timestamp="2022-11-11T21:15:26Z", 
-            user_id=111,
-            latitude="50.54321",
-            longitude="20.12345",
-            tags=Tags({"natural": "tree"})
-        )
+        node = sample_dataclasses.node("full_1")
 
         element = node._to_xml(999)
         self.assertEqual(element.tagName, "node")
@@ -70,17 +61,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(element.getAttribute("role"), "ABC")
 
     def test_to_from_dict(self):
-        node = Node(
-            id=123,
-            visible=True, 
-            version=1, 
-            changeset_id=321,
-            timestamp="2022-11-11T21:15:26Z", 
-            user_id=111,
-            latitude="50.54321",
-            longitude="20.12345",
-            tags=Tags({"natural": "tree"})
-        )
+        node = sample_dataclasses.node("full_1")
 
         dict = node.to_dict()
         node_from_dict = Node.from_dict(dict)

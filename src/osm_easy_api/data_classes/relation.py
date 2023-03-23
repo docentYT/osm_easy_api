@@ -2,8 +2,7 @@ from dataclasses import dataclass, field
 from typing import NamedTuple
 
 from ..data_classes.osm_object_primitive import osm_object_primitive
-from ..data_classes.node import Node
-from ..data_classes.way import Way
+from ..data_classes import Node, Way
 
 @dataclass
 class Relation(osm_object_primitive):
