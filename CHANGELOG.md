@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `to_dict()` method and `from_dict()` class method to `Note`.  
 - `to_dict()` method and `from_dict()` class method to `Comment`.
 - `to_dict()` method and `from_dict()` class method to `User`.
+- Documentation about `Meta` and `Action` class.
 
 ### Fixed
 - `Note` can now be imported from package.
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Changed imports in `Relation.py` to use importing through a module rather than directly from a file.
 - Added `sample_dataclasses.py` file in tests fixtures to reduce code duplication.
+- Changed function name and deleted unnecessary argument in `append_elements_to_master_element()` nested inside private method `_to_xml()` in `OsmChange`.
 
 ## [0.3.0] - 2023-03-14
 
