@@ -153,7 +153,7 @@ class TestApiNotes(unittest.TestCase):
         self.assertEqual(note.id, 37970)
 
     @responses.activate
-    def test_create(self):
+    def test_comment(self):
         body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
 <note lon="20.4660000" lat="52.2722000">
 <id>37970</id>
