@@ -4,6 +4,7 @@ import responses
 from ..fixtures.default_variables import LOGIN, PASSWORD
 
 from osm_easy_api import Api
+from osm_easy_api.api import exceptions as ApiExceptions
 
 class TestApiNotes(unittest.TestCase):
 
@@ -104,3 +105,103 @@ class TestApiNotes(unittest.TestCase):
         self.assertEqual(notes[0].comments[0].user.id, 18179)
         assert notes[1].comments[0].user, "User2 not exist"
         self.assertEqual(notes[1].comments[0].user.id, 7122)
+
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/notes?bbox=20.4345,52.2620,20.5608,52.2946?limit=100?closed=7",
+            "body": body,
+            "status": 400
+        })
+
+        def get_bbox():
+            return api.notes.get_bbox("20.4345", "52.2620", "20.5608", "52.2946")
+        
+        self.assertRaises(ValueError, get_bbox)
+
+    @responses.activate
+    def test_create(self):
+        body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+<note lon="20.4660000" lat="52.2722000">
+<id>37970</id>
+<url>https://master.apis.dev.openstreetmap.org/api/0.6/notes/37970</url>
+<comment_url>https://master.apis.dev.openstreetmap.org/api/0.6/notes/37970/comment</comment_url>
+<close_url>https://master.apis.dev.openstreetmap.org/api/0.6/notes/37970/close</close_url>
+<date_created>2023-02-26 13:37:26 UTC</date_created>
+<status>open</status>
+<comments>
+<comment>
+<date>2023-02-26 13:37:26 UTC</date>
+<uid>18179</uid>
+<user>kwiatek_123 bot</user>
+<user_url>https://master.apis.dev.openstreetmap.org/user/kwiatek_123%20bot</user_url>
+<action>opened</action>
+<text>test</text>
+<html><p>test</p></html>
+</comment>
+</comments>
+</note>
+</osm>"""
+        responses.add(**{
+            "method": responses.POST,
+            "url": "https://test.pl/api/0.6/notes?lat=20.4345&lon=52.2620&text=abc",
+            "body": body,
+            "status": 200
+        })
+
+        api = Api("https://test.pl", LOGIN, PASSWORD)
+        note = api.notes.create("20.4345", "52.2620", "abc")
+        self.assertEqual(note.id, 37970)
+
+    @responses.activate
+    def test_create(self):
+        body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+<note lon="20.4660000" lat="52.2722000">
+<id>37970</id>
+<url>https://master.apis.dev.openstreetmap.org/api/0.6/notes/37970</url>
+<comment_url>https://master.apis.dev.openstreetmap.org/api/0.6/notes/37970/comment</comment_url>
+<close_url>https://master.apis.dev.openstreetmap.org/api/0.6/notes/37970/close</close_url>
+<date_created>2023-02-26 13:37:26 UTC</date_created>
+<status>open</status>
+<comments>
+<comment>
+<date>2023-02-26 13:37:26 UTC</date>
+<uid>18179</uid>
+<user>kwiatek_123 bot</user>
+<user_url>https://master.apis.dev.openstreetmap.org/user/kwiatek_123%20bot</user_url>
+<action>opened</action>
+<text>test</text>
+<html><p>test</p></html>
+</comment>
+</comments>
+</note>
+</osm>"""
+        responses.add(**{
+            "method": responses.POST,
+            "url": "https://test.pl/api/0.6/notes/37970/comment?text=abc",
+            "body": body,
+            "status": 200
+        })
+
+        api = Api("https://test.pl", LOGIN, PASSWORD)
+        note = api.notes.comment(37970, "abc")
+        self.assertEqual(note.id, 37970)
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": "https://test.pl/api/0.6/notes/37970/comment?text=abc",
+            "body": body,
+            "status": 404
+        })
+
+        def comment():
+            return api.notes.comment(37970, "abc")
+        
+        self.assertRaises(ApiExceptions.IdNotFoundError, comment)
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": "https://test.pl/api/0.6/notes/37970/comment?text=abc",
+            "body": body,
+            "status": 409
+        })
+        self.assertRaises(ApiExceptions.NoteAlreadyClosed, comment)
