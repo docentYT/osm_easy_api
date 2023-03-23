@@ -29,7 +29,7 @@ pip install osm_easy_api
 You can view documentation on [github-pages](https://docentyt.github.io/osm_easy_api/osm_easy_api.html).
 
 Documentation is build using [pdoc](https://pdoc.dev).
-To run docs on your machine use preferred command: `pdoc --docformat google --no-show-source src !src.utils`.
+To run docs on your machine use preferred command: `pdoc --docformat google --no-show-source osm_easy_api !osm_easy_api.utils`.
 
 # Examples
 

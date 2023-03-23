@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Comment` can now be imported from package.
 - `User` can now be imported from package.
 - `Member` can now be imported from package.
+- Pdoc command in `README.md`.
 
 ### Changed
 - Changed imports in `Relation.py` to use importing through a module rather than directly from a file.
