@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from osm_easy_api import Node, Way, Relation, Member, Tags, User
+from osm_easy_api import Node, Way, Relation, Member, Tags, User, Comment, Note
 
 def node(key: str) -> Node:
     return deepcopy(_nodes[key])
@@ -16,6 +16,12 @@ def tags(key: str) -> Tags:
 
 def user(key: str) -> User:
     return deepcopy(_users[key])
+
+def comment(key: str) -> Comment:
+    return deepcopy(_comments[key])
+
+def note(key: str) -> Note:
+    return deepcopy(_notes[key])
 
 _nodes: dict[str, Node] = {
     "simple_1": Node(123),
@@ -95,7 +101,7 @@ _tags: dict[str, Tags] = {
 }
 
 _users: dict[str, User] = {
-    "simple_1": User(123),
+    "simple_1": User(123, "abc"),
     "full_1": User(
             id=123,
             display_name="abc",
@@ -117,6 +123,27 @@ _users: dict[str, User] = {
             }
             }
     ),
+    "full_2": User(
+            id=321,
+            display_name="cba",
+            account_created_at="22:11",
+            description="description",
+            contributor_terms_agreed=False,
+            img_url= "test.pl",
+            roles=None,
+            changesets_count=3,
+            traces_count=6,
+            blocks={
+            "received": {
+            "count": 1,
+            "active": 2
+            },
+            "issued": {
+            "count": 0,
+            "active": 0
+            }
+            }
+    ),
     "full_1_without_blocks": User(
             id=123,
             display_name="abc",
@@ -129,4 +156,17 @@ _users: dict[str, User] = {
             traces_count=1,
             blocks=None
         )
+}
+
+_comments: dict[str, Comment] = {
+    "simple_1": Comment("123", user("simple_1"), action="opened", text="ABC", html="ABC"),
+    "full_1": Comment("123", user("full_1"), action="opened", text="ABC", html="ABC"),
+    "full_2": Comment("321", user("full_2"), action="closed", text="CBA", html="CBA"),
+    "full_1_user_without_blocks": Comment("123", user("full_1_without_blocks"), action="opened", text="ABC", html="ABC")
+}
+
+_notes: dict[str, Note] = {
+    "simple_1": Note(123),
+    "full_1": Note(123, "11.11", "22.22", "123", True, [comment("full_1")]),
+    "full_1_simple_comment_1": Note(123, "11.11", "22.22", "123", True, [comment("simple_1")])
 }
