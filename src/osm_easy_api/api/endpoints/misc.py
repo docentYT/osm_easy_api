@@ -90,7 +90,8 @@ class Misc_Container:
                 case 200: pass
                 case 400: raise exceptions.LimitsExceeded("You are trying to download too much data.")
                 case 509: raise exceptions.LimitsExceeded("You have downloaded too much data. Please try again later. See https://wiki.openstreetmap.org/wiki/Developer_FAQ#I've_been_blocked_from_the_API_for_downloading_too_much._Now_what?")
-            
+                case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+
             response.raw.decode_content = True
             def generator():
                 gen = OsmChange_parser_generator(response.raw, None)

@@ -120,6 +120,7 @@ class User_Container:
             match response.status_code:
                 case 200: pass
                 case 404: raise ValueError("Preference not found")
+                case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
             return {key: response.text}
         generator = self.outer._get_generator(
             url=url,
@@ -165,3 +166,4 @@ class User_Container:
         match response.status_code:
             case 200: pass
             case 404: raise ValueError("Preference not found")
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."

@@ -110,6 +110,7 @@ class Notes_Container:
         match status_code:
             case 200: pass
             case 400: raise ValueError("Limits exceeded")
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
 
         return self._xml_to_note(generator)
     
@@ -154,6 +155,7 @@ class Notes_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.NoteAlreadyClosed()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
 
         return self._xml_to_note(generator)[0]
     
@@ -183,6 +185,7 @@ class Notes_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.NoteAlreadyClosed()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
 
         return self._xml_to_note(generator)[0]
     
@@ -213,6 +216,7 @@ class Notes_Container:
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.NoteAlreadyOpen()
             case 410: raise exceptions.ElementDeleted()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
 
         return self._xml_to_note(generator)[0]
     
@@ -251,6 +255,7 @@ class Notes_Container:
         match status_code:
             case 200: pass
             case 400: raise ValueError("Limits exceeded")
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
 
         try:
             return self._xml_to_note(generator)

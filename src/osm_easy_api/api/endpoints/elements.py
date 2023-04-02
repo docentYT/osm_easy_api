@@ -41,6 +41,7 @@ class Elements_Container:
             case 400: raise ValueError(response.content)
             case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.content)
             case 412: raise ValueError(response.content)
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
         
         return int(response.text)
 
@@ -69,6 +70,7 @@ class Elements_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 410: raise exceptions.ElementDeleted()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
         
         for event, elem in generator:
             if elem.tag in ("node", "way", "relation") and event == "start":
@@ -104,6 +106,7 @@ class Elements_Container:
             case 409: raise ValueError(response.content)
             case 404: raise exceptions.IdNotFoundError()
             case 412: raise exceptions.IdNotFoundError(response.content)
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
         return int(response.content)
     
     def delete(self, element: Node | Way | Relation, changeset_id: int) -> int:
@@ -135,6 +138,7 @@ class Elements_Container:
             case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.content)
             case 410: raise exceptions.ElementDeleted()
             case 412: raise ValueError(response.content)
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
         return int(response.content)
     
     def history(self, element: type[Node_Way_Relation], id: int) -> list[Node_Way_Relation]:
@@ -160,6 +164,7 @@ class Elements_Container:
         match status_code:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
         
         objects_list = []
         for event, elem in generator:
@@ -194,6 +199,7 @@ class Elements_Container:
             case 200: pass
             case 403: raise exceptions.IdNotFoundError("This version of the element is not available (due to redaction)")
             case 404: raise exceptions.IdNotFoundError()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
         
         for event, elem in generator:
             if elem.tag in ("node", "way", "relation"):
@@ -231,6 +237,7 @@ class Elements_Container:
             case 400: raise ValueError()
             case 404: raise exceptions.IdNotFoundError()
             case 414: raise ValueError("URL too long (too many ids)")
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
         
         objects_list = []
         for event, elem in generator:
@@ -310,6 +317,7 @@ class Elements_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 410: raise exceptions.ElementDeleted()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
         
         nodes_dict: dict[int, Node] = {}
         ways_dict:  dict[int, Way]  = {}

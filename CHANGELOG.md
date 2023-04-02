@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `to_dict()` method and `from_dict()` class method to `Comment`.
 - `to_dict()` method and `from_dict()` class method to `User`.
 - Documentation about `Meta` and `Action` class.
+- Assert error (with information to report it on github) when api returns an error code not described on the wiki.
 
 ### Fixed
 - `Note` can now be imported from package.
