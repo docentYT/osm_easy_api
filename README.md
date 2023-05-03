@@ -132,4 +132,4 @@ but it can consume large amounts of ram and use of this method is not recommende
 # Tests
 
 You will need to install `test-requirements.txt`. You can use tox.
-To run tests manually use `python -m unittest discover` or `run_tests_<module>.bat`.
+To run tests manually use `python -m unittest discover`.
