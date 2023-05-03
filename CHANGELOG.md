@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `to_dict()` method and `from_dict()` class method to `User`.
 - Documentation about `Meta` and `Action` class.
 - Assert error (with information to report it on github) when api returns an error code not described on the wiki.
+- `to_dict()` method and `from_dict()` class method to `(relation) Member`.
 
 ### Fixed
 - `Note` can now be imported from package.
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `User` can now be imported from package.
 - `Member` can now be imported from package.
 - Pdoc command in `README.md`.
+- `Relation.to_dict()` method now recursively serialises members.
+- `Way.to_dict()` method now recursively serialises nodes.
 
 ### Changed
 - Changed imports in `Relation.py` to use importing through a module rather than directly from a file.

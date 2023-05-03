@@ -77,14 +77,23 @@ class TestWay(unittest.TestCase):
         self.assertEqual(element.getAttribute("role"), "ABC")
 
     def test_to_from_dict(self):
-        way = sample_dataclasses.way("full_with_nodes")
+        way1 = sample_dataclasses.way("full_with_nodes")
+        way2 = sample_dataclasses.way("full_with_nodes")
+        way2.nodes.pop()
 
-        dict = way.to_dict()
-        way_from_dict = Way.from_dict(dict)
-        self.assertEqual(way, way_from_dict)
-        self.assertEqual(way.tags, way_from_dict.tags)
-        self.assertEqual(type(way_from_dict.tags), Tags)
-        self.assertNotEqual(id(way), id(way_from_dict))
+        dict1 = way1.to_dict()
+        dict2 = way2.to_dict()
+        way1_from_dict = Way.from_dict(dict1)
+        way2_from_dict = Way.from_dict(dict2)
+        self.assertEqual(way1, way1_from_dict)
+        self.assertEqual(way2, way2_from_dict)
+        self.assertEqual(way1.tags, way1_from_dict.tags)
+        self.assertEqual(way2.tags, way2_from_dict.tags)
+        self.assertEqual(type(way1_from_dict.tags), Tags)
+        self.assertEqual(type(way2_from_dict.tags), Tags)
+        self.assertNotEqual(id(way1), id(way1_from_dict))
+        self.assertNotEqual(id(way2), id(way2_from_dict))
+        self.assertNotEqual(id(way1_from_dict), id(way2_from_dict))
 
         def from_empty_dict():
             return Way.from_dict({})

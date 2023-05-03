@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from copy import copy
 
 from ..data_classes.osm_object_primitive import osm_object_primitive
 from ..data_classes.node import Node
@@ -21,3 +22,21 @@ class Way(osm_object_primitive):
             for tag in self.tags._to_xml():
                 element.appendChild(tag)
             return element
+        
+    def to_dict(self) -> dict[str, str | list[dict[str, str]]]:
+        super_dict: dict[str, str | list[dict[str, str]]] = super().to_dict() # type: ignore
+        nodes: list[dict[str, str]] = []
+        for node in self.nodes:
+            nodes.append(node.to_dict())
+        super_dict["nodes"] = nodes
+        return super_dict
+    
+    @classmethod
+    def from_dict(cls, dict: dict[str, str | list[dict[str, str]]]):
+        temp_dict = copy(dict)
+        way = super().from_dict(temp_dict) # type: ignore (ignoring list of nodes)
+        nodes = copy(dict["nodes"])
+        way.nodes.clear()
+        for node in nodes:
+            way.nodes.append(Node.from_dict(node)) # type: ignore
+        return way

@@ -90,12 +90,20 @@ class TestRelation(unittest.TestCase):
 
     def test_to_from_dict(self):
         relation = sample_dataclasses.relation("full_with_members")
+        relation2 = sample_dataclasses.relation("full_with_members")
+        relation2.members.pop()
 
         dict = relation.to_dict()
+        dict2 = relation2.to_dict()
         relation_from_dict = Relation.from_dict(dict)
+        relation2_from_dict = Relation.from_dict(dict2)
         self.assertEqual(relation, relation_from_dict)
+        self.assertEqual(relation2, relation2_from_dict)
         self.assertEqual(type(relation_from_dict.tags), Tags)
+        self.assertEqual(type(relation2_from_dict.tags), Tags)
         self.assertNotEqual(id(relation), id(relation_from_dict))
+        self.assertNotEqual(id(relation2), id(relation2_from_dict))
+        self.assertNotEqual(id(relation_from_dict), id(relation2_from_dict))
 
         def from_empty_dict():
             return Relation.from_dict({})
