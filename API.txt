@@ -5,7 +5,7 @@ MISC ✅
 ✅ GET /api/0.6/map?bbox=Left,Bottom,Right,Top - Retrieving map data by bounding box.
 ✅ GET /api/0.6/permissions - Returns the permissions granted to the current API connection.
 
-CHANGESETS
+CHANGESETS ✅
 ✅ PUT /api/0.6/changeset/create - Creates changeset
 ✅ GET /api/0.6/changeset/#id?include_discussion=true - Get changeset by id
 ✅ PUT /api/0.6/changeset/#id - Update changeset
@@ -15,14 +15,14 @@ CHANGESETS
 
 ✅ GET /api/0.6/changesets - Get changesets for provided parameters
 
-changeset discussion
+changeset discussion ✅
 ✅ POST /api/0.6/changeset/#id/comment - Add a comment to a closed changeset.
 ✅ POST /api/0.6/changeset/#id/subscribe - Subscribe to receive notifications for a new comments.
 ✅ POST /api/0.6/changeset/#id/unsubscribe - Unsubscribe to stop receiving notifinactions for a new comments.
 ✅ MO: POST /api/0.6/changeset/comment/#comment_id/hide - Hide comment from changeset.
 ✅ MO: POST /api/0.6/changeset/comment/#comment_id/unhide - Unhide comment from changeset.
 
-ELEMENTS
+ELEMENTS ✅
 ✅ PUT /api/0.6/[node|way|relation]/create - Create new element.
 ✅ GET /api/0.6/[node|way|relation]/#id - Get element with id.
 ✅ PUT /api/0.6/[node|way|relation]/#id - Update element with id.
@@ -44,7 +44,7 @@ GET /api/0.6/gpx/#id/details - Get osm data about GPS trace OO: if private
 GET /api/0.6/gpx/#id/data - Get GPX file for trace OO: if private
 OO: GET /api/0.6/user/gpx_files - Get all traces for owner account
 
-USERS
+USERS ✅
 ✅ GET /api/0.6/user/#id - Get user data by id.
 ✅ GET /api/0.6/users?users=#id1,#id2,...,#idn - Get user data for mulptile users on one request.
 ✅ CL: GET /api/0.6/user/details - Get user data
@@ -55,8 +55,8 @@ USERS
 NOTES
 ✅ GET /api/0.6/notes?bbox=Left,Bottom,Right,Top - Get all notes in bbox
 ✅ GET /api/0.6/notes/#id - Get note by id
-✅❓ POST /api/0.6/notes - Create new note
-✅❓ POST /api/0.6/notes/#id/comment - Create new comment to note
+✅ POST /api/0.6/notes - Create new note
+✅ POST /api/0.6/notes/#id/comment - Create new comment to note
 ✅❓ POST /api/0.6/notes/#id/close - Close note
 ✅❓ POST /api/0.6/notes/#id/reopen - Reopen note
 ✅❓ GET /api/0.6/notes/search - Search for notes

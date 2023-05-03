@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0]
+### Added
+- `to_dict()` method and `from_dict()` class method to `Note`.  
+- `to_dict()` method and `from_dict()` class method to `Comment`.
+- `to_dict()` method and `from_dict()` class method to `User`.
+- Documentation about `Meta` and `Action` class.
+- Assert error (with information to report it on github) when api returns an error code not described on the wiki.
+- `to_dict()` method and `from_dict()` class method to `(relation) Member`.
+
+### Fixed
+- `Note` can now be imported from package.
+- `Comment` can now be imported from package.
+- `User` can now be imported from package.
+- `Member` can now be imported from package.
+- Pdoc command in `README.md`.
+- `Relation.to_dict()` method now recursively serialises members.
+- `Way.to_dict()` method now recursively serialises nodes.
+
+### Changed
+- Changed imports in `Relation.py` to use importing through a module rather than directly from a file.
+- Added `sample_dataclasses.py` file in tests fixtures to reduce code duplication.
+- Changed function name and deleted unnecessary argument in `append_elements_to_master_element()` nested inside private method `_to_xml()` in `OsmChange`.
+
 ## [0.3.0] - 2023-03-14
 
 ### Added

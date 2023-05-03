@@ -1,6 +1,7 @@
 import unittest
 
 from osm_easy_api import Tags
+from ..fixtures import sample_dataclasses
 
 class TestTags(unittest.TestCase):
     def test_add_method(self):
@@ -34,7 +35,7 @@ class TestTags(unittest.TestCase):
         self.assertEqual(tags.get("natural"), None)
 
     def test__to_xml(self):
-        tags = Tags({"building": "yes", "building:levels": "3", "roof:levels": "1"})
+        tags = sample_dataclasses.tags("three")
         xml = tags._to_xml()
         
         nxt = next(xml)

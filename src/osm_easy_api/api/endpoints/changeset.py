@@ -114,6 +114,7 @@ class Changeset_Container:
         match status_code:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
 
         return self._xml_to_changeset(generator, include_discussion)[0] # type: ignore
 
@@ -168,6 +169,7 @@ class Changeset_Container:
             case 200: pass
             case 400: raise ValueError("Invalid arguments. See https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets for more info.")
             case 404: raise exceptions.IdNotFoundError()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
 
         return self._xml_to_changeset(generator) # type: ignore
     
@@ -215,6 +217,7 @@ class Changeset_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.text)
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
 
         response.raw.decode_content = True
         return self._xml_to_changeset(self.outer._raw_stream_parser(response.raw), True)[0]
@@ -234,6 +237,7 @@ class Changeset_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.text)
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
 
     def download(self, id: int) -> Generator[Tuple['Action', 'Node | Way | Relation'], None, None]:
         """Download changes made in changeset. Like in 'diff' module.
@@ -252,6 +256,7 @@ class Changeset_Container:
         match stream.status_code:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
+            case _: assert False, f"Unexpected response status code {stream.status_code}. Please report it on github."
         
         stream.raw.decode_content = True
         def generator() -> Generator[tuple['Action', 'Node | Way | Relation'], None, None]:   

@@ -8,8 +8,12 @@ from ..data_classes.way import Way
 from ..data_classes.relation import Relation
 
 Meta = NamedTuple("Meta", [("version", str), ("generator", str), ("sequence_number", str)])
+Meta.__doc__ = """\
+    Namedtuple, which stores information about OsmChange.
+    """
 
 class Action(Enum):
+    """Enum that represents the actions performed on an element in a given OsmChange."""
     CREATE = 0
     MODIFY = 1
     DELETE = 2
@@ -51,24 +55,24 @@ class OsmChange():
         xml.setAttribute("generator", self.meta.generator)
         root.appendChild(xml)
 
-        def append_elements__to_master_element(main_element, master_name, elements):
+        def append_elements_to_master_element(master_name, elements):
             if not elements: return
             master = root.createElement(master_name)
             for element in elements:
                 master.appendChild(element._to_xml(changeset_id))
             xml.appendChild(master)
             
-        append_elements__to_master_element(xml, "create", self.get(Node, Action.CREATE))
-        append_elements__to_master_element(xml, "modify", self.get(Node, Action.MODIFY))
-        append_elements__to_master_element(xml, "delete", self.get(Node, Action.DELETE))
+        append_elements_to_master_element("create", self.get(Node, Action.CREATE))
+        append_elements_to_master_element("modify", self.get(Node, Action.MODIFY))
+        append_elements_to_master_element("delete", self.get(Node, Action.DELETE))
 
-        append_elements__to_master_element(xml, "create", self.get(Way, Action.CREATE))
-        append_elements__to_master_element(xml, "modify", self.get(Way, Action.MODIFY))
-        append_elements__to_master_element(xml, "delete", self.get(Way, Action.DELETE))
+        append_elements_to_master_element("create", self.get(Way, Action.CREATE))
+        append_elements_to_master_element("modify", self.get(Way, Action.MODIFY))
+        append_elements_to_master_element("delete", self.get(Way, Action.DELETE))
 
-        append_elements__to_master_element(xml, "create", self.get(Relation, Action.CREATE))
-        append_elements__to_master_element(xml, "modify", self.get(Relation, Action.MODIFY))
-        append_elements__to_master_element(xml, "delete", self.get(Relation, Action.DELETE))
+        append_elements_to_master_element("create", self.get(Relation, Action.CREATE))
+        append_elements_to_master_element("modify", self.get(Relation, Action.MODIFY))
+        append_elements_to_master_element("delete", self.get(Relation, Action.DELETE))
 
         xml_str = root.toprettyxml(indent="\t")
         return xml_str
