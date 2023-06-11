@@ -24,7 +24,6 @@ class Node(osm_object_primitive):
             element.setAttribute("lat",    str(self.latitude))
             element.setAttribute("lon",   str(self.longitude))
 
-            root = minidom.Document()
             for tag in self.tags._to_xml():
                 element.appendChild(tag)
             return element

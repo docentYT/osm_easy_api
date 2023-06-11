@@ -56,16 +56,16 @@ class TestWay(unittest.TestCase):
         self.assertEqual(element.getAttribute("version"),     str(1))
         self.assertEqual(element.getAttribute("changeset"),   str(999))
 
-        self.assertEqual(element.childNodes[0].tagName, "nd")
-        self.assertEqual(element.childNodes[0].getAttribute("ref"), str(123))
+        self.assertEqual(element.childNodes[0].tagName, "tag")
+        self.assertEqual(element.childNodes[0].getAttribute("k"), "ABC")
+        self.assertEqual(element.childNodes[0].getAttribute("v"), "CBA")
 
         self.assertEqual(element.childNodes[1].tagName, "nd")
-        self.assertEqual(element.childNodes[1].getAttribute("ref"), str(12345))
-        
-        self.assertEqual(element.childNodes[2].tagName, "tag")
-        self.assertEqual(element.childNodes[2].getAttribute("k"), "ABC")
-        self.assertEqual(element.childNodes[2].getAttribute("v"), "CBA")
+        self.assertEqual(element.childNodes[1].getAttribute("ref"), str(123))
 
+        self.assertEqual(element.childNodes[2].tagName, "nd")
+        self.assertEqual(element.childNodes[2].getAttribute("ref"), str(12345))
+        
         element = way._to_xml(999, member_version=True)
         self.assertEqual(element.tagName, "member")
         self.assertEqual(element.getAttribute("ref"), str(123))

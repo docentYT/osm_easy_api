@@ -16,11 +16,12 @@ class Way(osm_object_primitive):
             return super()._to_xml(changeset_id, member_version=member_version, role=role)
         else:
             element = super()._to_xml(changeset_id)
+            for tag in self.tags._to_xml():
+                element.appendChild(tag)
+                
             for node in self.nodes:
                 node_element = node._to_xml(changeset_id, way_version=True)
                 element.appendChild(node_element)
-            for tag in self.tags._to_xml():
-                element.appendChild(tag)
             return element
         
     def to_dict(self) -> dict[str, str | list[dict[str, str]]]:

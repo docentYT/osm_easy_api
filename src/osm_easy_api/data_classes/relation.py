@@ -21,8 +21,12 @@ class Relation(osm_object_primitive):
             return super()._to_xml(changeset_id, member_version=member_version, role=role)
         else:
             element = super()._to_xml(changeset_id)
+            for tag in self.tags._to_xml():
+                element.appendChild(tag)
+            
             for member, role in self.members:
                 element.appendChild(member._to_xml(changeset_id=changeset_id, member_version=True, role=role))
+
             return element
         
     def to_dict(self) -> dict[str, str | list[_MEMBER_DICTIONARY_TYPE]]:
