@@ -69,20 +69,26 @@ class TestRelation(unittest.TestCase):
         self.assertEqual(element.getAttribute("id"), str(123))
         self.assertEqual(element.getAttribute("version"), str(1))
         self.assertEqual(element.getAttribute("changeset"), str(999))
+        
+        tag = element.childNodes[0]
+        self.assertIsNotNone(tag)
+        self.assertEqual(tag.tagName, "tag") # type: ignore (checked above)
+        self.assertEqual(tag.getAttribute("k"), "type") # type: ignore (checked above)
+        self.assertEqual(tag.getAttribute("v"), "multipolygon") # type: ignore (checked above)
 
-        node_1 = element.childNodes[0]
+        node_1 = element.childNodes[1]
         self.assertEqual(node_1.tagName, "member")
         self.assertEqual(node_1.getAttribute("type"), "node")
         self.assertEqual(node_1.getAttribute("role"), "role_1")
         self.assertIsNone(node_1.firstChild)
 
-        node_2 = element.childNodes[1]
+        node_2 = element.childNodes[2]
         self.assertEqual(node_2.tagName, "member")
         self.assertEqual(node_2.getAttribute("type"), "node")
         self.assertEqual(node_2.getAttribute("role"), "role_2")
         self.assertIsNone(node_2.firstChild)
 
-        way = element.childNodes[2]
+        way = element.childNodes[3]
         self.assertEqual(way.tagName, "member")
         self.assertEqual(way.getAttribute("type"), "way")
         self.assertEqual(way.getAttribute("role"), "role_3")
