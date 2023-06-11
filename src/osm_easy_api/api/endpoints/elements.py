@@ -343,7 +343,7 @@ class Elements_Container:
                 members = relations_dict[relation_id].members
                 for i in range(len(members)):
                     if isinstance(members[i].element, Node):
-                        member = Member(deepcopy(nodes_dict[member.element.id]), member.role)
+                        members[i] = Member(deepcopy(nodes_dict[members[i].element.id]), members[i].role)
                     elif isinstance(members[i].element, Way):
                         members[i] = Member(deepcopy(ways_dict[members[i].element.id]), members[i].role)
 

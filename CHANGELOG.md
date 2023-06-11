@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `Relation._to_xml()` was returning an xml without osm tags.
 - Deleted disused variable in `Node._to_xml()`.
+- Fixed incorrect relation parsing of data recived by `full` endpoint.
 
 ## [0.4.1]
 ### Changed
