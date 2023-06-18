@@ -1,8 +1,17 @@
-# osm_easy_api
-
-![Tests](https://github.com/docentYT/automated-python-tests-testing-repo/actions/workflows/tests.yaml/badge.svg)
-![coverage](https://raw.githubusercontent.com/docentYT/osm_easy_api/3889ae626be35183253485646b7be9e235a2fc27/coverage-badge.svg)
-[![PyPI version](https://badge.fury.io/py/osm_easy_api.svg)](https://badge.fury.io/py/osm_easy_api)
+<h1 align="center">osm_easy_api</h1>
+<p align="center">
+  <img src="https://github.com/docentYT/automated-python-tests-testing-repo/actions/workflows/tests.yaml/badge.svg" />
+  <img src="https://raw.githubusercontent.com/docentYT/osm_easy_api/3889ae626be35183253485646b7be9e235a2fc27/coverage-badge.svg" />
+  <a href="https://pypi.org/project/osm-easy-api/">
+    <img src="https://img.shields.io/pypi/v/osm_easy_api" />
+  </a>
+  <a href="https://github.com/frinyvonnick/gitmoji-changelog">
+    <img src="https://img.shields.io/pypi/dm/osm_easy_api" alt="pypi downloads">
+  </a>
+  <a href="https://pypi.org/project/osm-easy-api/">
+    <img alt="python versions" src="https://img.shields.io/pypi/pyversions/osm_easy_api" target="_blank" />
+  </a>
+</p>
 
 [Me on openstreetmap](https://www.openstreetmap.org/user/kwiatek_123)
 
