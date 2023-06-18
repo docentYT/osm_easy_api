@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `to_xml()` method in `OsmChange`.
 - `upload()` method in `changeset` `endpoint` has new optional arguments.
 - Test for `to_xml()` method in `OsmChange`.
+- `# pragma: no cover` for unexpected api errors (Those that are not in the specification on the wiki).
 
 ### Changed
 - Private `_to_xml()` method in `OsmChange` is now static.
