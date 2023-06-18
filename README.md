@@ -13,9 +13,9 @@
   </a>
 </p>
 
-[Me on openstreetmap](https://www.openstreetmap.org/user/kwiatek_123)
+<p align="center"><a href="https://www.openstreetmap.org/user/kwiatek_123)">Me on OpenStreetMap</a></p>
 
-Python package for parsing osm diffs and communicating with the osm api. See API.txt for list of supported endpoints.
+Python package for parsing osm diffs and communicating with the OpenStreetMap api. See API.txt for list of supported endpoints.
 
 ## What's the point of this package?
 
