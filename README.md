@@ -5,7 +5,7 @@
   <a href="https://pypi.org/project/osm-easy-api/">
     <img src="https://img.shields.io/pypi/v/osm_easy_api" />
   </a>
-  <a href="https://github.com/frinyvonnick/gitmoji-changelog">
+  <a href="https://pypi.org/project/osm-easy-api/">
     <img src="https://img.shields.io/pypi/dm/osm_easy_api" alt="pypi downloads">
   </a>
   <a href="https://pypi.org/project/osm-easy-api/">
