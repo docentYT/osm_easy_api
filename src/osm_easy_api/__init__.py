@@ -1,4 +1,4 @@
-VERSION = "0.4.2"
+VERSION = "1.0.0"
 
 from .data_classes import *
 from .diff import Diff, Frequency

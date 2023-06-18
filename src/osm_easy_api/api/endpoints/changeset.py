@@ -114,7 +114,7 @@ class Changeset_Container:
         match status_code:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         return self._xml_to_changeset(generator, include_discussion)[0] # type: ignore
 
@@ -169,7 +169,7 @@ class Changeset_Container:
             case 200: pass
             case 400: raise ValueError("Invalid arguments. See https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets for more info.")
             case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         return self._xml_to_changeset(generator) # type: ignore
     
@@ -217,7 +217,7 @@ class Changeset_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.text)
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
         response.raw.decode_content = True
         return self._xml_to_changeset(self.outer._raw_stream_parser(response.raw), True)[0]
@@ -237,7 +237,7 @@ class Changeset_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.text)
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
     def download(self, id: int) -> Generator[Tuple['Action', 'Node | Way | Relation'], None, None]:
         """Download changes made in changeset. Like in 'diff' module.
@@ -256,7 +256,7 @@ class Changeset_Container:
         match stream.status_code:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {stream.status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {stream.status_code}. Please report it on github." # pragma: no cover
         
         stream.raw.decode_content = True
         def generator() -> Generator[tuple['Action', 'Node | Way | Relation'], None, None]:   
@@ -267,13 +267,14 @@ class Changeset_Container:
                 yield (action, element) # type: ignore (We checked if it is Action)
         return generator()
 
-    def upload(self, changeset_id: int, osmChange: OsmChange):
+    def upload(self, changeset_id: int, osmChange: OsmChange, make_osmChange_valid: bool = True, work_on_copy: bool = False):
         # TODO: Parse returned xml
         """Upload OsmChange to OSM. You must provide changeset ID for open changeset.
 
         Args:
             changeset_id (int): Open changeset ID.
             osmChange (OsmChange): OsmChange instance with changes you want to upload. Action cannot be empty!
+            make_osmChange_valid (bool): 
 
         Raises:
             exceptions.ErrorWhenParsingXML: Incorrect OsmChange object. Maybe missing elements attributes.
@@ -285,7 +286,7 @@ class Changeset_Container:
             method=self.outer._RequestMethods.POST,
             url=self.outer._url.changeset["upload"].format(id=changeset_id),
             auth_requirement=self.outer._Requirement.YES,
-            body = osmChange._to_xml(changeset_id),
+            body = osmChange.to_xml(changeset_id, make_osmChange_valid, work_on_copy),
             auto_status_code_handling=False
         )
         match response.status_code:

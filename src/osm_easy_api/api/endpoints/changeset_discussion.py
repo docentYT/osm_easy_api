@@ -23,7 +23,7 @@ class Changeset_Discussion_Container:
         match response.status_code:
             case 200: pass
             case 409: raise exceptions.ChangesetNotClosed()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
     def subscribe(self, changeset_id: int) -> None:
         """Subscribe to the discussion to receive notifications for new comments.
@@ -39,7 +39,7 @@ class Changeset_Discussion_Container:
         match response.status_code:
             case 200: pass
             case 409: raise exceptions.AlreadySubscribed()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
     def unsubscribe(self, changeset_id: int) -> None:
         """Unsubscribe from discussion to stop receiving notifications.
@@ -55,7 +55,7 @@ class Changeset_Discussion_Container:
         match response.status_code:
             case 200: pass
             case 404: raise exceptions.NotSubscribed()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
     def hide(self, comment_id: int) -> None:
         """Set visible flag on changeset comment to false. MODERATOR ONLY!
@@ -73,7 +73,7 @@ class Changeset_Discussion_Container:
             case 200: pass
             case 403: raise exceptions.NotAModerator()
             case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
     def unhide(self, comment_id: int) -> None:
         """Set visible flag on changeset comment to true. MODERATOR ONLY!
@@ -91,4 +91,4 @@ class Changeset_Discussion_Container:
             case 200: pass
             case 403: raise exceptions.NotAModerator()
             case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover

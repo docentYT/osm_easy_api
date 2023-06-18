@@ -1,4 +1,5 @@
 import unittest
+import os
 
 from osm_easy_api import Node, Way, OsmChange, Action, Tags, Relation
 from ..fixtures import sample_dataclasses
@@ -55,12 +56,21 @@ class TestOsmChange(unittest.TestCase):
         osmChange.remove(way_one)
         self.assertEqual(osmChange.get(Way), [])
 
-    def test__to_xml(self):
-        # TODO: Check if xml is well made
+    def test_to_xml(self):
+        node_full_1 = sample_dataclasses.node("full_1")
+        node_full_1.id = -99
+        way_full_with_nodes = sample_dataclasses.way("full_with_nodes")
+        way_full_with_nodes.id = 444
+        way_full_with_nodes.nodes[0].id = -9
         osmChange = OsmChange("0.1", "unittest", "123")
         osmChange.add(sample_dataclasses.node("simple_1"))
-        osmChange.add(sample_dataclasses.node("full_1"), Action.CREATE)
-        osmChange.add(sample_dataclasses.way("full_with_nodes"), Action.MODIFY)
+        osmChange.add(node_full_1, Action.CREATE)
+        osmChange.add(way_full_with_nodes, Action.MODIFY)
         osmChange.add(sample_dataclasses.relation("simple_1"), Action.MODIFY)
-        self.maxDiff = None
-        osmChange._to_xml(999)
+
+        file_path = os.path.join("tests", "fixtures", "OsmChange.osc")
+
+        with open(file_path) as f: should_be = f.read()
+        # with open(file_path, "w") as f: f.write(osmChange.to_xml(999))
+        
+        self.assertEqual(should_be, osmChange.to_xml(999))
