@@ -267,13 +267,14 @@ class Changeset_Container:
                 yield (action, element) # type: ignore (We checked if it is Action)
         return generator()
 
-    def upload(self, changeset_id: int, osmChange: OsmChange):
+    def upload(self, changeset_id: int, osmChange: OsmChange, make_osmChange_valid: bool = True, work_on_copy: bool = False):
         # TODO: Parse returned xml
         """Upload OsmChange to OSM. You must provide changeset ID for open changeset.
 
         Args:
             changeset_id (int): Open changeset ID.
             osmChange (OsmChange): OsmChange instance with changes you want to upload. Action cannot be empty!
+            make_osmChange_valid (bool): 
 
         Raises:
             exceptions.ErrorWhenParsingXML: Incorrect OsmChange object. Maybe missing elements attributes.
@@ -285,7 +286,7 @@ class Changeset_Container:
             method=self.outer._RequestMethods.POST,
             url=self.outer._url.changeset["upload"].format(id=changeset_id),
             auth_requirement=self.outer._Requirement.YES,
-            body = osmChange._to_xml(changeset_id),
+            body = osmChange.to_xml(changeset_id, make_osmChange_valid, work_on_copy),
             auto_status_code_handling=False
         )
         match response.status_code:

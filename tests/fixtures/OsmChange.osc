@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<osmChange version="0.1" generator="unittest">
+	<create>
+		<node id="-1" version="1" changeset="999" lat="50.54321" lon="20.12345">
+			<tag k="natural" v="tree"/>
+		</node>
+		<node id="-2" version="1" changeset="999" lat="50.54321" lon="20.12345">
+			<tag k="natural" v="tree"/>
+		</node>
+	</create>
+	<modify>
+		<way id="444" version="1" changeset="999">
+			<tag k="ABC" v="CBA"/>
+			<nd ref="-2"/>
+			<nd ref="12345"/>
+		</way>
+	</modify>
+	<modify>
+		<relation id="123" version="None" changeset="999"/>
+	</modify>
+</osmChange>
