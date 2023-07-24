@@ -127,7 +127,7 @@ class Notes_Container:
         """
         generator = self.outer._post_generator(
             url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=text),
-            auth_requirement=self.outer._Requirement.NO,
+            auth_requirement=self.outer._Requirement.OPTIONAL,
             auto_status_code_handling=True)
         
         return self._xml_to_note(generator)[0]
