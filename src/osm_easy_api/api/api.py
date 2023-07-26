@@ -37,7 +37,7 @@ class Api():
         self.notes = Notes_Container(self)
 
         if username and password:
-            self._auth = HTTPBasicAuth(username, password)
+            self._auth = HTTPBasicAuth(username.encode('utf-8'), password.encode('utf-8'))
         else:
             self._auth = None
 
