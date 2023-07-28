@@ -91,7 +91,7 @@ class TestApiChangeset(unittest.TestCase):
         """
         responses.add(**{
             "method": responses.GET,
-            "url": "https://test.pl/api/0.6/changesets/?user=18179;",
+            "url": "https://test.pl/api/0.6/changesets/?user=18179&limit=100",
             "body": body,
             "status": 200
         })
@@ -115,6 +115,22 @@ class TestApiChangeset(unittest.TestCase):
         self.assertEqual(testing_changeset.comments_count, changeset.comments_count)
         self.assertEqual(testing_changeset.changes_count, changeset.changes_count)
         self.assertEqual(testing_changeset.tags, changeset.tags)
+
+        body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+    <changeset id="111" created_at="2023-01-10T16:49:30Z" open="false" comments_count="0" changes_count="3" closed_at="2023-01-10T16:52:52Z" min_lat="52.2423700" min_lon="21.1171000" max_lat="52.2423700" max_lon="21.1171000" uid="18179" user="kwiatek_123 bot">
+        <tag k="comment" v="Upload relation test"/>
+    </changeset>
+</osm>
+        """
+
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/changesets/?user=18179&limit=1",
+            "body": body,
+            "status": 200
+        })
+        changeset_list = api.changeset.get_query(user_id="18179", limit=1)
+        self.assertEqual(changeset_list.__len__(), 1)
 
         responses.add(**{
             "method": responses.GET,
