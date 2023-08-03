@@ -92,7 +92,7 @@ class Notes_Container:
             bottom (str): Bottom bbox
             right (str): Right bbox
             top (str): Top bbox
-            limit (int, optional): Max number of notes (1 < limit < 1000). Defaults to 100.
+            limit (int, optional): Max number of notes (1 < limit < 10000). Defaults to 100.
             closed_days (int, optional): Number of days a note needs to be closed to no longer be returned (0 - only open, -1 - all). Defaults to 7.
 
         Raises:

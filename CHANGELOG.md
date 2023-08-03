@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1]
+### Fixed
+- Corrected character when adding parameters in endpoint `api.notes.get_bbox()` (from `?` to `&`).
+- Fixed the `limit` parameter restrictions in `api.notes.get_bbox()` documentation.
+
 ## [1.1.0]
 ### Added
 - `limit` parameter for `api.changeset.get_query()` endpoint.

@@ -90,7 +90,7 @@ class TestApiNotes(unittest.TestCase):
 </osm>"""
         responses.add(**{
             "method": responses.GET,
-            "url": "https://test.pl/api/0.6/notes?bbox=20.4345,52.2620,20.5608,52.2946?limit=100?closed=7",
+            "url": "https://test.pl/api/0.6/notes?bbox=20.4345,52.2620,20.5608,52.2946&limit=100&closed=7",
             "body": body,
             "status": 200
         })
@@ -108,7 +108,7 @@ class TestApiNotes(unittest.TestCase):
 
         responses.add(**{
             "method": responses.GET,
-            "url": "https://test.pl/api/0.6/notes?bbox=20.4345,52.2620,20.5608,52.2946?limit=100?closed=7",
+            "url": "https://test.pl/api/0.6/notes?bbox=20.4345,52.2620,20.5608,52.2946&limit=100&closed=7",
             "body": body,
             "status": 400
         })
