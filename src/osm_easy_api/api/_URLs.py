@@ -57,7 +57,7 @@ class URLs:
 
         self.note: Dict[str, str] = {
             "get": six_url + "/notes/{id}",
-            "get_bbox": six_url + "/notes?bbox={left},{bottom},{right},{top}?limit={limit}?closed={closed_days}",
+            "get_bbox": six_url + "/notes?bbox={left},{bottom},{right},{top}&limit={limit}&closed={closed_days}",
             "create": six_url + "/notes?lat={latitude}&lon={longitude}&text={text}",
             "comment": six_url + "/notes/{id}/comment?text={text}",
             "close": six_url + "/notes/{id}/close",
