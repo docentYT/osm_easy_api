@@ -125,6 +125,7 @@ class User_Container:
                 case 404: raise ValueError("Preference not found")
                 case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
             return {key: response.text}
+        
         generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.YES,
