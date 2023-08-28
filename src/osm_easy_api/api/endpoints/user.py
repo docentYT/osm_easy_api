@@ -49,7 +49,6 @@ class User_Container:
             elif element.tag == "user":
                 user_list.append(deepcopy(temp_user)) 
 
-        if (len(user_list) == 0): raise exceptions.EmptyResult()
         return user_list
 
     def get(self, id: int) -> User:

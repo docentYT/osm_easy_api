@@ -59,7 +59,6 @@ class Changeset_Container:
                 discussion if include_discussion else None
             ))
 
-        if (len(changeset_list) == 0): raise exceptions.EmptyResult()
         return changeset_list
 
     def create(self, comment: str, tags: Tags | None = None) -> int:

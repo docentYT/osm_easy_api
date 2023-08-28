@@ -6,23 +6,20 @@ if TYPE_CHECKING: # pragma: no cover
 from ...api import exceptions
 from ...data_classes import User, Note, Comment
 
-from copy import copy, deepcopy
-from xml.dom import minidom
+from copy import deepcopy
+from xml.etree import ElementTree
 
 class Notes_Container:
     def __init__(self, outer):
         self.outer: "Api" = outer
 
     @staticmethod
-    def _xml_to_note(generator: Generator[Tuple[str, 'ElementTree.Element'], None, None]) -> list[Note]:
-        note_list = []
+    def _xml_to_notes_list(generator: Generator[Tuple[str, 'ElementTree.Element'], None, None]) -> list[Note]:
+        notes_list = []
         temp_note = Note()
         for event, element in generator:
-            if event == "start":
+            if event == "end":
                 match element.tag:
-                    case "note": 
-                        temp_note.longitude = element.attrib["lon"]
-                        temp_note.latitude = element.attrib["lat"]
                     case "id":
                         assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'"
                         temp_note.id = int(element.text)
@@ -57,13 +54,14 @@ class Notes_Container:
                             del temp_user
                             del temp_comment
 
-            elif element.tag == "note":
-                note_list.append(deepcopy(temp_note))
-                temp_note = Note()
-                temp_note.comments = []
+                    case "note":
+                        temp_note.longitude = element.attrib["lon"]
+                        temp_note.latitude = element.attrib["lat"]
+                        notes_list.append(deepcopy(temp_note))
+                        temp_note = Note()
+                        temp_note.comments = []
 
-        if (len(note_list) == 0): raise exceptions.EmptyResult()
-        return note_list
+        return notes_list
 
     def get(self, id: int) -> Note:
         """Returns note with given id.
@@ -82,7 +80,7 @@ class Notes_Container:
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
     
     def get_bbox(self, left: str, bottom: str, right: str, top: str, limit: int = 100, closed_days: int = 7) -> list[Note]:
         """Get notes in bbox.
@@ -102,17 +100,27 @@ class Notes_Container:
             list[Note]: List of notes.
         """
         url=self.outer._url.note["get_bbox"].format(left=left, bottom=bottom, right=right, top=top, limit=limit, closed_days=closed_days)
-        status_code, generator = self.outer._get_generator(
-            url=url,
-            auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=False)
-        
-        match status_code:
+
+        response = self.outer._request(
+            self.outer._RequestMethods.GET,
+            url,
+            self.outer._Requirement.NO,
+            auto_status_code_handling=False,
+            stream=True
+        )
+
+        response.raw.decode_content = True
+        def generator(stream):
+            iterator = ElementTree.iterparse(stream, events=('end', ))
+            for event, element in iterator:
+                yield(event, element)
+
+        match response.status_code:
             case 200: pass
             case 400: raise ValueError("Limits exceeded")
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_note(generator)
+        return self._xml_to_notes_list(generator(response.raw))
     
     def create(self, latitude: str, longitude: str, text: str) -> Note:
         """Creates new note.
@@ -130,7 +138,7 @@ class Notes_Container:
             auth_requirement=self.outer._Requirement.OPTIONAL,
             auto_status_code_handling=True)
         
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
     
     def comment(self, id: int, text: str) -> Note:
         """Add a new comment to note
@@ -157,7 +165,7 @@ class Notes_Container:
             case 409: raise exceptions.NoteAlreadyClosed()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
     
     def close(self, id: int, text: str | None = None) -> Note:
         """Close a note as fixed.
@@ -187,7 +195,7 @@ class Notes_Container:
             case 409: raise exceptions.NoteAlreadyClosed()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
     
     def reopen(self, id: int, text: str | None = None) -> Note:
         """Close a note as fixed.
@@ -218,7 +226,7 @@ class Notes_Container:
             case 410: raise exceptions.ElementDeleted()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
     
     def search(self, text: str, limit: int = 100, closed_days: int = 7, user_id: int | None = None, from_date: str | None = None, to_date: str | None = None, sort: str = "updated_at", order: str = "newest") -> list[Note]:
         """Search for notes with initial text and comments.
@@ -258,6 +266,6 @@ class Notes_Container:
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         try:
-            return self._xml_to_note(generator)
+            return self._xml_to_notes_list(generator)
         except:
             return []
