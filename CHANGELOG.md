@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Working method of parser used in `notes` endpoint.
 - Working method of parsers in `misc` endpoint.
 - Working method of parsers in `user` endpoint.
+- Working method of parsers in `changeset` endpoint.
 ### Removed
 - `EmptyResult` api exception, which was used in endpoints `notes`, `user` and `changeset`. From now on when the results are empty an empty list will be returned.
 
