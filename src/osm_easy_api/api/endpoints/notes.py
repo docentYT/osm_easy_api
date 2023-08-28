@@ -145,8 +145,8 @@ class Notes_Container:
             text (str): Comment text
 
         Raises:
-            exceptions.IdNotFoundError: Cannot find note with given id
-            exceptions.NoteAlreadyClosed: Note is closed
+            exceptions.IdNotFoundError: Cannot find note with given id.
+            exceptions.NoteAlreadyClosed: Note is closed.
 
         Returns:
             Note: Note object of commented note
@@ -169,7 +169,7 @@ class Notes_Container:
 
         Args:
             id (int): Note id.
-            text (str | None, optional): Text to add as comment when closing note. Defaults to None.
+            text (str | None, optional): Text to add as comment when closing the note. Defaults to None.
 
         Raises:
             exceptions.IdNotFoundError: Cannot find note with given id.
@@ -178,7 +178,7 @@ class Notes_Container:
         Returns:
             Note: Note object of closed note.
         """
-        url=self.outer._url.note["close"].format(id=id, text=text)
+        url = self.outer._url.note["close"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
         status_code, generator = self.outer._post_generator(
@@ -199,7 +199,7 @@ class Notes_Container:
 
         Args:
             id (int): Note id.
-            text (str | None, optional): Text to add as comment when closing note. Defaults to None.
+            text (str | None, optional): Text to add as comment when reopening the note. Defaults to None.
 
         Raises:
             exceptions.IdNotFoundError: Cannot find note with given id.
@@ -208,7 +208,7 @@ class Notes_Container:
         Returns:
             Note: Note object of closed note.
         """
-        url=self.outer._url.note["reopen"].format(id=id, text=text)
+        url = self.outer._url.note["reopen"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
         status_code, generator = self.outer._post_generator(
@@ -224,6 +224,36 @@ class Notes_Container:
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         return self._xml_to_notes_list(generator)[0]
+    
+    def hide(self, id: int, text: str | None = None) -> None:
+        """Hide a note.
+
+        Args:
+            id (int): Note id.
+            text (str | None, optional): Text to add as comment when hiding the note. Defaults to None.
+
+        Raises:
+            exceptions.NotAModerator: User does not have a moderator role.
+            exceptions.IdNotFoundError: Cannot find note with given id.
+            exceptions.ElementDeleted: Note already deleted.
+        """
+        url = self.outer._url.note["hide"].format(id=id, text=text)
+        param = f"?text={text}" if text else ""
+
+        status_code, response = self.outer._request(
+            method=self.outer._RequestMethods.DELETE,
+            url=url+param,
+            auth_requirement=self.outer._Requirement.YES,
+            stream=False,
+            auto_status_code_handling=False
+        )
+
+        match status_code:
+            case 200: pass
+            case 403: raise exceptions.NotAModerator()
+            case 404: raise exceptions.IdNotFoundError()
+            case 410: raise exceptions.ElementDeleted()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
     
     def search(self, text: str, limit: int = 100, closed_days: int = 7, user_id: int | None = None, from_date: str | None = None, to_date: str | None = None, sort: str = "updated_at", order: str = "newest") -> list[Note]:
         """Search for notes with initial text and comments.

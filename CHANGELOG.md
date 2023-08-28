@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [X.X.X]
 ### Added
 - Missing status code handling in `notes.get()`.
+- Support for hide note endpoint.
 ### Fixed
 - Problems with parsing data chunks received by api.
+- Small grammar corrections in the documentation.
 ### Changed
 - Working method of parser used in `notes` endpoint.
 - Working method of parsers in `misc` endpoint.
