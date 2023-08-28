@@ -254,7 +254,6 @@ class Notes_Container:
         if sort: url += f"&sort={sort}"
         if order: url += f"&order={order}"
 
-        print(url)
         status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
