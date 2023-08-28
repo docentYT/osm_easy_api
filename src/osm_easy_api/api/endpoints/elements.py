@@ -61,7 +61,7 @@ class Elements_Container:
         """""
         element_name = element.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
-        status_code, generator = self.outer._get_generator(
+        status_code, generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -72,8 +72,8 @@ class Elements_Container:
             case 410: raise exceptions.ElementDeleted()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
         
-        for event, elem in generator:
-            if elem.tag in ("node", "way", "relation") and event == "start":
+        for elem in generator:
+            if elem.tag in ("node", "way", "relation"):
                 object = _element_to_osm_object(elem)
                 return object
             
@@ -156,7 +156,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["history"].format(element_type=element_name, id=id)
-        status_code, generator = self.outer._get_generator(
+        status_code, generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -167,8 +167,8 @@ class Elements_Container:
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
         
         objects_list = []
-        for event, elem in generator:
-            if elem.tag == element_name and event == "start":
+        for elem in generator:
+            if elem.tag == element_name:
                 objects_list.append(_element_to_osm_object(elem))
             
         return objects_list
@@ -190,7 +190,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["version"].format(element_type=element_name, id=id, version=version)
-        status_code, generator = self.outer._get_generator(
+        status_code, generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -201,10 +201,9 @@ class Elements_Container:
             case 404: raise exceptions.IdNotFoundError()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
         
-        for event, elem in generator:
+        for elem in generator:
             if elem.tag in ("node", "way", "relation"):
-                object = _element_to_osm_object(elem)
-                return object
+                return _element_to_osm_object(elem)
         assert False, "[ERROR::API::ENDPOINTS::ELEMENTS::version] Cannot create an element."
     
     def get_query(self, element: type[Node_Way_Relation], ids: list[int]) -> list[Node_Way_Relation]:
@@ -227,7 +226,7 @@ class Elements_Container:
         for id in ids: param += f"{id},"
         param = param[:-1]
         url = self.outer._url.elements["multi_fetch"].format(element_type=element_name) + param
-        status_code, generator = self.outer._get_generator(
+        status_code, generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -240,8 +239,8 @@ class Elements_Container:
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
         
         objects_list = []
-        for event, elem in generator:
-            if elem.tag == element.__name__.lower() and event == "start":
+        for elem in generator:
+            if elem.tag == element.__name__.lower():
                 objects_list.append(_element_to_osm_object(elem))
             
         return objects_list
@@ -258,14 +257,14 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["relations"].format(element_type=element_name, id=id)
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=False)
+            auto_status_code_handling=True)
         
         relations_list = []
-        for event, elem in generator:
-            if elem.tag == "relation" and event == "start":
+        for elem in generator:
+            if elem.tag == "relation":
                 relations_list.append(_element_to_osm_object(elem))
             
         return relations_list
@@ -280,14 +279,14 @@ class Elements_Container:
             list[Way]: List of ways.
         """
         url = self.outer._url.elements["ways"].format(id=node_id)
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=False)
+            auto_status_code_handling=True)
         
         ways_list = []
-        for event, elem in generator:
-            if elem.tag == "way" and event == "start":
+        for elem in generator:
+            if elem.tag == "way":
                 ways_list.append(_element_to_osm_object(elem))
             
         return ways_list
@@ -308,7 +307,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["full"].format(element_type = element_name, id=id)
-        status_code, generator = self.outer._get_generator(
+        status_code, generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -322,17 +321,16 @@ class Elements_Container:
         nodes_dict: dict[int, Node] = {}
         ways_dict:  dict[int, Way]  = {}
         relations_dict: dict[int, Relation] = {}
-        for event, elem in generator:
-            if event == "start":
-                if elem.tag == "node":
-                    node = _element_to_osm_object(elem)
-                    nodes_dict.update({node.id: node})
-                if elem.tag == "way":
-                    way = _element_to_osm_object(elem)
-                    ways_dict.update({way.id: way})
-                if elem.tag == "relation" and element_name == "relation":
-                    relation = _element_to_osm_object(elem)
-                    relations_dict.update({relation.id: relation})
+        for elem in generator:
+            if elem.tag == "node":
+                node = _element_to_osm_object(elem)
+                nodes_dict.update({node.id: node})
+            if elem.tag == "way":
+                way = _element_to_osm_object(elem)
+                ways_dict.update({way.id: way})
+            if elem.tag == "relation" and element_name == "relation":
+                relation = _element_to_osm_object(elem)
+                relations_dict.update({relation.id: relation})
         
         for way_id in ways_dict:
             for i in range(len(ways_dict[way_id].nodes)):
