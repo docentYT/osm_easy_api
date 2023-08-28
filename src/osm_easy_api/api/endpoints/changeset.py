@@ -220,7 +220,7 @@ class Changeset_Container:
             case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
         response.raw.decode_content = True
-        return self._xml_to_changesets_list(self.outer._raw_stream_parser_v2(response.raw), True)[0]
+        return self._xml_to_changesets_list(self.outer._raw_stream_parser(response.raw), True)[0]
 
     def close(self, id: int) -> None:
         """Close changeset by ID.

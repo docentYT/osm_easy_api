@@ -130,7 +130,7 @@ class Notes_Container:
         Returns:
             Note: Object of newly created note.
         """
-        generator = self.outer._post_generator_v2(
+        generator = self.outer._post_generator(
             url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=text),
             auth_requirement=self.outer._Requirement.OPTIONAL,
             auto_status_code_handling=True)
@@ -151,7 +151,7 @@ class Notes_Container:
         Returns:
             Note: Note object of commented note
         """
-        status_code, generator = self.outer._post_generator_v2(
+        status_code, generator = self.outer._post_generator(
             url=self.outer._url.note["comment"].format(id=id, text=text),
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
@@ -181,7 +181,7 @@ class Notes_Container:
         url=self.outer._url.note["close"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, generator = self.outer._post_generator_v2(
+        status_code, generator = self.outer._post_generator(
             url=url+param,
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
@@ -211,7 +211,7 @@ class Notes_Container:
         url=self.outer._url.note["reopen"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, generator = self.outer._post_generator_v2(
+        status_code, generator = self.outer._post_generator(
             url=url+param,
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
