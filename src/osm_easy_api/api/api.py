@@ -66,6 +66,13 @@ class Api():
             yield(event, element)
             element.clear()
     
+    @staticmethod
+    def _raw_stream_parser_v2(xml_raw_stream: "HTTPResponse") -> Generator[ElementTree.Element, None, None]:
+            iterator = ElementTree.iterparse(xml_raw_stream, events=('end', ))
+            for event, element in iterator:
+                yield element
+
+
     def _get_generator(self, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, auto_status_code_handling: bool = True) -> Generator[Tuple[str, ElementTree.Element], None, None] | Tuple[int, Generator[Tuple[str, ElementTree.Element], None, None]]:
         response = self._request(self._RequestMethods.GET, url, auth_requirement, auto_status_code_handling=auto_status_code_handling, stream=True)
         response.raw.decode_content = True
@@ -74,6 +81,14 @@ class Api():
         else:
             return (response.status_code, self._raw_stream_parser(response.raw))
         
+    def _get_generator_v2(self, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, auto_status_code_handling: bool = True) -> Generator[ElementTree.Element, None, None] | Tuple[int, Generator[ElementTree.Element, None, None]]:
+        response = self._request(self._RequestMethods.GET, url, auth_requirement, auto_status_code_handling=auto_status_code_handling, stream=True)
+        response.raw.decode_content = True
+        if auto_status_code_handling:
+            return self._raw_stream_parser_v2(response.raw)
+        else:
+            return (response.status_code, self._raw_stream_parser_v2(response.raw))
+        
     def _post_generator(self, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, auto_status_code_handling: bool = True) -> Generator[Tuple[str, ElementTree.Element], None, None] | Tuple[int, Generator[Tuple[str, ElementTree.Element], None, None]]:
         response = self._request(self._RequestMethods.POST, url, auth_requirement, auto_status_code_handling=auto_status_code_handling, stream=True)
         response.raw.decode_content = True
@@ -81,3 +96,11 @@ class Api():
             return self._raw_stream_parser(response.raw)
         else:
             return (response.status_code, self._raw_stream_parser(response.raw))
+        
+    def _post_generator_v2(self, url: str, auth_requirement: _Requirement = _Requirement.OPTIONAL, auto_status_code_handling: bool = True) -> Generator[ElementTree.Element, None, None] | Tuple[int, Generator[ElementTree.Element, None, None]]:
+        response = self._request(self._RequestMethods.POST, url, auth_requirement, auto_status_code_handling=auto_status_code_handling, stream=True)
+        response.raw.decode_content = True
+        if auto_status_code_handling:
+            return self._raw_stream_parser_v2(response.raw)
+        else:
+            return (response.status_code, self._raw_stream_parser_v2(response.raw))

@@ -14,52 +14,53 @@ class Notes_Container:
         self.outer: "Api" = outer
 
     @staticmethod
-    def _xml_to_notes_list(generator: Generator[Tuple[str, 'ElementTree.Element'], None, None]) -> list[Note]:
+    def _xml_to_notes_list(generator: Generator['ElementTree.Element', None, None]) -> list[Note]:
         notes_list = []
         temp_note = Note()
-        for event, element in generator:
-            if event == "end":
-                match element.tag:
-                    case "id":
-                        assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'"
-                        temp_note.id = int(element.text)
-                    case "date_created":
-                        temp_note.note_created_at = element.text
-                    case "status":
-                        temp_note.open = True if element.text == "open" else False
-                    case "comments":
-                        for comment in element:
-                            temp_comment = Comment()
-                            temp_user = User()
-                            for comment_tag in comment:
-                                # Comment specific data
-                                if comment_tag.tag == "date":
-                                    assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'date'"
-                                    temp_comment.comment_created_at = comment_tag.text
-                                # User specific data
-                                elif comment_tag.tag == "uid":
-                                    assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'uid'"
-                                    temp_user.id = int(comment_tag.text)
-                                elif comment_tag.tag == "user":
-                                    temp_user.display_name = comment_tag.text
-                                    temp_comment.user = deepcopy(temp_user)
-                                # Comment specific data
-                                elif comment_tag.tag == "action":
-                                    temp_comment.action = comment_tag.text
-                                elif comment_tag.tag == "text":
-                                    temp_comment.text = comment_tag.text or ""
-                                elif comment_tag.tag == "html":
-                                    temp_comment.html = comment_tag.text or ""
-                            temp_note.comments.append(deepcopy(temp_comment))
-                            del temp_user
-                            del temp_comment
+        for element in generator:
+            match element.tag:
+                case "id":
+                    assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'"
+                    temp_note.id = int(element.text)
+                case "date_created":
+                    temp_note.note_created_at = element.text
+                case "status":
+                    temp_note.open = True if element.text == "open" else False
+                case "comments":
+                    for comment in element:
+                        temp_comment = Comment()
+                        temp_user = User()
+                        for comment_tag in comment:
+                            # Comment specific data
+                            if comment_tag.tag == "date":
+                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'date'"
+                                temp_comment.comment_created_at = comment_tag.text
+                            # User specific data
+                            elif comment_tag.tag == "uid":
+                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'uid'"
+                                temp_user.id = int(comment_tag.text)
+                            elif comment_tag.tag == "user":
+                                temp_user.display_name = comment_tag.text
+                                temp_comment.user = deepcopy(temp_user)
+                            # Comment specific data
+                            elif comment_tag.tag == "action":
+                                temp_comment.action = comment_tag.text
+                            elif comment_tag.tag == "text":
+                                temp_comment.text = comment_tag.text or ""
+                            elif comment_tag.tag == "html":
+                                temp_comment.html = comment_tag.text or ""
+                            comment_tag.clear()
+                        temp_note.comments.append(deepcopy(temp_comment))
+                        del temp_user
+                        del temp_comment
 
-                    case "note":
-                        temp_note.longitude = element.attrib["lon"]
-                        temp_note.latitude = element.attrib["lat"]
-                        notes_list.append(deepcopy(temp_note))
-                        temp_note = Note()
-                        temp_note.comments = []
+                case "note":
+                    temp_note.longitude = element.attrib["lon"]
+                    temp_note.latitude = element.attrib["lat"]
+                    notes_list.append(deepcopy(temp_note))
+                    temp_note = Note()
+                    temp_note.comments = []
+                    element.clear()
 
         return notes_list
 
@@ -75,10 +76,14 @@ class Notes_Container:
         Returns:
             Note: Note object.
         """
-        status_code, generator = self.outer._get_generator(
+        status_code, generator = self.outer._get_generator_v2(
             url=self.outer._url.note["get"].format(id=id),
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
+        
+        match status_code:
+            case 200: pass
+            case 404: raise exceptions.IdNotFoundError()
         
         return self._xml_to_notes_list(generator)[0]
     
@@ -101,26 +106,18 @@ class Notes_Container:
         """
         url=self.outer._url.note["get_bbox"].format(left=left, bottom=bottom, right=right, top=top, limit=limit, closed_days=closed_days)
 
-        response = self.outer._request(
-            self.outer._RequestMethods.GET,
-            url,
-            self.outer._Requirement.NO,
-            auto_status_code_handling=False,
-            stream=True
+        status_code, generator = self.outer._get_generator_v2(
+            url=url,
+            auth_requirement=self.outer._Requirement.NO,
+            auto_status_code_handling=False
         )
 
-        response.raw.decode_content = True
-        def generator(stream):
-            iterator = ElementTree.iterparse(stream, events=('end', ))
-            for event, element in iterator:
-                yield(event, element)
-
-        match response.status_code:
+        match status_code:
             case 200: pass
             case 400: raise ValueError("Limits exceeded")
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_notes_list(generator(response.raw))
+        return self._xml_to_notes_list(generator)
     
     def create(self, latitude: str, longitude: str, text: str) -> Note:
         """Creates new note.
@@ -133,7 +130,7 @@ class Notes_Container:
         Returns:
             Note: Object of newly created note.
         """
-        generator = self.outer._post_generator(
+        generator = self.outer._post_generator_v2(
             url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=text),
             auth_requirement=self.outer._Requirement.OPTIONAL,
             auto_status_code_handling=True)
@@ -154,7 +151,7 @@ class Notes_Container:
         Returns:
             Note: Note object of commented note
         """
-        status_code, generator = self.outer._post_generator(
+        status_code, generator = self.outer._post_generator_v2(
             url=self.outer._url.note["comment"].format(id=id, text=text),
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
@@ -184,7 +181,7 @@ class Notes_Container:
         url=self.outer._url.note["close"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, generator = self.outer._post_generator(
+        status_code, generator = self.outer._post_generator_v2(
             url=url+param,
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
@@ -214,7 +211,7 @@ class Notes_Container:
         url=self.outer._url.note["reopen"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, generator = self.outer._post_generator(
+        status_code, generator = self.outer._post_generator_v2(
             url=url+param,
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
@@ -254,7 +251,7 @@ class Notes_Container:
         if sort: url += f"&sort={sort}"
         if order: url += f"&order={order}"
 
-        status_code, generator = self.outer._get_generator(
+        status_code, generator = self.outer._get_generator_v2(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
