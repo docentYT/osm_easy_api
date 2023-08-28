@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generator, Tuple
+from typing import TYPE_CHECKING, Generator
 if TYPE_CHECKING: # pragma: no cover
     from xml.etree import ElementTree
     from ...api import Api

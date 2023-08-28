@@ -1,5 +1,4 @@
 from xml.dom import minidom
-from copy import copy
 
 from typing import TYPE_CHECKING, Generator, Tuple
 if TYPE_CHECKING: # pragma: no cover

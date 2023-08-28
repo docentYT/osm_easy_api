@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, TypeVar
 if TYPE_CHECKING: # pragma: no cover
     from ...api import Api
-    from xml.etree import ElementTree
 
 from copy import deepcopy
 
