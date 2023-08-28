@@ -61,7 +61,7 @@ class Elements_Container:
         """""
         element_name = element.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -156,7 +156,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["history"].format(element_type=element_name, id=id)
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -190,7 +190,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["version"].format(element_type=element_name, id=id, version=version)
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -226,7 +226,7 @@ class Elements_Container:
         for id in ids: param += f"{id},"
         param = param[:-1]
         url = self.outer._url.elements["multi_fetch"].format(element_type=element_name) + param
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -257,7 +257,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["relations"].format(element_type=element_name, id=id)
-        generator = self.outer._get_generator_v2(
+        generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
@@ -279,7 +279,7 @@ class Elements_Container:
             list[Way]: List of ways.
         """
         url = self.outer._url.elements["ways"].format(id=node_id)
-        generator = self.outer._get_generator_v2(
+        generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
@@ -307,7 +307,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["full"].format(element_type = element_name, id=id)
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)

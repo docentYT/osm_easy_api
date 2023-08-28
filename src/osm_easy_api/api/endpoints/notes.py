@@ -76,7 +76,7 @@ class Notes_Container:
         Returns:
             Note: Note object.
         """
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=self.outer._url.note["get"].format(id=id),
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -106,7 +106,7 @@ class Notes_Container:
         """
         url=self.outer._url.note["get_bbox"].format(left=left, bottom=bottom, right=right, top=top, limit=limit, closed_days=closed_days)
 
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False
@@ -251,7 +251,7 @@ class Notes_Container:
         if sort: url += f"&sort={sort}"
         if order: url += f"&order={order}"
 
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)

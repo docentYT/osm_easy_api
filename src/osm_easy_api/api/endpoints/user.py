@@ -64,7 +64,7 @@ class User_Container:
         Returns:
             User: User object.
         """
-        generator = self.outer._get_generator_v2(
+        generator = self.outer._get_generator(
             url=self.outer._url.user["get"].format(id=id),
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
@@ -84,7 +84,7 @@ class User_Container:
         for id in ids:
             param += f"{id},"
         param = param[:-1]
-        generator = self.outer._get_generator_v2(
+        generator = self.outer._get_generator(
             url=self.outer._url.user["get_query"] + param,
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
@@ -97,7 +97,7 @@ class User_Container:
         Returns:
             User: User object.
         """
-        generator = self.outer._get_generator_v2(
+        generator = self.outer._get_generator(
             url=self.outer._url.user["get_current"],
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=True)
@@ -126,7 +126,7 @@ class User_Container:
                 case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
             return {key: response.text}
         
-        generator = self.outer._get_generator_v2(
+        generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=True)

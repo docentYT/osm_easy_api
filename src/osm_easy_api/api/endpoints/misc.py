@@ -21,7 +21,7 @@ class Misc_Container:
             Returns:
                 list: List of supported versions by instance.
             """
-            gen: Generator['ElementTree.Element', None, None] = self.outer._get_generator_v2(self.outer._url.misc["versions"])
+            gen: Generator['ElementTree.Element', None, None] = self.outer._get_generator(self.outer._url.misc["versions"])
             versions = []
             for element in gen:
                 if element.tag == "version": versions.append(element.text)
@@ -55,7 +55,7 @@ class Misc_Container:
                             dict["policy"]["imagery"]["blacklist_regex"].append(blacklist.attrib["regex"])
 
             HEAD_TAGS = ("osm", "api", "policy")
-            gen: Generator['ElementTree.Element', None, None] = self.outer._get_generator_v2(self.outer._url.misc["capabilities"])
+            gen: Generator['ElementTree.Element', None, None] = self.outer._get_generator(self.outer._url.misc["capabilities"])
             return_dict = {}
 
             for element in gen:
@@ -107,7 +107,7 @@ class Misc_Container:
             Returns:
                 list: List of permissions names.
             """
-            gen = self.outer._get_generator_v2(self.outer._url.misc["permissions"])
+            gen = self.outer._get_generator(self.outer._url.misc["permissions"])
             return_permission_list = []
 
             for element in gen:

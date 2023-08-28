@@ -102,7 +102,7 @@ class Changeset_Container:
         """
         include_discussion_text = "true" if include_discussion else "false"
         param = f"{id}?include_discussion={include_discussion_text}"
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=join_url(self.outer._url.changeset["get"], param),
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
@@ -160,7 +160,7 @@ class Changeset_Container:
             param += "&"
         param+=f"limit={limit}"
 
-        status_code, generator = self.outer._get_generator_v2(
+        status_code, generator = self.outer._get_generator(
             url=join_url(self.outer._url.changeset["get_query"], param),
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
