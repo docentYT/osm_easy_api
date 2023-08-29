@@ -62,5 +62,6 @@ class URLs:
             "comment": six_url + "/notes/{id}/comment?text={text}",
             "close": six_url + "/notes/{id}/close",
             "reopen": six_url + "/notes/{id}/reopen",
+            "hide": six_url + "/notes/{id}",
             "search": six_url + "/notes/search?q={text}&limit={limit}&closed={closed}"
         }

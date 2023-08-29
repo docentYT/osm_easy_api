@@ -3,8 +3,6 @@ import shutil
 if TYPE_CHECKING: # pragma: no cover
     from ...api import Api
 
-from ...api import exceptions
-
 # TODO: GPX full support and parser
 
 class Gpx_Container:

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generator, Tuple
+from typing import TYPE_CHECKING, Generator
 if TYPE_CHECKING: # pragma: no cover
     from xml.etree import ElementTree
     from ... import Node, Way, Relation
@@ -21,10 +21,10 @@ class Misc_Container:
             Returns:
                 list: List of supported versions by instance.
             """
-            gen: Generator[Tuple[str, 'ElementTree.Element'], None, None] = self.outer._get_generator(self.outer._url.misc["versions"])
+            gen: Generator['ElementTree.Element', None, None] = self.outer._get_generator(self.outer._url.misc["versions"])
             versions = []
-            for event, element in gen:
-                if element.tag == "version" and event == "start": versions.append(element.text)
+            for element in gen:
+                if element.tag == "version": versions.append(element.text)
             if len(versions) == 0: raise ValueError("[ERROR::API::MISC::versions] CAN'T FIND version")
             return versions
         
@@ -55,15 +55,16 @@ class Misc_Container:
                             dict["policy"]["imagery"]["blacklist_regex"].append(blacklist.attrib["regex"])
 
             HEAD_TAGS = ("osm", "api", "policy")
-            gen: Generator[Tuple[str, 'ElementTree.Element'], None, None] = self.outer._get_generator(self.outer._url.misc["capabilities"])
+            gen: Generator['ElementTree.Element', None, None] = self.outer._get_generator(self.outer._url.misc["capabilities"])
             return_dict = {}
 
-            for event, element in gen:
-                if element.tag in HEAD_TAGS and event == "start":
+            for element in gen:
+                if element.tag in HEAD_TAGS:
                     match element.tag:
                         case "osm": osm_parser(return_dict, element)
                         case "api": api_parser(return_dict, element)
                         case "policy": policy_parser(return_dict, element)
+                    element.clear()
 
             return return_dict
 
@@ -106,10 +107,10 @@ class Misc_Container:
             Returns:
                 list: List of permissions names.
             """
-            gen: Generator[Tuple[str, 'ElementTree.Element'], None, None] = self.outer._get_generator(self.outer._url.misc["permissions"])
+            gen = self.outer._get_generator(self.outer._url.misc["permissions"])
             return_permission_list = []
 
-            for event, element in gen:
-                if element.tag == "permission" and event == "start":
+            for element in gen:
+                if element.tag == "permission":
                     return_permission_list.append(element.attrib["name"])
             return return_permission_list

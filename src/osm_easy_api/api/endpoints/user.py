@@ -1,9 +1,8 @@
-from typing import TYPE_CHECKING, Generator, Tuple
+from typing import TYPE_CHECKING, Generator
 if TYPE_CHECKING: # pragma: no cover
     from xml.etree import ElementTree
     from ...api import Api
 
-from ...api import exceptions
 from ...data_classes import User
 
 from copy import deepcopy
@@ -14,43 +13,46 @@ class User_Container:
         self.outer: "Api" = outer
 
     @staticmethod
-    def _xml_to_user(generator: Generator[Tuple[str, 'ElementTree.Element'], None, None]) -> list[User]:
-        user_list = []
+    def _xml_to_users_list(generator: Generator['ElementTree.Element', None, None]) -> list[User]:
+        users_list = []
         temp_user = User()
-        for event, element in generator:
-            if event == "start":
-                match element.tag:
-                    case "user":
-                        temp_user = User(id=int(element.attrib["id"]), display_name=element.attrib["display_name"], account_created_at=element.attrib["account_created"])
-                    case "description":
-                        temp_user.description = element.text
-                    case "contributor-terms":
-                        temp_user.contributor_terms_agreed = bool(element.attrib["agreed"])
-                    case "img":
-                        temp_user.img_url = element.attrib["href"]
-                    case "roles":
-                        temp_user.roles = []
-                        for role in element:
-                            temp_user.roles.append(role.tag)
-                    case "changesets":
-                        temp_user.changesets_count = int(element.attrib["count"])
-                    case "traces":
-                        temp_user.traces_count = int(element.attrib["count"])
-                    case "blocks":
-                        for block_type in element:
-                            temp_user.blocks = {"received": {"count": 0, "active": 0}, "issued": {"count": 0, "active": 0}}
-                            if block_type.tag == "received":
-                                temp_user.blocks["received"]["count"] = int(block_type.attrib["count"])
-                                temp_user.blocks["received"]["active"] = int(block_type.attrib["active"])
-                            elif block_type.tag == "issued":
-                                temp_user.blocks["issued"]["count"] = int(block_type.attrib["count"])
-                                temp_user.blocks["issued"]["active"] = int(block_type.attrib["active"])
+        for element in generator:
+            match element.tag:
+                case "description":
+                    temp_user.description = element.text
+                case "contributor-terms":
+                    temp_user.contributor_terms_agreed = bool(element.attrib["agreed"])
+                case "img":
+                    temp_user.img_url = element.attrib["href"]
+                case "roles":
+                    temp_user.roles = []
+                    for role in element:
+                        temp_user.roles.append(role.tag)
+                        element.clear()
+                case "changesets":
+                    temp_user.changesets_count = int(element.attrib["count"])
+                case "traces":
+                    temp_user.traces_count = int(element.attrib["count"])
+                case "blocks":
+                    for block_type in element:
+                        temp_user.blocks = {"received": {"count": 0, "active": 0}, "issued": {"count": 0, "active": 0}}
+                        if block_type.tag == "received":
+                            temp_user.blocks["received"]["count"] = int(block_type.attrib["count"])
+                            temp_user.blocks["received"]["active"] = int(block_type.attrib["active"])
+                        elif block_type.tag == "issued":
+                            temp_user.blocks["issued"]["count"] = int(block_type.attrib["count"])
+                            temp_user.blocks["issued"]["active"] = int(block_type.attrib["active"])
 
-            elif element.tag == "user":
-                user_list.append(deepcopy(temp_user)) 
+                case "user":
+                    temp_user.id = int(element.attrib["id"])
+                    temp_user.display_name = element.attrib["display_name"]
+                    temp_user.account_created_at = element.attrib["account_created"]
+                    # temp_user = User(id=int(element.attrib["id"]), display_name=element.attrib["display_name"], account_created_at=element.attrib["account_created"])
+                    users_list.append(deepcopy(temp_user))
+                    temp_user = User()
+                    element.clear()
 
-        if (len(user_list) == 0): raise exceptions.EmptyResult()
-        return user_list
+        return users_list
 
     def get(self, id: int) -> User:
         """Get user data by id.
@@ -66,7 +68,7 @@ class User_Container:
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
         
-        return self._xml_to_user(generator)[0]
+        return self._xml_to_users_list(generator)[0]
     
     def get_query(self, ids: list[int]) -> list[User]:
         """Search for multiple users on one call.
@@ -86,7 +88,7 @@ class User_Container:
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
         
-        return self._xml_to_user(generator)
+        return self._xml_to_users_list(generator)
     
     def get_current(self) -> User:
         """Get User object for current authenticated user.
@@ -99,7 +101,7 @@ class User_Container:
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=True)
         
-        return self._xml_to_user(generator)[0]
+        return self._xml_to_users_list(generator)[0]
     
     def get_preferences(self, key: str | None = None) -> dict[str, str]:
         """Get preferences for current logged user.
@@ -122,15 +124,17 @@ class User_Container:
                 case 404: raise ValueError("Preference not found")
                 case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
             return {key: response.text}
+        
         generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=True)
         
         preferences = {}
-        for event, element in generator:
-            if event == "start" and element.tag == "preference":
+        for element in generator:
+            if element.tag == "preference":
                 preferences.update({element.attrib["k"]: element.attrib["v"]})
+                element.clear()
         return preferences
     
     def set_preferences(self, preferences: dict[str, str]) -> None:

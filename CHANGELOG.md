@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0]
+### Added
+- Missing status code handling in `notes.get()`.
+- Support for hide note endpoint.
+### Fixed
+- Problems with parsing data chunks received by api.
+- Small grammar corrections in the documentation.
+### Changed
+- Working method of parser used in `notes` endpoint.
+- Working method of parsers in `misc` endpoint.
+- Working method of parsers in `user` endpoint.
+- Working method of parsers in `changeset` endpoint.
+- Working method of parsers in `elements` endpoint.
+### Removed
+- `EmptyResult` api exception, which was used in endpoints `notes`, `user` and `changeset`. From now on when the results are empty an empty list will be returned.
+- Unused imports.
+
 ## [1.1.1]
 ### Fixed
 - Corrected character when adding parameters in endpoint `api.notes.get_bbox()` (from `?` to `&`).

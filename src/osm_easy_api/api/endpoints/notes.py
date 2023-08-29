@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generator, Tuple
+from typing import TYPE_CHECKING, Generator
 if TYPE_CHECKING: # pragma: no cover
     from xml.etree import ElementTree
     from ...api import Api
@@ -6,64 +6,63 @@ if TYPE_CHECKING: # pragma: no cover
 from ...api import exceptions
 from ...data_classes import User, Note, Comment
 
-from copy import copy, deepcopy
-from xml.dom import minidom
+from copy import deepcopy
+from xml.etree import ElementTree
 
 class Notes_Container:
     def __init__(self, outer):
         self.outer: "Api" = outer
 
     @staticmethod
-    def _xml_to_note(generator: Generator[Tuple[str, 'ElementTree.Element'], None, None]) -> list[Note]:
-        note_list = []
+    def _xml_to_notes_list(generator: Generator['ElementTree.Element', None, None]) -> list[Note]:
+        notes_list = []
         temp_note = Note()
-        for event, element in generator:
-            if event == "start":
-                match element.tag:
-                    case "note": 
-                        temp_note.longitude = element.attrib["lon"]
-                        temp_note.latitude = element.attrib["lat"]
-                    case "id":
-                        assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'"
-                        temp_note.id = int(element.text)
-                    case "date_created":
-                        temp_note.note_created_at = element.text
-                    case "status":
-                        temp_note.open = True if element.text == "open" else False
-                    case "comments":
-                        for comment in element:
-                            temp_comment = Comment()
-                            temp_user = User()
-                            for comment_tag in comment:
-                                # Comment specific data
-                                if comment_tag.tag == "date":
-                                    assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'date'"
-                                    temp_comment.comment_created_at = comment_tag.text
-                                # User specific data
-                                elif comment_tag.tag == "uid":
-                                    assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'uid'"
-                                    temp_user.id = int(comment_tag.text)
-                                elif comment_tag.tag == "user":
-                                    temp_user.display_name = comment_tag.text
-                                    temp_comment.user = deepcopy(temp_user)
-                                # Comment specific data
-                                elif comment_tag.tag == "action":
-                                    temp_comment.action = comment_tag.text
-                                elif comment_tag.tag == "text":
-                                    temp_comment.text = comment_tag.text or ""
-                                elif comment_tag.tag == "html":
-                                    temp_comment.html = comment_tag.text or ""
-                            temp_note.comments.append(deepcopy(temp_comment))
-                            del temp_user
-                            del temp_comment
+        for element in generator:
+            match element.tag:
+                case "id":
+                    assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'"
+                    temp_note.id = int(element.text)
+                case "date_created":
+                    temp_note.note_created_at = element.text
+                case "status":
+                    temp_note.open = True if element.text == "open" else False
+                case "comments":
+                    for comment in element:
+                        temp_comment = Comment()
+                        temp_user = User()
+                        for comment_tag in comment:
+                            # Comment specific data
+                            if comment_tag.tag == "date":
+                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'date'"
+                                temp_comment.comment_created_at = comment_tag.text
+                            # User specific data
+                            elif comment_tag.tag == "uid":
+                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'uid'"
+                                temp_user.id = int(comment_tag.text)
+                            elif comment_tag.tag == "user":
+                                temp_user.display_name = comment_tag.text
+                                temp_comment.user = deepcopy(temp_user)
+                            # Comment specific data
+                            elif comment_tag.tag == "action":
+                                temp_comment.action = comment_tag.text
+                            elif comment_tag.tag == "text":
+                                temp_comment.text = comment_tag.text or ""
+                            elif comment_tag.tag == "html":
+                                temp_comment.html = comment_tag.text or ""
+                            comment_tag.clear()
+                        temp_note.comments.append(deepcopy(temp_comment))
+                        del temp_user
+                        del temp_comment
 
-            elif element.tag == "note":
-                note_list.append(deepcopy(temp_note))
-                temp_note = Note()
-                temp_note.comments = []
+                case "note":
+                    temp_note.longitude = element.attrib["lon"]
+                    temp_note.latitude = element.attrib["lat"]
+                    notes_list.append(deepcopy(temp_note))
+                    temp_note = Note()
+                    temp_note.comments = []
+                    element.clear()
 
-        if (len(note_list) == 0): raise exceptions.EmptyResult()
-        return note_list
+        return notes_list
 
     def get(self, id: int) -> Note:
         """Returns note with given id.
@@ -82,7 +81,11 @@ class Notes_Container:
             auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
-        return self._xml_to_note(generator)[0]
+        match status_code:
+            case 200: pass
+            case 404: raise exceptions.IdNotFoundError()
+        
+        return self._xml_to_notes_list(generator)[0]
     
     def get_bbox(self, left: str, bottom: str, right: str, top: str, limit: int = 100, closed_days: int = 7) -> list[Note]:
         """Get notes in bbox.
@@ -102,17 +105,19 @@ class Notes_Container:
             list[Note]: List of notes.
         """
         url=self.outer._url.note["get_bbox"].format(left=left, bottom=bottom, right=right, top=top, limit=limit, closed_days=closed_days)
+
         status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=False)
-        
+            auto_status_code_handling=False
+        )
+
         match status_code:
             case 200: pass
             case 400: raise ValueError("Limits exceeded")
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_note(generator)
+        return self._xml_to_notes_list(generator)
     
     def create(self, latitude: str, longitude: str, text: str) -> Note:
         """Creates new note.
@@ -130,7 +135,7 @@ class Notes_Container:
             auth_requirement=self.outer._Requirement.OPTIONAL,
             auto_status_code_handling=True)
         
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
     
     def comment(self, id: int, text: str) -> Note:
         """Add a new comment to note
@@ -140,8 +145,8 @@ class Notes_Container:
             text (str): Comment text
 
         Raises:
-            exceptions.IdNotFoundError: Cannot find note with given id
-            exceptions.NoteAlreadyClosed: Note is closed
+            exceptions.IdNotFoundError: Cannot find note with given id.
+            exceptions.NoteAlreadyClosed: Note is closed.
 
         Returns:
             Note: Note object of commented note
@@ -157,14 +162,14 @@ class Notes_Container:
             case 409: raise exceptions.NoteAlreadyClosed()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
     
     def close(self, id: int, text: str | None = None) -> Note:
         """Close a note as fixed.
 
         Args:
             id (int): Note id.
-            text (str | None, optional): Text to add as comment when closing note. Defaults to None.
+            text (str | None, optional): Text to add as comment when closing the note. Defaults to None.
 
         Raises:
             exceptions.IdNotFoundError: Cannot find note with given id.
@@ -173,7 +178,7 @@ class Notes_Container:
         Returns:
             Note: Note object of closed note.
         """
-        url=self.outer._url.note["close"].format(id=id, text=text)
+        url = self.outer._url.note["close"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
         status_code, generator = self.outer._post_generator(
@@ -187,14 +192,14 @@ class Notes_Container:
             case 409: raise exceptions.NoteAlreadyClosed()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
     
     def reopen(self, id: int, text: str | None = None) -> Note:
         """Close a note as fixed.
 
         Args:
             id (int): Note id.
-            text (str | None, optional): Text to add as comment when closing note. Defaults to None.
+            text (str | None, optional): Text to add as comment when reopening the note. Defaults to None.
 
         Raises:
             exceptions.IdNotFoundError: Cannot find note with given id.
@@ -203,7 +208,7 @@ class Notes_Container:
         Returns:
             Note: Note object of closed note.
         """
-        url=self.outer._url.note["reopen"].format(id=id, text=text)
+        url = self.outer._url.note["reopen"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
         status_code, generator = self.outer._post_generator(
@@ -218,7 +223,37 @@ class Notes_Container:
             case 410: raise exceptions.ElementDeleted()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_note(generator)[0]
+        return self._xml_to_notes_list(generator)[0]
+    
+    def hide(self, id: int, text: str | None = None) -> None:
+        """Hide a note.
+
+        Args:
+            id (int): Note id.
+            text (str | None, optional): Text to add as comment when hiding the note. Defaults to None.
+
+        Raises:
+            exceptions.NotAModerator: User does not have a moderator role.
+            exceptions.IdNotFoundError: Cannot find note with given id.
+            exceptions.ElementDeleted: Note already deleted.
+        """
+        url = self.outer._url.note["hide"].format(id=id, text=text)
+        param = f"?text={text}" if text else ""
+
+        status_code, response = self.outer._request(
+            method=self.outer._RequestMethods.DELETE,
+            url=url+param,
+            auth_requirement=self.outer._Requirement.YES,
+            stream=False,
+            auto_status_code_handling=False
+        )
+
+        match status_code:
+            case 200: pass
+            case 403: raise exceptions.NotAModerator()
+            case 404: raise exceptions.IdNotFoundError()
+            case 410: raise exceptions.ElementDeleted()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
     
     def search(self, text: str, limit: int = 100, closed_days: int = 7, user_id: int | None = None, from_date: str | None = None, to_date: str | None = None, sort: str = "updated_at", order: str = "newest") -> list[Note]:
         """Search for notes with initial text and comments.
@@ -246,7 +281,6 @@ class Notes_Container:
         if sort: url += f"&sort={sort}"
         if order: url += f"&order={order}"
 
-        print(url)
         status_code, generator = self.outer._get_generator(
             url=url,
             auth_requirement=self.outer._Requirement.NO,
@@ -258,6 +292,6 @@ class Notes_Container:
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         try:
-            return self._xml_to_note(generator)
+            return self._xml_to_notes_list(generator)
         except:
             return []

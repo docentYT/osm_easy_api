@@ -1,5 +1,4 @@
 from xml.dom import minidom
-from copy import copy
 
 from typing import TYPE_CHECKING, Generator, Tuple
 if TYPE_CHECKING: # pragma: no cover
@@ -22,45 +21,41 @@ class Changeset_Container:
         self.discussion = Changeset_Discussion_Container(outer)
 
     @staticmethod
-    def _xml_to_changeset(generator: Generator[Tuple[str, 'ElementTree.Element'], None, None], include_discussion: bool = False) -> list[Changeset]:
+    def _xml_to_changesets_list(generator: Generator['ElementTree.Element', None, None], include_discussion: bool = False) -> list[Changeset]:
         """Creates Changeset instance from xml provided by API
 
         Args:
-            generator (Generator[Tuple[str, ElementTree.Element], None, None]): Generator for xml file.
+            generator (Generator[ElementTree.Element, None, None]): Generator for xml file.
             include_discussion (bool, optional): Whether xml from generator has included discussion or not. Defaults to False.
 
         Returns:
             list[Changeset]: list of Changeset objects.
         """
-        changeset_list = []
-
+        changesets_list = []
         tags = Tags()
         discussion = []
-        changeset_element = None
-        for event, element in generator:
-            if element.tag == "changeset" and event == "start":
-                tags = Tags()
-                changeset_element = copy(element)
-            elif element.tag == "tag" and event == "start":
-                tags.update({element.attrib["k"]: element.attrib["v"]})
-            elif include_discussion and element.tag == "discussion" and event == "start":
-                for comment in element:
-                    discussion.append({"date": comment.attrib["date"], "user_id": comment.attrib["uid"], "text": comment[0].text})
-            if element.tag == "changeset" and event == "end":
-                assert changeset_element, "No changeset element in API response for get changeset. Should not happen."
-                changeset_list.append(Changeset(
-                int(changeset_element.attrib["id"]),
-                changeset_element.attrib["created_at"],
-                True if changeset_element.attrib["open"] == "true" else False,
-                changeset_element.attrib["uid"],
-                changeset_element.attrib["comments_count"],
-                changeset_element.attrib["changes_count"],
-                tags,
-                discussion if include_discussion else None
-            ))
+        for element in generator:
+                if element.tag == "tag":
+                    tags.update({element.attrib["k"]: element.attrib["v"]})
+                elif include_discussion and element.tag == "discussion":
+                    for comment in element:
+                        discussion.append({"date": comment.attrib["date"], "user_id": comment.attrib["uid"], "text": comment[0].text})
+                
+                elif element.tag == "changeset":
+                    changesets_list.append(Changeset(
+                        int(element.attrib["id"]),
+                        element.attrib["created_at"],
+                        element.attrib["open"] == "true",
+                        element.attrib["uid"],
+                        element.attrib["comments_count"],
+                        element.attrib["changes_count"],
+                        tags,
+                        discussion if include_discussion else None
+                    ))
+                    tags = Tags()
+                    element.clear()
 
-        if (len(changeset_list) == 0): raise exceptions.EmptyResult()
-        return changeset_list
+        return changesets_list
 
     def create(self, comment: str, tags: Tags | None = None) -> int:
         """Creates new changeset.
@@ -116,7 +111,7 @@ class Changeset_Container:
             case 404: raise exceptions.IdNotFoundError()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_changeset(generator, include_discussion)[0] # type: ignore
+        return self._xml_to_changesets_list(generator, include_discussion)[0] # type: ignore
 
     def get_query(self, left: float | None = None, bottom: float | None = None, right: float | None = None, top: float | None = None,
     user_id: str | None = None, display_name: str | None = None,
@@ -175,7 +170,7 @@ class Changeset_Container:
             case 404: raise exceptions.IdNotFoundError()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
-        return self._xml_to_changeset(generator) # type: ignore
+        return self._xml_to_changesets_list(generator) # type: ignore
     
     def update(self, id: int, comment: str | None = None, tags: Tags | None = None) -> Changeset:
         """Updates the changeset with new comment or tags or both.
@@ -224,7 +219,7 @@ class Changeset_Container:
             case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
         response.raw.decode_content = True
-        return self._xml_to_changeset(self.outer._raw_stream_parser(response.raw), True)[0]
+        return self._xml_to_changesets_list(self.outer._raw_stream_parser(response.raw), True)[0]
 
     def close(self, id: int) -> None:
         """Close changeset by ID.
