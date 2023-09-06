@@ -23,6 +23,7 @@ class Changeset_Discussion_Container:
         match response.status_code:
             case 200: pass
             case 409: raise exceptions.ChangesetNotClosed()
+            case 429: raise exceptions.TooManyRequests()
             case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
     def subscribe(self, changeset_id: int) -> None:

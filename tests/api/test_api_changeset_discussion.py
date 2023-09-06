@@ -9,6 +9,30 @@ from osm_easy_api.api import exceptions as ApiExceptions
 class TestApiChangesetDiscussion(unittest.TestCase):
 
     @responses.activate
+    def test_comment(self):
+        responses.add(**{
+            "method": responses.POST,
+            "url": "https://test.pl/api/0.6/changeset/111/comment?text=Hello%20World",
+            "status": 200
+        })
+
+        api = Api("https://test.pl", LOGIN, PASSWORD)
+        def comment(): return api.changeset.discussion.comment(111, "Hello World")
+        comment()
+        responses.add(**{
+            "method": responses.POST,
+            "url": "https://test.pl/api/0.6/changeset/111/comment?text=Hello%20World",
+            "status": 409
+        })
+        self.assertRaises(ApiExceptions.ChangesetNotClosed, comment)
+        responses.add(**{
+            "method": responses.POST,
+            "url": "https://test.pl/api/0.6/changeset/111/comment?text=Hello%20World",
+            "status": 429
+        })
+        self.assertRaises(ApiExceptions.TooManyRequests, comment)
+
+    @responses.activate
     def test_subscribe_unsubscribe(self):
         responses.add(**{
             "method": responses.POST,

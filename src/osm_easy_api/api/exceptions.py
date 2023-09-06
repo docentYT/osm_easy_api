@@ -39,3 +39,6 @@ class NoteAlreadyClosed(Exception):
 
 class NoteAlreadyOpen(Exception):
     pass
+
+class TooManyRequests(Exception):
+    pass
