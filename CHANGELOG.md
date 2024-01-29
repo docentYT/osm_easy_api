@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1]
+### Fixed
+- Percent-encoding was not applied on texts entered by the user. [#22](https://github.com/docentYT/osm_easy_api/issues/22)
+
 ## [2.1.0]
 ### Added
 - `TooManyRequests` exception.

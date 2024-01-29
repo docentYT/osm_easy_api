@@ -7,6 +7,7 @@ from ...api import exceptions
 from ...data_classes import User, Note, Comment
 
 from copy import deepcopy
+import urllib.parse
 from xml.etree import ElementTree
 
 class Notes_Container:
@@ -131,7 +132,7 @@ class Notes_Container:
             Note: Object of newly created note.
         """
         generator = self.outer._post_generator(
-            url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=text),
+            url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=urllib.parse.quote(text)),
             auth_requirement=self.outer._Requirement.OPTIONAL,
             auto_status_code_handling=True)
         
@@ -152,7 +153,7 @@ class Notes_Container:
             Note: Note object of commented note
         """
         status_code, generator = self.outer._post_generator(
-            url=self.outer._url.note["comment"].format(id=id, text=text),
+            url=self.outer._url.note["comment"].format(id=id, text=urllib.parse.quote(text)),
             auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
         
@@ -274,7 +275,7 @@ class Notes_Container:
         Returns:
             list[Note]: List of notes objects.
         """
-        url=self.outer._url.note["search"].format(text=text, limit=limit, closed=closed_days)
+        url=self.outer._url.note["search"].format(text=urllib.parse.quote(text), limit=limit, closed=closed_days)
         if user_id: url += f"&user={user_id}"
         if from_date: url += f"&from={from_date}"
         if to_date: url += f"&from={to_date}"

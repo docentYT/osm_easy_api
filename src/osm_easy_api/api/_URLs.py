@@ -1,3 +1,5 @@
+# REMEMBER TO ADD urllib.parse.quote WHEN FORMATTING TEXT PROVIDED BY USER!!!
+
 from typing import Dict
 
 class URLs:
