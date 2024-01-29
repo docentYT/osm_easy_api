@@ -4,6 +4,8 @@ if TYPE_CHECKING: # pragma: no cover
 
 from ...api import exceptions
 
+import urllib.parse
+
 class Changeset_Discussion_Container:
     def __init__(self, outer):
         self.outer: "Api" = outer
@@ -18,7 +20,7 @@ class Changeset_Discussion_Container:
         Raises:
             exceptions.ChangesetNotClosed: Changeset must be closed to add comment.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["comment"].format(id=changeset_id, text=text), self.outer._Requirement.YES, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["comment"].format(id=changeset_id, text=urllib.parse.quote(text)), self.outer._Requirement.YES, auto_status_code_handling=False)
         
         match response.status_code:
             case 200: pass
