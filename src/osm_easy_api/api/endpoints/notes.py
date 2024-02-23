@@ -73,6 +73,7 @@ class Notes_Container:
 
         Raises:
             exceptions.IdNotFoundError: Note with given id cannot be found.
+            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
 
         Returns:
             Note: Note object.
@@ -85,6 +86,8 @@ class Notes_Container:
         match status_code:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
+            case 410: raise exceptions.ElementDeleted()
+            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
         
         return self._xml_to_notes_list(generator)[0]
     
@@ -148,6 +151,7 @@ class Notes_Container:
         Raises:
             exceptions.IdNotFoundError: Cannot find note with given id.
             exceptions.NoteAlreadyClosed: Note is closed.
+            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
 
         Returns:
             Note: Note object of commented note
@@ -161,6 +165,7 @@ class Notes_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.NoteAlreadyClosed()
+            case 410: raise exceptions.ElementDeleted()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         return self._xml_to_notes_list(generator)[0]
@@ -175,6 +180,7 @@ class Notes_Container:
         Raises:
             exceptions.IdNotFoundError: Cannot find note with given id.
             exceptions.NoteAlreadyClosed: Note already closed.
+            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
 
         Returns:
             Note: Note object of closed note.
@@ -191,6 +197,7 @@ class Notes_Container:
             case 200: pass
             case 404: raise exceptions.IdNotFoundError()
             case 409: raise exceptions.NoteAlreadyClosed()
+            case 410: raise exceptions.ElementDeleted()
             case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         return self._xml_to_notes_list(generator)[0]
@@ -205,6 +212,7 @@ class Notes_Container:
         Raises:
             exceptions.IdNotFoundError: Cannot find note with given id.
             exceptions.NoteAlreadyClosed: Note already closed.
+            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
 
         Returns:
             Note: Note object of closed note.
@@ -236,7 +244,7 @@ class Notes_Container:
         Raises:
             exceptions.NotAModerator: User does not have a moderator role.
             exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.ElementDeleted: Note already deleted.
+            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
         """
         url = self.outer._url.note["hide"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
