@@ -46,6 +46,27 @@ class TestApiNotes(unittest.TestCase):
         assert note.comments[0].user, "User not exist"
         self.assertEqual(note.comments[0].user.id, 18179)
 
+        def get():
+            return api.notes.get(37970)
+        
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/notes/37970",
+            "body": body,
+            "status": 404
+        })
+
+        self.assertRaises(ApiExceptions.IdNotFoundError, get)
+
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/notes/37970",
+            "body": body,
+            "status": 410
+        })
+
+        self.assertRaises(ApiExceptions.ElementDeleted, get)
+
     @responses.activate
     def test_get_bbox(self):
         body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
@@ -204,4 +225,13 @@ class TestApiNotes(unittest.TestCase):
             "body": body,
             "status": 409
         })
+
         self.assertRaises(ApiExceptions.NoteAlreadyClosed, comment)
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": "https://test.pl/api/0.6/notes/37970/comment?text=abc",
+            "body": body,
+            "status": 410
+        })
+        self.assertRaises(ApiExceptions.ElementDeleted, comment)
