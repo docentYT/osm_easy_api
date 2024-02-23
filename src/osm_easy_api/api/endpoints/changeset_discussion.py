@@ -19,6 +19,7 @@ class Changeset_Discussion_Container:
 
         Raises:
             exceptions.ChangesetNotClosed: Changeset must be closed to add comment.
+            exceptions.TooManyRequests: Request has been blocked due to rate limiting.
         """
         response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["comment"].format(id=changeset_id, text=urllib.parse.quote(text)), self.outer._Requirement.YES, auto_status_code_handling=False)
         
