@@ -6,13 +6,18 @@ class TestApi(unittest.TestCase):
     def test_initialize(self):
         Api("https://test.pl")
 
-    def test_credintials(self):
-        api = Api(username="abc", password="cba")
-        self.assertIsNotNone(api._auth)
-        self.assertEqual(api._auth.username.decode(), "abc")
-        self.assertEqual(api._auth.password.decode(), "cba")
+    def test_empty_headers(self):
+        api = Api()
+        self.assertEqual(api._headers, {})
 
-        api = Api(username="ęśąćź", password="ąęźż")
-        self.assertIsNotNone(api._auth)
-        self.assertEqual(api._auth.username.decode(), "ęśąćź")
-        self.assertEqual(api._auth.password.decode(), "ąęźż")
+    def test_authorization_header(self):
+        api = Api(access_token="TOKEN")
+        self.assertEqual(api._headers, {"Authorization": "Bearer TOKEN"})
+
+    def test_user_agent_header(self):
+        api = Api(user_agent="AGENT")
+        self.assertEqual(api._headers, {"User-Agent": "AGENT"})
+
+    def test_authorization_and_user_agent_header(self):
+        api = Api(access_token="TOKEN", user_agent="AGENT")
+        self.assertEqual(api._headers, {"Authorization": "Bearer TOKEN", "User-Agent": "AGENT"})

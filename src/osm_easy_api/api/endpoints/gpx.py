@@ -20,6 +20,6 @@ class Gpx_Container:
             top (int): Bounding box
             page_number (int): Which group of 5 000 points you want to get.
         """
-        response = self.outer._request(self.outer._RequestMethods.GET, self.outer._url.gpx["get"].format(left=left, bottom=bottom, right=right, top=top, page_number=page_number), self.outer._Requirement.NO, True, False)
+        response = self.outer._request(self.outer._RequestMethods.GET, self.outer._url.gpx["get"].format(left=left, bottom=bottom, right=right, top=top, page_number=page_number), True, False)
         with open(file_to, "wb") as f_to:
             shutil.copyfileobj(response.raw, f_to)

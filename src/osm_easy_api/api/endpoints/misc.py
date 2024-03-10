@@ -82,7 +82,6 @@ class Misc_Container:
             """
             response = self.outer._request(method=self.outer._RequestMethods.GET,
                 url=self.outer._url.misc["map"].format(left=left, bottom=bottom, right=right, top=top),
-                auth_requirement=self.outer._Requirement.OPTIONAL,
                 stream=True,
                 auto_status_code_handling=False
             )

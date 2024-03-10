@@ -33,7 +33,7 @@ class Elements_Container:
         """
         element_name = element.__class__.__name__.lower()
         body = f"<osm>\n{element._to_xml(changeset_id).toprettyxml()}</osm>"
-        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.elements["create"].format(element_type=element_name), self.outer._Requirement.YES, body=body, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.elements["create"].format(element_type=element_name), body=body, auto_status_code_handling=False)
 
         match response.status_code:
             case 200: pass
@@ -62,7 +62,6 @@ class Elements_Container:
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
         status_code, generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
         match status_code:
@@ -97,7 +96,7 @@ class Elements_Container:
         element.changeset_id = changeset_id
         element_name = element.__class__.__name__.lower()
         body = f"<osm>\n{element._to_xml(element.changeset_id).toprettyxml()}</osm>"
-        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.elements["update"].format(element_type=element_name, id=element.id), self.outer._Requirement.YES, body=body, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.elements["update"].format(element_type=element_name, id=element.id), body=body, auto_status_code_handling=False)
 
         match response.status_code:
             case 200: pass
@@ -128,7 +127,7 @@ class Elements_Container:
         element.changeset_id = changeset_id
         element_name = element.__class__.__name__.lower()
         body = f"<osm>\n{element._to_xml(element.changeset_id).toprettyxml()}</osm>"
-        response = self.outer._request(self.outer._RequestMethods.DELETE, self.outer._url.elements["delete"].format(element_type=element_name, id=element.id), self.outer._Requirement.YES, body=body, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.DELETE, self.outer._url.elements["delete"].format(element_type=element_name, id=element.id), body=body, auto_status_code_handling=False)
 
         match response.status_code:
             case 200: pass
@@ -157,7 +156,6 @@ class Elements_Container:
         url = self.outer._url.elements["history"].format(element_type=element_name, id=id)
         status_code, generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
         match status_code:
@@ -191,7 +189,6 @@ class Elements_Container:
         url = self.outer._url.elements["version"].format(element_type=element_name, id=id, version=version)
         status_code, generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
         match status_code:
@@ -227,7 +224,6 @@ class Elements_Container:
         url = self.outer._url.elements["multi_fetch"].format(element_type=element_name) + param
         status_code, generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
         match status_code:
@@ -258,7 +254,6 @@ class Elements_Container:
         url = self.outer._url.elements["relations"].format(element_type=element_name, id=id)
         generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
         
         relations_list = []
@@ -280,7 +275,6 @@ class Elements_Container:
         url = self.outer._url.elements["ways"].format(id=node_id)
         generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
         
         ways_list = []
@@ -308,7 +302,6 @@ class Elements_Container:
         url = self.outer._url.elements["full"].format(element_type = element_name, id=id)
         status_code, generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
         match status_code:
@@ -360,4 +353,4 @@ class Elements_Container:
             redaction_id (int): https://www.openstreetmap.org/redactions
         """
         element_name = element.__name__.lower()
-        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.elements["redaction"].format(element_type=element_name, id=id, version=version, redaction_id=redaction_id), self.outer._Requirement.YES, auto_status_code_handling=True)
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.elements["redaction"].format(element_type=element_name, id=id, version=version, redaction_id=redaction_id), auto_status_code_handling=True)

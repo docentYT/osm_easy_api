@@ -21,7 +21,7 @@ class Changeset_Discussion_Container:
             exceptions.ChangesetNotClosed: Changeset must be closed to add comment.
             exceptions.TooManyRequests: Request has been blocked due to rate limiting.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["comment"].format(id=changeset_id, text=urllib.parse.quote(text)), self.outer._Requirement.YES, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["comment"].format(id=changeset_id, text=urllib.parse.quote(text)), auto_status_code_handling=False)
         
         match response.status_code:
             case 200: pass
@@ -38,7 +38,7 @@ class Changeset_Discussion_Container:
         Raises:
             exceptions.AlreadySubscribed: You are already subscribed to this changeset.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["subscribe"].format(id=changeset_id), self.outer._Requirement.YES, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["subscribe"].format(id=changeset_id), auto_status_code_handling=False)
         
         match response.status_code:
             case 200: pass
@@ -54,7 +54,7 @@ class Changeset_Discussion_Container:
         Raises:
             exceptions.NotSubscribed: You are not subscribed to this changeset.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unsubscribe"].format(id=changeset_id), self.outer._Requirement.YES, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unsubscribe"].format(id=changeset_id), auto_status_code_handling=False)
         
         match response.status_code:
             case 200: pass
@@ -71,7 +71,7 @@ class Changeset_Discussion_Container:
             exceptions.NotAModerator: You are not a moderator.
             exceptions.IdNotFoundError: Comment with provided id not found.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["hide"].format(comment_id=comment_id), self.outer._Requirement.YES, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["hide"].format(comment_id=comment_id), auto_status_code_handling=False)
         
         match response.status_code:
             case 200: pass
@@ -89,7 +89,7 @@ class Changeset_Discussion_Container:
             exceptions.NotAModerator: You are not a moderator.
             exceptions.IdNotFoundError: Comment with provided id not found.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unhide"].format(comment_id=comment_id), self.outer._Requirement.YES, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unhide"].format(comment_id=comment_id), auto_status_code_handling=False)
         
         match response.status_code:
             case 200: pass

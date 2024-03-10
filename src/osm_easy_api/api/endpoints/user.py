@@ -65,7 +65,6 @@ class User_Container:
         """
         generator = self.outer._get_generator(
             url=self.outer._url.user["get"].format(id=id),
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
         
         return self._xml_to_users_list(generator)[0]
@@ -85,7 +84,6 @@ class User_Container:
         param = param[:-1]
         generator = self.outer._get_generator(
             url=self.outer._url.user["get_query"] + param,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=True)
         
         return self._xml_to_users_list(generator)
@@ -98,7 +96,6 @@ class User_Container:
         """
         generator = self.outer._get_generator(
             url=self.outer._url.user["get_current"],
-            auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=True)
         
         return self._xml_to_users_list(generator)[0]
@@ -118,7 +115,7 @@ class User_Container:
         url = self.outer._url.user["preferences"]
         if key:
             url += f"/{key}"
-            response = self.outer._request(self.outer._RequestMethods.GET, url, self.outer._Requirement.YES, auto_status_code_handling=False)
+            response = self.outer._request(self.outer._RequestMethods.GET, url, auto_status_code_handling=False)
             match response.status_code:
                 case 200: pass
                 case 404: raise ValueError("Preference not found")
@@ -127,7 +124,6 @@ class User_Container:
         
         generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=True)
         
         preferences = {}
@@ -153,7 +149,7 @@ class User_Container:
         root.appendChild(preferences_element)
         xml_str = root.toprettyxml(indent="\t")
 
-        self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.user["preferences"], self.outer._Requirement.YES, stream=True, body=xml_str)
+        self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.user["preferences"], stream=True, body=xml_str)
         
     def delete_preference(self, key: str) -> None:
         """Deletes only one preference with given key.
@@ -166,7 +162,7 @@ class User_Container:
         """
         url = self.outer._url.user["preferences"]
         url += f"/{key}"
-        response = self.outer._request(self.outer._RequestMethods.DELETE, url, self.outer._Requirement.YES, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.DELETE, url, auto_status_code_handling=False)
         match response.status_code:
             case 200: pass
             case 404: raise ValueError("Preference not found")

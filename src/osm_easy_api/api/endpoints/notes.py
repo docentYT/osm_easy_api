@@ -80,7 +80,6 @@ class Notes_Container:
         """
         status_code, generator = self.outer._get_generator(
             url=self.outer._url.note["get"].format(id=id),
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
         match status_code:
@@ -112,7 +111,6 @@ class Notes_Container:
 
         status_code, generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False
         )
 
@@ -136,7 +134,6 @@ class Notes_Container:
         """
         generator = self.outer._post_generator(
             url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=urllib.parse.quote(text)),
-            auth_requirement=self.outer._Requirement.OPTIONAL,
             auto_status_code_handling=True)
         
         return self._xml_to_notes_list(generator)[0]
@@ -158,7 +155,6 @@ class Notes_Container:
         """
         status_code, generator = self.outer._post_generator(
             url=self.outer._url.note["comment"].format(id=id, text=urllib.parse.quote(text)),
-            auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
         
         match status_code:
@@ -190,7 +186,6 @@ class Notes_Container:
 
         status_code, generator = self.outer._post_generator(
             url=url+param,
-            auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
         
         match status_code:
@@ -222,7 +217,6 @@ class Notes_Container:
 
         status_code, generator = self.outer._post_generator(
             url=url+param,
-            auth_requirement=self.outer._Requirement.YES,
             auto_status_code_handling=False)
         
         match status_code:
@@ -252,7 +246,6 @@ class Notes_Container:
         status_code, response = self.outer._request(
             method=self.outer._RequestMethods.DELETE,
             url=url+param,
-            auth_requirement=self.outer._Requirement.YES,
             stream=False,
             auto_status_code_handling=False
         )
@@ -292,7 +285,6 @@ class Notes_Container:
 
         status_code, generator = self.outer._get_generator(
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
             auto_status_code_handling=False)
         
         match status_code:
