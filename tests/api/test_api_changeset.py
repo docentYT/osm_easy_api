@@ -107,7 +107,7 @@ class TestApiChangeset(unittest.TestCase):
             Tags({"comment": "Upload relation test"})
         )
 
-        testing_changeset = api.changeset.get_query(user_id="18179")[1]
+        testing_changeset = api.changeset.get_query(user_id=18179)[1]
         self.assertEqual(testing_changeset.id, changeset.id)
         self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
         self.assertEqual(testing_changeset.open, changeset.open)
@@ -129,7 +129,7 @@ class TestApiChangeset(unittest.TestCase):
             "body": body,
             "status": 200
         })
-        changeset_list = api.changeset.get_query(user_id="18179", limit=1)
+        changeset_list = api.changeset.get_query(user_id=18179, limit=1)
         self.assertEqual(changeset_list.__len__(), 1)
 
         responses.add(**{

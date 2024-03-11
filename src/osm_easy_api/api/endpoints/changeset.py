@@ -106,7 +106,7 @@ class Changeset_Container:
         return self._xml_to_changesets_list(generator, include_discussion)[0]
 
     def get_query(self, left: float | None = None, bottom: float | None = None, right: float | None = None, top: float | None = None,
-    user_id: str | None = None, display_name: str | None = None,
+    user_id: int | None = None, display_name: str | None = None,
     time_one: str | None = None, time_two: str | None = None,
     open: bool = False, closed: bool = False,
     changesets_id: list[int] | None = None,
@@ -119,7 +119,7 @@ class Changeset_Container:
             bottom (float | None, optional): Bottom side of bounding box (min_lat / south). Use left, bottom, right, top together. Defaults to None.
             right (float | None, optional): Right side of bounding box (max_lon / east). Use left, bottom, right, top together. Defaults to None.
             top (float | None, optional): Top side of bounding box (max_lat / north). Use left, bottom, right, top together. Defaults to None.
-            user_id (str | None, optional): User id. Defaults to None.
+            user_id (int | None, optional): User id. Defaults to None.
             display_name (str | None, optional): User display name. Defaults to None.
             time_one (str | None, optional): Find changesets closed after time_one. Defaults to None.
             time_two (str | None, optional): Requires time_one. Find changesets created before time_two. (Range time_one - time_two). Defaults to None.
