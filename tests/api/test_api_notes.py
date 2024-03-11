@@ -1,7 +1,7 @@
 import unittest
 import responses
 
-from ..fixtures.default_variables import LOGIN, PASSWORD
+from ..fixtures.default_variables import TOKEN
 
 from osm_easy_api import Api
 from osm_easy_api.api import exceptions as ApiExceptions
@@ -38,7 +38,7 @@ class TestApiNotes(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         note = api.notes.get(37970)
         self.assertEqual(note.id, 37970)
         self.assertEqual(note.longitude, "20.4660000")
@@ -116,7 +116,7 @@ class TestApiNotes(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         notes = api.notes.get_bbox("20.4345", "52.2620", "20.5608", "52.2946")
         self.assertEqual(notes[0].id, 37970)
         self.assertEqual(notes[1].id, 13742)
@@ -169,7 +169,7 @@ class TestApiNotes(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         note = api.notes.create("20.4345", "52.2620", "abc")
         self.assertEqual(note.id, 37970)
 
@@ -203,7 +203,7 @@ class TestApiNotes(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         note = api.notes.comment(37970, "abc")
         self.assertEqual(note.id, 37970)
 

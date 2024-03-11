@@ -1,2 +1,1 @@
-LOGIN = "abc"
-PASSWORD = "123"
+TOKEN="TOKEN"

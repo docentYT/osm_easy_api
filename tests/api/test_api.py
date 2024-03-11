@@ -1,5 +1,3 @@
-# TODO: Do not use LOGIN and PASSWORD in tests.
-
 import unittest
 
 from osm_easy_api import Api

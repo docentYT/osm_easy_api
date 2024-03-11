@@ -2,7 +2,7 @@ import unittest
 import responses
 from copy import copy
 
-from ..fixtures.default_variables import LOGIN, PASSWORD
+from ..fixtures.default_variables import TOKEN
 
 from osm_easy_api import Api
 from osm_easy_api.data_classes import Node, Way, Relation
@@ -22,7 +22,7 @@ class TestApiElements(unittest.TestCase):
         def create_node():
             return api.elements.create(node, 123)
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         node = Node(latitude="123", longitude="321")
         self.assertEqual(create_node(), 1)
 
@@ -74,7 +74,7 @@ class TestApiElements(unittest.TestCase):
         def get_node():
             return api.elements.get(Node, 123)
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         node = get_node()
         self.assertEqual(str(node), should_be)
 
@@ -120,7 +120,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         node = api.elements.get(Node, 123)
         node.latitude = "1"
         self.assertEqual(api.elements.update(node, 1), 2)
@@ -136,7 +136,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         node = Node(123)
         new_version = api.elements.delete(node, 333)
         self.assertEqual(new_version, 3)
@@ -161,7 +161,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         history = api.elements.history(Node, 123)
         self.assertEqual(len(history), 4)
         self.assertEqual(history[3].user_id, 10688)
@@ -182,7 +182,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         version = api.elements.version(Node, 123, 4)
         self.assertEqual(version.user_id, 10688)
 
@@ -205,7 +205,7 @@ class TestApiElements(unittest.TestCase):
                     "status": 200
                 })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         nodes = api.elements.get_query(Node, [1, 2])
         self.assertEqual(nodes[0].user_id, 12342)
         self.assertEqual(nodes[1].user_id, 10021)
@@ -237,7 +237,7 @@ class TestApiElements(unittest.TestCase):
                     "status": 200
                 })
         
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         relations = api.elements.relations(Way, 111)
         self.assertEqual(relations[0].id, 79)
         self.assertEqual(relations[1].members[0].role, "outer")
@@ -259,7 +259,7 @@ class TestApiElements(unittest.TestCase):
                             "status": 200
                         })
                 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         ways = api.elements.ways(111)
         self.assertEqual(ways[0].id, 5638)
         self.assertEqual(ways[1].nodes[0].id, 1368)
@@ -452,7 +452,7 @@ class TestApiElements(unittest.TestCase):
                             "status": 200
                         })
                 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         relation = api.elements.full(Relation, 226)
         self.assertEqual(relation.id, 226)
         self.assertEqual(relation.members[1].element.id, 6178)
@@ -516,6 +516,6 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         history = api.elements.history(Node, 123)
         self.assertEqual(history[0].user_id, -1)

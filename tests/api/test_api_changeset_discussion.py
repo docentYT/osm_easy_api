@@ -1,7 +1,7 @@
 import unittest
 import responses
 
-from ..fixtures.default_variables import LOGIN, PASSWORD
+from ..fixtures.default_variables import TOKEN
 
 from osm_easy_api import Api
 from osm_easy_api.api import exceptions as ApiExceptions
@@ -16,7 +16,7 @@ class TestApiChangesetDiscussion(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         def comment(): return api.changeset.discussion.comment(111, "Hello World")
         comment()
         responses.add(**{
@@ -45,7 +45,7 @@ class TestApiChangesetDiscussion(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         def subscribe(): return api.changeset.discussion.subscribe(111)
         def unsubscribe(): return api.changeset.discussion.unsubscribe(111)
         subscribe()
@@ -71,7 +71,7 @@ class TestApiChangesetDiscussion(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         def hide(): return api.changeset.discussion.hide(111)
         hide()
         responses.add(**{
@@ -95,7 +95,7 @@ class TestApiChangesetDiscussion(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         def unhide(): return api.changeset.discussion.unhide(111)
         unhide()
         responses.add(**{

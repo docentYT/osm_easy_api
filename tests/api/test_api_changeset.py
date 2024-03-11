@@ -2,7 +2,7 @@ import unittest
 import responses
 from copy import copy
 
-from ..fixtures.default_variables import LOGIN, PASSWORD
+from ..fixtures.default_variables import TOKEN
 
 from osm_easy_api import Api
 from osm_easy_api.data_classes import Changeset, Tags, Node
@@ -19,7 +19,7 @@ class TestApiChangeset(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         self.assertEqual(api.changeset.create("ABC"), 111)
 
     @responses.activate
@@ -45,7 +45,7 @@ class TestApiChangeset(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         changeset = Changeset(
             111,
             "2022-12-26T13:33:40Z",
@@ -96,7 +96,7 @@ class TestApiChangeset(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         changeset = Changeset(
             222,
             "2023-01-10T16:48:58Z",
@@ -177,7 +177,7 @@ class TestApiChangeset(unittest.TestCase):
             [{"date": "2022-12-26T14:22:22Z", "user_id": "18179", "text": "abc"}]
         )
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
 
         testing_changeset = api.changeset.update(111, "BBB")
         self.assertEqual(testing_changeset.id, changeset.id)
@@ -255,7 +255,7 @@ class TestApiChangeset(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         changeset_id = api.changeset.create("ABC")
         def close():
             return api.changeset.close(changeset_id)
