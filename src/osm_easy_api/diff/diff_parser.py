@@ -6,21 +6,11 @@ from ..data_classes import Node, Way, Relation, OsmChange, Action, Tags
 from ..data_classes.relation import Member
 from ..data_classes.OsmChange import Meta
 
-def _string_to_action(string: str) -> Action:
-    """Returns Action from string name.
-
-    Args:
-        string (str): "create" | "modify" | "delete"
-
-    Returns:
-        Action: If no match found returns Action.NONE.
-    """
-    match string:
-        case "create": return Action.CREATE
-        case "modify": return Action.MODIFY
-        case "delete": return Action.DELETE
-
-        case _: return Action.NONE
+STRING_TO_ACTION = {
+    "create": Action.CREATE,
+    "modify": Action.MODIFY,
+    "delete": Action.DELETE
+}
 
 def _add_members_to_relation_from_element(relation: Relation, element: ElementTree.Element) -> None:
     def _append_member(relation: Relation, type: type[Node | Way | Relation], member_attrib: dict) -> None:
@@ -181,7 +171,7 @@ def OsmChange_parser_generator(file: gzip.GzipFile, sequence_number: str | None,
                 # for tag in element:
                 #     if tag.tag == "tag": node_way_relation.tags.add(tag.attrib["k"], tag.attrib["v"])
 
-                action = _string_to_action(action_string)
+                action = STRING_TO_ACTION.get(action_string, Action.NONE)
                 yield(action, node_way_relation)
         element.clear()
 

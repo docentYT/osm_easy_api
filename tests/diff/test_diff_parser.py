@@ -2,18 +2,11 @@ import unittest
 import gzip
 import os
 
-from osm_easy_api.diff.diff_parser import OsmChange_parser, _string_to_action
+from osm_easy_api.diff.diff_parser import OsmChange_parser
 from osm_easy_api import Node, Way, Relation, Action, Tags
 from osm_easy_api.data_classes.relation import Member
 
 class TestDiffParser(unittest.TestCase):
-    def test__string_to_action(self):
-        self.assertEqual(_string_to_action("create"), Action.CREATE)
-        self.assertEqual(_string_to_action("modify"), Action.MODIFY)
-        self.assertEqual(_string_to_action("delete"), Action.DELETE)
-        self.assertEqual(_string_to_action("fwegwgew"), Action.NONE)
-        self.assertEqual(_string_to_action(""), Action.NONE)
-
     def test_OsmChange_parser_basic(self):
         file_path = os.path.join("tests", "fixtures", "hour.xml.gz")
         file = gzip.open(file_path, "r")
