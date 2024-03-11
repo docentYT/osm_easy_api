@@ -52,10 +52,10 @@ class Changeset_Discussion_Container:
             comment_id (int): Comment id.
 
         Raises:
-            exceptions.NotAModerator: You are not a moderator.
+            exceptions.Forbidden: You are not a moderator.
             exceptions.IdNotFoundError: Comment with provided id not found.
         """
-        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["hide"].format(comment_id=comment_id), custom_status_code_exceptions={403: exceptions.NotAModerator()})
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["hide"].format(comment_id=comment_id))
 
     def unhide(self, comment_id: int) -> None:
         """Set visible flag on changeset comment to true. MODERATOR ONLY!
@@ -64,7 +64,7 @@ class Changeset_Discussion_Container:
             comment_id (int): Comment id.
 
         Raises:
-            exceptions.NotAModerator: You are not a moderator.
+            exceptions.Forbidden: You are not a moderator.
             exceptions.IdNotFoundError: Comment with provided id not found.
         """
-        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unhide"].format(comment_id=comment_id), custom_status_code_exceptions={403: exceptions.NotAModerator()})
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unhide"].format(comment_id=comment_id))

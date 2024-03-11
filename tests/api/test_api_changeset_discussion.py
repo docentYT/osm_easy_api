@@ -79,7 +79,7 @@ class TestApiChangesetDiscussion(unittest.TestCase):
             "url": "https://test.pl/api/0.6/changeset/comment/111/hide",
             "status": 403
         })
-        self.assertRaises(ApiExceptions.NotAModerator, hide)
+        self.assertRaises(ApiExceptions.Forbidden, hide)
         responses.add(**{
             "method": responses.POST,
             "url": "https://test.pl/api/0.6/changeset/comment/111/hide",
@@ -103,7 +103,7 @@ class TestApiChangesetDiscussion(unittest.TestCase):
             "url": "https://test.pl/api/0.6/changeset/comment/111/unhide",
             "status": 403
         })
-        self.assertRaises(ApiExceptions.NotAModerator, unhide)
+        self.assertRaises(ApiExceptions.Forbidden, unhide)
         responses.add(**{
             "method": responses.POST,
             "url": "https://test.pl/api/0.6/changeset/comment/111/unhide",

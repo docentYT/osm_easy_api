@@ -208,7 +208,7 @@ class Notes_Container:
             text (str | None, optional): Text to add as comment when hiding the note. Defaults to None.
 
         Raises:
-            exceptions.NotAModerator: User does not have a moderator role.
+            exceptions.Forbidden: User does not have a moderator role.
             exceptions.IdNotFoundError: Cannot find note with given id.
             exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
         """
@@ -218,10 +218,7 @@ class Notes_Container:
         self.outer._request(
             method=self.outer._RequestMethods.DELETE,
             url=url+param,
-            stream=False,
-            custom_status_code_exceptions={
-                403: exceptions.NotAModerator()
-            }
+            stream=False
         )
     
     def search(self, text: str, limit: int = 100, closed_days: int = 7, user_id: int | None = None, from_date: str | None = None, to_date: str | None = None, sort: str = "updated_at", order: str = "newest") -> list[Note]:

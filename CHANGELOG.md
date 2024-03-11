@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Support for `oAuth2`: `access_token` parameter in `Api` class constructor.
+- `Unauthorized` exception. (No access token.)
+- `Forbidden` exception. (The access token does not support the needed scope or you must be a moderator.)
 
 ### Fixed
 - Types in `elements` endpoint.
@@ -26,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Support for `HTTP Basic authentication`: `username` and `password` parameters in `Api` class constructor.
 - Most `# type: ignore`.
+- `NotAModerator` exception. It is now replaced by `Forbidden` exception.
 
 ## [2.2.0]
 ### Added
