@@ -1,5 +1,5 @@
 from xml.etree import ElementTree
-from typing import Generator
+from typing import Generator, cast
 import gzip # for typing
 
 from ..data_classes import Node, Way, Relation, OsmChange, Action, Tags
@@ -60,7 +60,7 @@ def _if_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
         good_tags_count = 0
         for tag in element:
             if tag.tag != "tag": continue
-            if tag.attrib["k"] in tags and tag.attrib["v"] == tags[tag.attrib["k"]]: #type: ignore (We already checked if type(tags)==Tags)
+            if tag.attrib["k"] in tags and tag.attrib["v"] == tags[tag.attrib["k"]]:
                 good_tags_count += 1
         return good_tags_count == len(tags)
     
@@ -200,8 +200,9 @@ def OsmChange_parser(file: gzip.GzipFile, sequence_number: str | None, required_
     # FIXME: Maybe OsmChange_parser_generator should return tuple(Meta, gen)? EDIT: I think Meta should be generated somewhere else
     meta = next(gen)
     assert type(meta) == Meta, "[ERROR::DIFF_PARSER::OSMCHANGE_PARSER] meta type is not equal to Meta."
-    osmChange = OsmChange(meta.version, meta.generator, meta.sequence_number) # type: ignore
+    osmChange = OsmChange(meta.version, meta.generator, meta.sequence_number)
     for action, element in gen: # type: ignore (Next gen elements must be proper tuple type.)
-        assert type(action) == Action, "[ERROR::DIFF_PARSER::OSMCHANGE_PARSER] action type is not equal to Action."
-        osmChange.add(element, action)  # type: ignore (I just created assert for it, didn't I?)
+        element = cast(Node | Way | Relation, element)
+        action = cast(Action, action)
+        osmChange.add(element, action)
     return osmChange

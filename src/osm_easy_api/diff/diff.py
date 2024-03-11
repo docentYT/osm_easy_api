@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 import gzip
-from typing import Generator
+from typing import Generator, cast
 
 import requests
 
@@ -93,9 +93,9 @@ class Diff():
         if not generator: return OsmChange_parser(file, sequence_number, tags)
 
         gen_to_return = OsmChange_parser_generator(file, sequence_number, tags)
-        meta = next(gen_to_return)
-        # FIXME type problem below
-        return (meta, gen_to_return) # type: ignore (First generator return will be Meta data. Idk why this is not working for typing.) 
+        meta = cast(Meta, next(gen_to_return))
+        gen_to_return = cast(Generator[tuple[Action, Node | Way | Relation], None, None], gen_to_return)
+        return (meta, gen_to_return)
 
     def get(self, sequence_number: str | None = None, file_to: str | None = None, file_from: str | None = None, tags: Tags | str = Tags(), generator: bool = True) -> tuple[Meta, Generator[tuple[Action, Node | Way | Relation], None, None]] | OsmChange:
         """Gets compressed diff file from server.

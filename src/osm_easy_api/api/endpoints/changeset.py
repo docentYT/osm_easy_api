@@ -1,6 +1,6 @@
 from xml.dom import minidom
 
-from typing import TYPE_CHECKING, Generator, Tuple
+from typing import TYPE_CHECKING, Generator, Tuple, cast
 if TYPE_CHECKING: # pragma: no cover
     from xml.etree import ElementTree
     from ...api import Api
@@ -103,7 +103,7 @@ class Changeset_Container:
         param = f"{id}?include_discussion={include_discussion_text}"
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=join_url(self.outer._url.changeset["get"], param))
 
-        return self._xml_to_changesets_list(generator, include_discussion)[0] # type: ignore
+        return self._xml_to_changesets_list(generator, include_discussion)[0]
 
     def get_query(self, left: float | None = None, bottom: float | None = None, right: float | None = None, top: float | None = None,
     user_id: str | None = None, display_name: str | None = None,
@@ -156,7 +156,7 @@ class Changeset_Container:
             url=join_url(self.outer._url.changeset["get_query"], param),
             custom_status_code_exceptions={400: ValueError("Invalid arguments. See https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets for more info.")})
 
-        return self._xml_to_changesets_list(generator) # type: ignore
+        return self._xml_to_changesets_list(generator)
     
     def update(self, id: int, comment: str | None = None, tags: Tags | None = None) -> Changeset:
         """Updates the changeset with new comment or tags or both.
@@ -186,10 +186,10 @@ class Changeset_Container:
             tag_xml.setAttribute("v", comment)
             changeset.appendChild(tag_xml)
         if tags:
-            for tag in tags:
+            for key, value in tags.items():
                 tag_xml = root.createElement("tag")
-                tag_xml.setAttribute("k", tag)
-                tag_xml.setAttribute("v", tags.get(tag))  # type: ignore
+                tag_xml.setAttribute("k", key)
+                tag_xml.setAttribute("v", value)
                 changeset.appendChild(tag_xml)
 
         xml.appendChild(changeset)
@@ -232,8 +232,9 @@ class Changeset_Container:
             gen = OsmChange_parser_generator(stream.raw, None)
             next(gen) # for meta data
             for action, element in gen: # type: ignore
-                assert isinstance(action, Action), "ERROR::API::ENDPOINTS::CHANGESET::download action TYPE IS NOT EQUAL TO ACTION"
-                yield (action, element) # type: ignore (We checked if it is Action)
+                action = cast('Action', action)
+                element = cast('Node | Way | Relation', element)
+                yield (action, element)
         return generator()
 
     def upload(self, changeset_id: int, osmChange: OsmChange, make_osmChange_valid: bool = True, work_on_copy: bool = False):

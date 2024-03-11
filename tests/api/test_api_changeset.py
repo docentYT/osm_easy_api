@@ -189,6 +189,38 @@ class TestApiChangeset(unittest.TestCase):
         self.assertEqual(testing_changeset.tags, changeset.tags)
         self.assertEqual(testing_changeset.discussion, changeset.discussion)
 
+        body = """<?xml version="1.0" encoding="UTF-8"?>
+            <osm version="0.6" generator="CGImap 0.8.8 (3619885 faffy.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+                <changeset id="111" created_at="2022-12-26T13:33:40Z" closed_at="2022-12-26T14:22:04Z" open="false" user="kwiatek_123 bot" uid="18179" comments_count="1" changes_count="0">
+                    <tag k="testing" v="no"/>
+                    <tag k="created_by" v="osm-python-api"/>
+                    <tag k="comment" v="aaa"/>
+                    <discussion>
+                        <comment date="2022-12-26T14:22:22Z" uid="18179" user="kwiatek_123 bot">
+                            <text>abc</text>
+                        </comment>
+                    </discussion>
+                </changeset>
+            </osm>
+        """
+        responses.add(**{
+            "method": responses.PUT,
+            "url": "https://test.pl/api/0.6/changeset/111",
+            "body": body,
+            "status": 200
+        })
+        testing_changeset = api.changeset.update(111, "BBB" , Tags({"testing": "no"}))
+        new_tags = copy(changeset.tags)
+        new_tags.update({"testing": "no"})
+        self.assertEqual(testing_changeset.id, changeset.id)
+        self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
+        self.assertEqual(testing_changeset.open, changeset.open)
+        self.assertEqual(testing_changeset.user_id, changeset.user_id)
+        self.assertEqual(testing_changeset.comments_count, changeset.comments_count)
+        self.assertEqual(testing_changeset.changes_count, changeset.changes_count)
+        self.assertEqual(testing_changeset.tags, new_tags)
+        self.assertEqual(testing_changeset.discussion, changeset.discussion)
+
         def update():
             return api.changeset.update(111, "BBB")
         responses.add(**{
