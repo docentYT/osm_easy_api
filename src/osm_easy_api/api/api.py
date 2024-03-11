@@ -51,7 +51,7 @@ class Api():
     
     @staticmethod
     def _raw_stream_parser(xml_raw_stream: "HTTPResponse") -> Generator[ElementTree.Element, None, None]:
-            iterator = ElementTree.iterparse(xml_raw_stream, events=('end', ))
+            iterator = ElementTree.iterparse(xml_raw_stream, events=['end'])
             for event, element in iterator:
                 yield element
 

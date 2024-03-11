@@ -165,7 +165,7 @@ def OsmChange_parser_generator(file: gzip.GzipFile, sequence_number: str | None,
     try:
         file.seek(0)
     except: pass
-    iterator = ElementTree.iterparse(file, events=('start', 'end'))
+    iterator = ElementTree.iterparse(file, events=['start', 'end'])
     _, root = next(iterator)
     yield Meta(version=root.attrib["version"], generator=root.attrib["generator"], sequence_number=sequence_number or "")
     for event, element in iterator:
