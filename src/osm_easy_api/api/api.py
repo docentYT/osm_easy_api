@@ -9,6 +9,7 @@ if TYPE_CHECKING: # pragma: no cover
 
 from ._URLs import URLs
 from .endpoints import Misc_Container, Changeset_Container, Elements_Container, Gpx_Container, User_Container, Notes_Container
+from .exceptions import STATUS_CODE_EXCEPTIONS
 
 class Api():
     """Class used to communicate with API."""
@@ -37,10 +38,16 @@ class Api():
         if user_agent:
             self._headers.update({"User-Agent": user_agent})
 
-    def _request(self, method: _RequestMethods, url: str, stream: bool = False, auto_status_code_handling: bool = True, body = None) -> "Response":
+    def _request(self, method: _RequestMethods, url: str, stream: bool = False, custom_status_code_exceptions: dict = {int: Exception}, body = None) -> "Response":
         response = requests.request(str(method), url, stream=stream, data=body.encode('utf-8') if body else None, headers=self._headers)
-        if auto_status_code_handling: assert response.status_code == 200, f"Invalid (and unexpected) response code {response.status_code} for {url}"
-        return response
+        if response.status_code == 200: return response
+
+        exception = custom_status_code_exceptions.get(response.status_code, None) or STATUS_CODE_EXCEPTIONS.get(response.status_code, None)
+        if not exception: exception = STATUS_CODE_EXCEPTIONS.get(response.status_code, None)
+        if not exception: exception = custom_status_code_exceptions.get(-1, None)
+        if not exception: raise NotImplementedError(f"Invalid (and unexpected) response code {response.status_code} for {url}. Please report it on GitHub.")
+        if str(exception): raise type(exception)(str(exception).format(TEXT=response.text, CODE=response.status_code)) from exception
+        raise exception
     
     @staticmethod
     def _raw_stream_parser(xml_raw_stream: "HTTPResponse") -> Generator[ElementTree.Element, None, None]:
@@ -48,18 +55,12 @@ class Api():
             for event, element in iterator:
                 yield element
         
-    def _get_generator(self, url: str, auto_status_code_handling: bool = True) -> Generator[ElementTree.Element, None, None] | Tuple[int, Generator[ElementTree.Element, None, None]]:
-        response = self._request(self._RequestMethods.GET, url, auto_status_code_handling=auto_status_code_handling, stream=True)
+    def _get_generator(self, url: str, custom_status_code_exceptions: dict = {int: Exception}) -> Generator[ElementTree.Element, None, None]:
+        response = self._request(self._RequestMethods.GET, url, custom_status_code_exceptions=custom_status_code_exceptions, stream=True)
         response.raw.decode_content = True
-        if auto_status_code_handling:
-            return self._raw_stream_parser(response.raw)
-        else:
-            return (response.status_code, self._raw_stream_parser(response.raw))
+        return self._raw_stream_parser(response.raw)
         
-    def _post_generator(self, url: str, auto_status_code_handling: bool = True) -> Generator[ElementTree.Element, None, None] | Tuple[int, Generator[ElementTree.Element, None, None]]:
-        response = self._request(self._RequestMethods.POST, url, auto_status_code_handling=auto_status_code_handling, stream=True)
+    def _post_generator(self, url: str, custom_status_code_exceptions: dict = {int: Exception}) -> Generator[ElementTree.Element, None, None]:
+        response = self._request(self._RequestMethods.POST, url, custom_status_code_exceptions=custom_status_code_exceptions, stream=True)
         response.raw.decode_content = True
-        if auto_status_code_handling:
-            return self._raw_stream_parser(response.raw)
-        else:
-            return (response.status_code, self._raw_stream_parser(response.raw))
+        return self._raw_stream_parser(response.raw)

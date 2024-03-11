@@ -101,14 +101,7 @@ class Changeset_Container:
         """
         include_discussion_text = "true" if include_discussion else "false"
         param = f"{id}?include_discussion={include_discussion_text}"
-        status_code, generator = self.outer._get_generator(
-            url=join_url(self.outer._url.changeset["get"], param),
-            auto_status_code_handling=False)
-
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+        generator = self.outer._get_generator(url=join_url(self.outer._url.changeset["get"], param))
 
         return self._xml_to_changesets_list(generator, include_discussion)[0] # type: ignore
 
@@ -158,15 +151,9 @@ class Changeset_Container:
             param += "&"
         param+=f"limit={limit}"
 
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._get_generator(
             url=join_url(self.outer._url.changeset["get_query"], param),
-            auto_status_code_handling=False)
-
-        match status_code:
-            case 200: pass
-            case 400: raise ValueError("Invalid arguments. See https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets for more info.")
-            case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={400: ValueError("Invalid arguments. See https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets for more info.")})
 
         return self._xml_to_changesets_list(generator) # type: ignore
     
@@ -208,13 +195,7 @@ class Changeset_Container:
         xml_str = root.toprettyxml(indent="\t")
 
         response = self.outer._request(self.outer._RequestMethods.PUT,
-            self.outer._url.changeset["update"].format(id=id), body=xml_str, stream=True, auto_status_code_handling = False)
-
-        match response.status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.text)
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+            self.outer._url.changeset["update"].format(id=id), body=xml_str, stream=True, custom_status_code_exceptions={409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor("{TEXT}")})
 
         response.raw.decode_content = True
         return self._xml_to_changesets_list(self.outer._raw_stream_parser(response.raw), True)[0]
@@ -229,12 +210,7 @@ class Changeset_Container:
             exceptions.IdNotFoundError: There is no changeset with given ID.
             exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor: The changeset was already closer or you are not the author.
         """
-        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.changeset["close"].format(id = id), auto_status_code_handling = False)
-        match response.status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.text)
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+        self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.changeset["close"].format(id = id), custom_status_code_exceptions={409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor("{TEXT}")})
 
     def download(self, id: int) -> Generator[Tuple['Action', 'Node | Way | Relation'], None, None]:
         """Download changes made in changeset. Like in 'diff' module.
@@ -248,13 +224,8 @@ class Changeset_Container:
         Yields:
             Generator: Diff generator like in 'diff' module.
         """
-        stream = self.outer._request(self.outer._RequestMethods.GET, self.outer._url.changeset["download"].format(id=id), stream=True, auto_status_code_handling = False)
+        stream = self.outer._request(self.outer._RequestMethods.GET, self.outer._url.changeset["download"].format(id=id), stream=True)
 
-        match stream.status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {stream.status_code}. Please report it on github." # pragma: no cover
-        
         stream.raw.decode_content = True
         def generator() -> Generator[tuple['Action', 'Node | Way | Relation'], None, None]:   
             gen = OsmChange_parser_generator(stream.raw, None)
@@ -279,15 +250,14 @@ class Changeset_Container:
             exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor: Changeset already closed or you are not an author.
             ValueError: Unexpected but correct error.
         """
-        response = self.outer._request(
+        self.outer._request(
             method=self.outer._RequestMethods.POST,
             url=self.outer._url.changeset["upload"].format(id=changeset_id),
             body = osmChange.to_xml(changeset_id, make_osmChange_valid, work_on_copy),
-            auto_status_code_handling=False
+            custom_status_code_exceptions= {
+                400: exceptions.ErrorWhenParsingXML("{TEXT}"),
+                404: exceptions.IdNotFoundError("{TEXT}"),
+                409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(),
+                -1: ValueError("Unexpected but correct error. Status code: {CODE}")
+            }
         )
-        match response.status_code:
-            case 200: pass
-            case 400: raise exceptions.ErrorWhenParsingXML(response.text)
-            case 404: raise exceptions.IdNotFoundError(response.text)
-            case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor()
-            case _: raise ValueError("Unexpected but correct error. Status code:", response.status_code)

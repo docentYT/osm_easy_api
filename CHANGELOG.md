@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for `oAuth2`: `access_token` parameter in `Api` class constructor.
 
+### Changed
+- Changed the way http errors are handled.
+
 ### Removed
 - Support for `HTTP Basic authentication`: `username` and `password` parameters in `Api` class constructor.
 

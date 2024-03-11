@@ -64,8 +64,7 @@ class User_Container:
             User: User object.
         """
         generator = self.outer._get_generator(
-            url=self.outer._url.user["get"].format(id=id),
-            auto_status_code_handling=True)
+            url=self.outer._url.user["get"].format(id=id))
         
         return self._xml_to_users_list(generator)[0]
     
@@ -83,8 +82,7 @@ class User_Container:
             param += f"{id},"
         param = param[:-1]
         generator = self.outer._get_generator(
-            url=self.outer._url.user["get_query"] + param,
-            auto_status_code_handling=True)
+            url=self.outer._url.user["get_query"] + param)
         
         return self._xml_to_users_list(generator)
     
@@ -95,8 +93,7 @@ class User_Container:
             User: User object.
         """
         generator = self.outer._get_generator(
-            url=self.outer._url.user["get_current"],
-            auto_status_code_handling=True)
+            url=self.outer._url.user["get_current"])
         
         return self._xml_to_users_list(generator)[0]
     
@@ -115,16 +112,10 @@ class User_Container:
         url = self.outer._url.user["preferences"]
         if key:
             url += f"/{key}"
-            response = self.outer._request(self.outer._RequestMethods.GET, url, auto_status_code_handling=False)
-            match response.status_code:
-                case 200: pass
-                case 404: raise ValueError("Preference not found")
-                case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            response = self.outer._request(self.outer._RequestMethods.GET, url, custom_status_code_exceptions={404: ValueError("Preference not found")})
             return {key: response.text}
         
-        generator = self.outer._get_generator(
-            url=url,
-            auto_status_code_handling=True)
+        generator = self.outer._get_generator(url=url)
         
         preferences = {}
         for element in generator:
@@ -162,8 +153,4 @@ class User_Container:
         """
         url = self.outer._url.user["preferences"]
         url += f"/{key}"
-        response = self.outer._request(self.outer._RequestMethods.DELETE, url, auto_status_code_handling=False)
-        match response.status_code:
-            case 200: pass
-            case 404: raise ValueError("Preference not found")
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+        self.outer._request(self.outer._RequestMethods.DELETE, url, custom_status_code_exceptions={404: ValueError("Preference not found")})

@@ -33,14 +33,10 @@ class Elements_Container:
         """
         element_name = element.__class__.__name__.lower()
         body = f"<osm>\n{element._to_xml(changeset_id).toprettyxml()}</osm>"
-        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.elements["create"].format(element_type=element_name), body=body, auto_status_code_handling=False)
-
-        match response.status_code:
-            case 200: pass
-            case 400: raise ValueError(response.content)
-            case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.content)
-            case 412: raise ValueError(response.content)
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.elements["create"].format(element_type=element_name), body=body,
+                                       custom_status_code_exceptions={
+                                           409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor("{TEXT}")
+                                           })
         
         return int(response.text)
 
@@ -60,15 +56,9 @@ class Elements_Container:
         """""
         element_name = element.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._get_generator(
             url=url,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={410: exceptions.ElementDeleted()})
         
         for elem in generator:
             if elem.tag in ("node", "way", "relation"):
@@ -96,16 +86,12 @@ class Elements_Container:
         element.changeset_id = changeset_id
         element_name = element.__class__.__name__.lower()
         body = f"<osm>\n{element._to_xml(element.changeset_id).toprettyxml()}</osm>"
-        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.elements["update"].format(element_type=element_name, id=element.id), body=body, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.elements["update"].format(element_type=element_name, id=element.id), body=body, custom_status_code_exceptions={
+            409: ValueError("{TEXT}"),
+            412: exceptions.IdNotFoundError("{TEXT}"),
+        })
 
-        match response.status_code:
-            case 200: pass
-            case 400: raise ValueError(response.content)
-            case 409: raise ValueError(response.content)
-            case 404: raise exceptions.IdNotFoundError()
-            case 412: raise exceptions.IdNotFoundError(response.content)
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
-        return int(response.content)
+        return int(response.content) # FIXME: Should be text?
     
     def delete(self, element: Node | Way | Relation, changeset_id: int) -> int:
         """Deletes element. 
@@ -127,17 +113,11 @@ class Elements_Container:
         element.changeset_id = changeset_id
         element_name = element.__class__.__name__.lower()
         body = f"<osm>\n{element._to_xml(element.changeset_id).toprettyxml()}</osm>"
-        response = self.outer._request(self.outer._RequestMethods.DELETE, self.outer._url.elements["delete"].format(element_type=element_name, id=element.id), body=body, auto_status_code_handling=False)
+        response = self.outer._request(self.outer._RequestMethods.DELETE, self.outer._url.elements["delete"].format(element_type=element_name, id=element.id), body=body, custom_status_code_exceptions={
+            409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor("{TEXT}")
+        })
 
-        match response.status_code:
-            case 200: pass
-            case 400: raise ValueError(response.content)
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(response.content)
-            case 410: raise exceptions.ElementDeleted()
-            case 412: raise ValueError(response.content)
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
-        return int(response.content)
+        return int(response.content) # FIXME: Should be text?
     
     def history(self, element: type[Node_Way_Relation], id: int) -> list[Node_Way_Relation]:
         """Returns all old versions of element.
@@ -154,14 +134,8 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["history"].format(element_type=element_name, id=id)
-        status_code, generator = self.outer._get_generator(
-            url=url,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+        generator = self.outer._get_generator(
+            url=url)
         
         objects_list = []
         for elem in generator:
@@ -187,16 +161,12 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["version"].format(element_type=element_name, id=id, version=version)
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._get_generator(
             url=url,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 403: raise exceptions.IdNotFoundError("This version of the element is not available (due to redaction)")
-            case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
-        
+            custom_status_code_exceptions={
+                403: exceptions.IdNotFoundError("This version of the element is not available (due to redaction)")
+            })
+    
         for elem in generator:
             if elem.tag in ("node", "way", "relation"):
                 return _element_to_osm_object(elem)
@@ -222,16 +192,11 @@ class Elements_Container:
         for id in ids: param += f"{id},"
         param = param[:-1]
         url = self.outer._url.elements["multi_fetch"].format(element_type=element_name) + param
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._get_generator(
             url=url,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 400: raise ValueError()
-            case 404: raise exceptions.IdNotFoundError()
-            case 414: raise ValueError("URL too long (too many ids)")
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={
+                414: ValueError("URL too long (too many ids)")
+            })
         
         objects_list = []
         for elem in generator:
@@ -253,8 +218,7 @@ class Elements_Container:
         element_name = element.__name__.lower()
         url = self.outer._url.elements["relations"].format(element_type=element_name, id=id)
         generator = self.outer._get_generator(
-            url=url,
-            auto_status_code_handling=True)
+            url=url)
         
         relations_list = []
         for elem in generator:
@@ -273,9 +237,7 @@ class Elements_Container:
             list[Way]: List of ways.
         """
         url = self.outer._url.elements["ways"].format(id=node_id)
-        generator = self.outer._get_generator(
-            url=url,
-            auto_status_code_handling=True)
+        generator = self.outer._get_generator(url=url)
         
         ways_list = []
         for elem in generator:
@@ -300,15 +262,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["full"].format(element_type = element_name, id=id)
-        status_code, generator = self.outer._get_generator(
-            url=url,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+        generator = self.outer._get_generator(url=url)
         
         nodes_dict: dict[int, Node] = {}
         ways_dict:  dict[int, Way]  = {}
@@ -353,4 +307,4 @@ class Elements_Container:
             redaction_id (int): https://www.openstreetmap.org/redactions
         """
         element_name = element.__name__.lower()
-        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.elements["redaction"].format(element_type=element_name, id=id, version=version, redaction_id=redaction_id), auto_status_code_handling=True)
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.elements["redaction"].format(element_type=element_name, id=id, version=version, redaction_id=redaction_id))

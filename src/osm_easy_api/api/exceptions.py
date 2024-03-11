@@ -42,3 +42,12 @@ class NoteAlreadyOpen(Exception):
 
 class TooManyRequests(Exception):
     pass
+
+
+STATUS_CODE_EXCEPTIONS = {
+    400: ValueError("{TEXT}"),
+    404: IdNotFoundError(),
+    410: ElementDeleted(),
+    412: ValueError("{TEXT}"),
+    429: TooManyRequests(),
+}

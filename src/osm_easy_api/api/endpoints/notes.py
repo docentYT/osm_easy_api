@@ -78,15 +78,8 @@ class Notes_Container:
         Returns:
             Note: Note object.
         """
-        status_code, generator = self.outer._get_generator(
-            url=self.outer._url.note["get"].format(id=id),
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+        generator = self.outer._get_generator(
+            url=self.outer._url.note["get"].format(id=id))
         
         return self._xml_to_notes_list(generator)[0]
     
@@ -109,15 +102,10 @@ class Notes_Container:
         """
         url=self.outer._url.note["get_bbox"].format(left=left, bottom=bottom, right=right, top=top, limit=limit, closed_days=closed_days)
 
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._get_generator(
             url=url,
-            auto_status_code_handling=False
+            custom_status_code_exceptions={400: ValueError("Limits exceeded")}
         )
-
-        match status_code:
-            case 200: pass
-            case 400: raise ValueError("Limits exceeded")
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         return self._xml_to_notes_list(generator)
     
@@ -133,8 +121,7 @@ class Notes_Container:
             Note: Object of newly created note.
         """
         generator = self.outer._post_generator(
-            url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=urllib.parse.quote(text)),
-            auto_status_code_handling=True)
+            url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=urllib.parse.quote(text)))
         
         return self._xml_to_notes_list(generator)[0]
     
@@ -153,16 +140,9 @@ class Notes_Container:
         Returns:
             Note: Note object of commented note
         """
-        status_code, generator = self.outer._post_generator(
+        generator = self.outer._post_generator(
             url=self.outer._url.note["comment"].format(id=id, text=urllib.parse.quote(text)),
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.NoteAlreadyClosed()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={409: exceptions.NoteAlreadyClosed()})
 
         return self._xml_to_notes_list(generator)[0]
     
@@ -184,16 +164,9 @@ class Notes_Container:
         url = self.outer._url.note["close"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, generator = self.outer._post_generator(
+        generator = self.outer._post_generator(
             url=url+param,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.NoteAlreadyClosed()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={409: exceptions.NoteAlreadyClosed()})
 
         return self._xml_to_notes_list(generator)[0]
     
@@ -215,16 +188,9 @@ class Notes_Container:
         url = self.outer._url.note["reopen"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, generator = self.outer._post_generator(
+        generator = self.outer._post_generator(
             url=url+param,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.NoteAlreadyOpen()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={409: exceptions.NoteAlreadyOpen()})
 
         return self._xml_to_notes_list(generator)[0]
     
@@ -243,19 +209,14 @@ class Notes_Container:
         url = self.outer._url.note["hide"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, response = self.outer._request(
+        self.outer._request(
             method=self.outer._RequestMethods.DELETE,
             url=url+param,
             stream=False,
-            auto_status_code_handling=False
+            custom_status_code_exceptions={
+                403: exceptions.NotAModerator()
+            }
         )
-
-        match status_code:
-            case 200: pass
-            case 403: raise exceptions.NotAModerator()
-            case 404: raise exceptions.IdNotFoundError()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
     
     def search(self, text: str, limit: int = 100, closed_days: int = 7, user_id: int | None = None, from_date: str | None = None, to_date: str | None = None, sort: str = "updated_at", order: str = "newest") -> list[Note]:
         """Search for notes with initial text and comments.
@@ -283,14 +244,9 @@ class Notes_Container:
         if sort: url += f"&sort={sort}"
         if order: url += f"&order={order}"
 
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._get_generator(
             url=url,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 400: raise ValueError("Limits exceeded")
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={400: ValueError("Limits exceeded")})
 
         try:
             return self._xml_to_notes_list(generator)
