@@ -78,7 +78,8 @@ class Notes_Container:
         Returns:
             Note: Note object.
         """
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=self.outer._url.note["get"].format(id=id))
         
         return self._xml_to_notes_list(generator)[0]
@@ -102,7 +103,8 @@ class Notes_Container:
         """
         url=self.outer._url.note["get_bbox"].format(left=left, bottom=bottom, right=right, top=top, limit=limit, closed_days=closed_days)
 
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=url,
             custom_status_code_exceptions={400: ValueError("Limits exceeded")}
         )
@@ -120,7 +122,8 @@ class Notes_Container:
         Returns:
             Note: Object of newly created note.
         """
-        generator = self.outer._post_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.POST,
             url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=urllib.parse.quote(text)))
         
         return self._xml_to_notes_list(generator)[0]
@@ -140,7 +143,8 @@ class Notes_Container:
         Returns:
             Note: Note object of commented note
         """
-        generator = self.outer._post_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.POST,
             url=self.outer._url.note["comment"].format(id=id, text=urllib.parse.quote(text)),
             custom_status_code_exceptions={409: exceptions.NoteAlreadyClosed()})
 
@@ -164,7 +168,8 @@ class Notes_Container:
         url = self.outer._url.note["close"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        generator = self.outer._post_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.POST,
             url=url+param,
             custom_status_code_exceptions={409: exceptions.NoteAlreadyClosed()})
 
@@ -188,7 +193,8 @@ class Notes_Container:
         url = self.outer._url.note["reopen"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        generator = self.outer._post_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.POST,
             url=url+param,
             custom_status_code_exceptions={409: exceptions.NoteAlreadyOpen()})
 
@@ -244,7 +250,8 @@ class Notes_Container:
         if sort: url += f"&sort={sort}"
         if order: url += f"&order={order}"
 
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=url,
             custom_status_code_exceptions={400: ValueError("Limits exceeded")})
 

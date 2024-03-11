@@ -63,7 +63,8 @@ class User_Container:
         Returns:
             User: User object.
         """
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=self.outer._url.user["get"].format(id=id))
         
         return self._xml_to_users_list(generator)[0]
@@ -81,7 +82,8 @@ class User_Container:
         for id in ids:
             param += f"{id},"
         param = param[:-1]
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=self.outer._url.user["get_query"] + param)
         
         return self._xml_to_users_list(generator)
@@ -92,7 +94,8 @@ class User_Container:
         Returns:
             User: User object.
         """
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=self.outer._url.user["get_current"])
         
         return self._xml_to_users_list(generator)[0]
@@ -115,7 +118,7 @@ class User_Container:
             response = self.outer._request(self.outer._RequestMethods.GET, url, custom_status_code_exceptions={404: ValueError("Preference not found")})
             return {key: response.text}
         
-        generator = self.outer._get_generator(url=url)
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
         preferences = {}
         for element in generator:

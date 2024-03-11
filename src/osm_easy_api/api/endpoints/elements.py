@@ -56,7 +56,7 @@ class Elements_Container:
         """""
         element_name = element.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET,
             url=url,
             custom_status_code_exceptions={410: exceptions.ElementDeleted()})
         
@@ -134,8 +134,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["history"].format(element_type=element_name, id=id)
-        generator = self.outer._get_generator(
-            url=url)
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
         objects_list = []
         for elem in generator:
@@ -161,7 +160,8 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["version"].format(element_type=element_name, id=id, version=version)
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=url,
             custom_status_code_exceptions={
                 403: exceptions.IdNotFoundError("This version of the element is not available (due to redaction)")
@@ -192,7 +192,8 @@ class Elements_Container:
         for id in ids: param += f"{id},"
         param = param[:-1]
         url = self.outer._url.elements["multi_fetch"].format(element_type=element_name) + param
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=url,
             custom_status_code_exceptions={
                 414: ValueError("URL too long (too many ids)")
@@ -217,8 +218,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["relations"].format(element_type=element_name, id=id)
-        generator = self.outer._get_generator(
-            url=url)
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
         relations_list = []
         for elem in generator:
@@ -237,7 +237,7 @@ class Elements_Container:
             list[Way]: List of ways.
         """
         url = self.outer._url.elements["ways"].format(id=node_id)
-        generator = self.outer._get_generator(url=url)
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
         ways_list = []
         for elem in generator:
@@ -262,7 +262,7 @@ class Elements_Container:
         """
         element_name = element.__name__.lower()
         url = self.outer._url.elements["full"].format(element_type = element_name, id=id)
-        generator = self.outer._get_generator(url=url)
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
         nodes_dict: dict[int, Node] = {}
         ways_dict:  dict[int, Way]  = {}

@@ -101,7 +101,7 @@ class Changeset_Container:
         """
         include_discussion_text = "true" if include_discussion else "false"
         param = f"{id}?include_discussion={include_discussion_text}"
-        generator = self.outer._get_generator(url=join_url(self.outer._url.changeset["get"], param))
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=join_url(self.outer._url.changeset["get"], param))
 
         return self._xml_to_changesets_list(generator, include_discussion)[0] # type: ignore
 
@@ -151,7 +151,8 @@ class Changeset_Container:
             param += "&"
         param+=f"limit={limit}"
 
-        generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=join_url(self.outer._url.changeset["get_query"], param),
             custom_status_code_exceptions={400: ValueError("Invalid arguments. See https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets for more info.")})
 

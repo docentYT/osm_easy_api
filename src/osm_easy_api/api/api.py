@@ -54,13 +54,8 @@ class Api():
             iterator = ElementTree.iterparse(xml_raw_stream, events=('end', ))
             for event, element in iterator:
                 yield element
-        
-    def _get_generator(self, url: str, custom_status_code_exceptions: dict = {int: Exception}) -> Generator[ElementTree.Element, None, None]:
-        response = self._request(self._RequestMethods.GET, url, custom_status_code_exceptions=custom_status_code_exceptions, stream=True)
-        response.raw.decode_content = True
-        return self._raw_stream_parser(response.raw)
-        
-    def _post_generator(self, url: str, custom_status_code_exceptions: dict = {int: Exception}) -> Generator[ElementTree.Element, None, None]:
-        response = self._request(self._RequestMethods.POST, url, custom_status_code_exceptions=custom_status_code_exceptions, stream=True)
+
+    def _request_generator(self, method: _RequestMethods, url: str, custom_status_code_exceptions: dict = {int: Exception}) -> Generator[ElementTree.Element, None, None]:
+        response = self._request(method=method, url=url, stream=True, custom_status_code_exceptions=custom_status_code_exceptions)
         response.raw.decode_content = True
         return self._raw_stream_parser(response.raw)
