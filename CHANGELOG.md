@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Types in `elements` endpoint.
 - Missing documentation.
+- `misc.get_map_in_bbox()` endpoint should not yield `string`.
 
 ### Changed
 - The way http errors are handled.

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Generator, cast
 if TYPE_CHECKING: # pragma: no cover
     from xml.etree import ElementTree
     from ... import Node, Way, Relation
@@ -68,7 +68,7 @@ class Misc_Container:
 
             return return_dict
 
-        def get_map_in_bbox(self, left: float, bottom: float, right: float, top: float) -> Generator["Node | Way | Relation | str", None, None]:
+        def get_map_in_bbox(self, left: float, bottom: float, right: float, top: float) -> Generator[Node | Way | Relation, None, None]:
             """Returns generator of map data in border box. See https://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_map_data_by_bounding_box:_GET_/api/0.6/map for more info. 
 
             Args:
@@ -94,7 +94,7 @@ class Misc_Container:
                 gen = OsmChange_parser_generator(response.raw, None)
                 next(gen) # for meta data
                 for action, element in gen: # type: ignore
-                    yield element           # type: ignore
+                    yield cast(Node | Way | Relation, element)
             return generator()
 
         def permissions(self) -> list:
