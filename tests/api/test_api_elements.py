@@ -138,7 +138,8 @@ class TestApiElements(unittest.TestCase):
 
         api = Api("https://test.pl", LOGIN, PASSWORD)
         node = Node(123)
-        api.elements.delete(node, 333)
+        new_version = api.elements.delete(node, 333)
+        self.assertEqual(new_version, 3)
 
     @responses.activate
     def test_history(self):

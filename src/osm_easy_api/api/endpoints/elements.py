@@ -91,7 +91,7 @@ class Elements_Container:
             412: exceptions.IdNotFoundError("{TEXT}"),
         })
 
-        return int(response.content) # FIXME: Should be text?
+        return int(response.text)
     
     def delete(self, element: Node | Way | Relation, changeset_id: int) -> int:
         """Deletes element. 
@@ -117,7 +117,7 @@ class Elements_Container:
             409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor("{TEXT}")
         })
 
-        return int(response.content) # FIXME: Should be text?
+        return int(response.text)
     
     def history(self, elementType: Type[Node_Way_Relation], id: int) -> list[Node_Way_Relation]:
         """Returns all old versions of element.
