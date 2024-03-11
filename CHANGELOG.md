@@ -9,8 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for `oAuth2`: `access_token` parameter in `Api` class constructor.
 
+### Fixed
+- Types in `elements` endpoint.
+- Missing documentation.
+
 ### Changed
 - The way http errors are handled.
+- In `elements.get()` endpoint the `element` parameter has been renamed to `elementType`.
+- In `elements.history()` endpoint the `element` parameter has been renamed to `elementType`.
+- In `elements.version()` endpoint the `element` parameter has been renamed to `elementType`.
+- In `elements.getQuery()` endpoint the `element` parameter has been renamed to `elementType`.
+- In `elements.relations()` endpoint the `element` parameter has been renamed to `elementType`.
+- In `elements.full()` endpoint the `element` parameter has been renamed to `elementType`.
 
 ### Removed
 - Support for `HTTP Basic authentication`: `username` and `password` parameters in `Api` class constructor.

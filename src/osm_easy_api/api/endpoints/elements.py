@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, TypeVar, Type, cast
 if TYPE_CHECKING: # pragma: no cover
     from ...api import Api
 
@@ -40,11 +40,11 @@ class Elements_Container:
         
         return int(response.text)
 
-    def get(self, element: type[Node_Way_Relation], id: int) -> Node_Way_Relation :
+    def get(self, elementType: Type[Node_Way_Relation], id: int) -> Node_Way_Relation:
         """""Get element by id
 
         Args:
-            element (type[Node_Way_Relation]): Element type.
+            elementType (Type[Node_Way_Relation]): Element type.
             id (int): Element id.
 
         Raises:
@@ -52,9 +52,9 @@ class Elements_Container:
             exceptions.ElementDeleted: Element has been deleted. Maybe you should use elements.version() instead?
 
         Returns:
-            Node | Way | Relation: Representation of element.
+            Node_Way_Relation: Representation of element.
         """""
-        element_name = element.__name__.lower()
+        element_name = elementType.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET,
             url=url,
@@ -63,9 +63,9 @@ class Elements_Container:
         for elem in generator:
             if elem.tag in ("node", "way", "relation"):
                 object = _element_to_osm_object(elem)
-                return object
-            
-        return object
+                return cast(elementType, object)
+        
+        assert False, "No objects to parse!"
     
     def update(self, element: Node | Way | Relation, changeset_id: int) -> int:
         """Updates data for existing element.
@@ -81,7 +81,7 @@ class Elements_Container:
             exceptions.IdNotFoundError: Way or relation has members/elements that do not exist or are not visible.
 
         Returns:
-            int: _description_
+            int: The new version number.
         """
         element.changeset_id = changeset_id
         element_name = element.__class__.__name__.lower()
@@ -108,7 +108,7 @@ class Elements_Container:
             ValueError: Node is still used in way or element is still member of relation.
 
         Returns:
-            int: New version number.
+            int: The new version number.
         """
         element.changeset_id = changeset_id
         element_name = element.__class__.__name__.lower()
@@ -119,20 +119,20 @@ class Elements_Container:
 
         return int(response.content) # FIXME: Should be text?
     
-    def history(self, element: type[Node_Way_Relation], id: int) -> list[Node_Way_Relation]:
+    def history(self, elementType: Type[Node_Way_Relation], id: int) -> list[Node_Way_Relation]:
         """Returns all old versions of element.
 
         Args:
-            element (type[Node_Way_Relation]): Element type to search for.
+            elementType (Type[Node_Way_Relation]): Element type to search for.
             id (int): Element id.
 
         Raises:
             exceptions.IdNotFoundError: cannot find element with given id.
 
         Returns:
-            list[Node | Way | Relation]: List of previous versions of element.
+            list[Node_Way_Relation]: List of previous versions of element.
         """
-        element_name = element.__name__.lower()
+        element_name = elementType.__name__.lower()
         url = self.outer._url.elements["history"].format(element_type=element_name, id=id)
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
@@ -143,11 +143,11 @@ class Elements_Container:
             
         return objects_list
     
-    def version(self, element: type[Node_Way_Relation], id: int, version: int) -> Node_Way_Relation:
+    def version(self, elementType: Type[Node_Way_Relation], id: int, version: int) -> Node_Way_Relation:
         """Returns specific version of element.
 
         Args:
-            element (type[Node_Way_Relation]): Element type.
+            elementType (Type[Node_Way_Relation]): Element type.
             id (int): Element id.
             version (int): Version number you are looking for.
 
@@ -156,9 +156,9 @@ class Elements_Container:
             exceptions.IdNotFoundError: Cannot find element with given id.
 
         Returns:
-            Node | Way | Relation: _description_
+            Node_Way_Relation: Element in specific version.
         """
-        element_name = element.__name__.lower()
+        element_name = elementType.__name__.lower()
         url = self.outer._url.elements["version"].format(element_type=element_name, id=id, version=version)
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,
@@ -169,14 +169,14 @@ class Elements_Container:
     
         for elem in generator:
             if elem.tag in ("node", "way", "relation"):
-                return _element_to_osm_object(elem)
+                return cast(Node_Way_Relation, _element_to_osm_object(elem))
         assert False, "[ERROR::API::ENDPOINTS::ELEMENTS::version] Cannot create an element."
     
-    def get_query(self, element: type[Node_Way_Relation], ids: list[int]) -> list[Node_Way_Relation]:
+    def get_query(self, elementType: Type[Node_Way_Relation], ids: list[int]) -> list[Node_Way_Relation]:
         """Allows fetch multiple elements at once.
 
         Args:
-            element (type[Node  |  Way  |  Relation]): Elements type.
+            elementType (Type[Node_Way_Relation]): Elements type.
             ids (list[int]): List of ids you are looking for.
 
         Raises:
@@ -185,9 +185,9 @@ class Elements_Container:
             ValueError: Request url was too long (too many ids.)
 
         Returns:
-            list[Node | Way | Relation]: List of elements you are looking for.
+            list[Node_Way_Relation]: List of elements you are looking for.
         """
-        element_name = element.__name__.lower() + 's'
+        element_name = elementType.__name__.lower() + 's'
         param = f"?{element_name}="
         for id in ids: param += f"{id},"
         param = param[:-1]
@@ -201,22 +201,22 @@ class Elements_Container:
         
         objects_list = []
         for elem in generator:
-            if elem.tag == element.__name__.lower():
+            if elem.tag == elementType.__name__.lower():
                 objects_list.append(_element_to_osm_object(elem))
             
         return objects_list
     
-    def relations(self, element: type[Node | Way | Relation], id: int) -> list[Relation]:
+    def relations(self, elementType: Type[Node | Way | Relation], id: int) -> list[Relation]:
         """Gets all relations that given element is in.
 
         Args:
-            element (type[Node  |  Way  |  Relation]): Element type.
+            elementType (Type[Node  |  Way  |  Relation]): Element type.
             id (int): Element id.
 
         Returns:
             list[Relation]: List of Relations that element is in.
         """
-        element_name = element.__name__.lower()
+        element_name = elementType.__name__.lower()
         url = self.outer._url.elements["relations"].format(element_type=element_name, id=id)
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
@@ -246,11 +246,11 @@ class Elements_Container:
             
         return ways_list
     
-    def full(self, element: type[Way_Relation], id: int) -> Way_Relation:
+    def full(self, elementType: Type[Way_Relation], id: int) -> Way_Relation:
         """Retrieves a way or relation and all other elements referenced by it. See https://wiki.openstreetmap.org/wiki/API_v0.6#Full:_GET_/api/0.6/[way|relation]/#id/full for more info.
 
         Args:
-            element (type[Way_Relation]): Type of element.
+            elementType (Type[Way_Relation]): Type of element.
             id (int): Element id.
 
         Raises:
@@ -258,9 +258,9 @@ class Elements_Container:
             exceptions.ElementDeleted: Element already deleted.
 
         Returns:
-            Way | Relation: Way or Relation with complete data.
+            Way_Relation: Way or Relation with complete data.
         """
-        element_name = element.__name__.lower()
+        element_name = elementType.__name__.lower()
         url = self.outer._url.elements["full"].format(element_type = element_name, id=id)
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
@@ -269,33 +269,41 @@ class Elements_Container:
         relations_dict: dict[int, Relation] = {}
         for elem in generator:
             if elem.tag == "node":
-                node = _element_to_osm_object(elem)
+                node = cast(Node, _element_to_osm_object(elem))
+                assert node.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
                 nodes_dict.update({node.id: node})
             if elem.tag == "way":
-                way = _element_to_osm_object(elem)
+                way = cast(Way, _element_to_osm_object(elem))
+                assert way.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
                 ways_dict.update({way.id: way})
             if elem.tag == "relation" and element_name == "relation":
-                relation = _element_to_osm_object(elem)
+                relation = cast(Relation, _element_to_osm_object(elem))
+                assert relation.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
                 relations_dict.update({relation.id: relation})
         
-        for way_id in ways_dict:
-            for i in range(len(ways_dict[way_id].nodes)):
-                ways_dict[way_id].nodes[i] = deepcopy(nodes_dict[ways_dict[way_id].nodes[i].id])
+        for way in ways_dict.values():
+            for i in range(len(way.nodes)):
+                node_id = way.nodes[i].id
+                assert node_id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
+                node = nodes_dict[node_id]
+                way.nodes[i] = deepcopy(node)
 
         if element_name == "relation":
-            for relation_id in relations_dict:
-                members = relations_dict[relation_id].members
+            for relation in relations_dict.values():
+                members = relation.members
                 for i in range(len(members)):
-                    if isinstance(members[i].element, Node):
-                        members[i] = Member(deepcopy(nodes_dict[members[i].element.id]), members[i].role)
-                    elif isinstance(members[i].element, Way):
-                        members[i] = Member(deepcopy(ways_dict[members[i].element.id]), members[i].role)
+                    element = members[i].element
+                    assert element.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {element}"
+                    if isinstance(element, Node):
+                        members[i] = Member(deepcopy(nodes_dict[element.id]), members[i].role)
+                    elif isinstance(element, Way):
+                        members[i] = Member(deepcopy(ways_dict[element.id]), members[i].role)
 
             del nodes_dict, ways_dict
-            return relations_dict[id]
+            return cast(Way_Relation, relations_dict[id])
         else:
             del nodes_dict, relations_dict
-            return ways_dict[id]
+            return cast(Way_Relation, ways_dict[id])
         
     def redaction(self, element: type[Node | Way | Relation], id: int, version: int, redaction_id: int) -> None:
         """Moderator only https://wiki.openstreetmap.org/wiki/API_v0.6#Redaction:_POST_/api/0.6/[node|way|relation]/#id/#version/redact?redaction=#redaction_id
