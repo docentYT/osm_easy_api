@@ -164,7 +164,7 @@ def OsmChange_parser_generator(file: gzip.GzipFile, sequence_number: str | None,
         elif element.tag in ("node", "way", "relation"):
             if not element.attrib: continue
 
-            if (_if_correct(element, required_tags)):
+            if _if_correct(element, required_tags):
                 node_way_relation = _element_to_osm_object(element)
                 assert node_way_relation, "[ERROR::DIFF_PARSER::OSMCHANGE_PARSER_GENERATOR] node_way_relation is equal to None!"
                 

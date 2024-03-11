@@ -136,14 +136,14 @@ class Changeset_Container:
             list[Changeset]: List of Changeset objects.
         """
         param = "?"
-        if (left or bottom or right or top): param += f"bbox={left},{bottom},{right},{top}&"
-        if (user_id): param += f"user={user_id}&"
-        if (display_name): param += f"display_name={display_name}&"
-        if (time_one): param += f"time={time_one}&"
-        if (time_two): param += f",{time_two}&"
-        if (open): param += f"open={open}&"
-        if (closed): param += f"closed={closed}&"
-        if (changesets_id):
+        if left or bottom or right or top: param += f"bbox={left},{bottom},{right},{top}&"
+        if user_id:         param += f"user={user_id}&"
+        if display_name:    param += f"display_name={display_name}&"
+        if time_one:        param += f"time={time_one}&"
+        if time_two:        param += f",{time_two}&"
+        if open:            param += f"open={open}&"
+        if closed:          param += f"closed={closed}&"
+        if changesets_id:
             param += f"changesets={changesets_id[0]}"
             changesets_id.pop(0)
             for id in changesets_id:

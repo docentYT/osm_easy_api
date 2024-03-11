@@ -53,7 +53,7 @@ class Diff():
 
     def _get_state(self) -> str:
         """Downloads state.txt file content from diff server."""
-        if (self.standard_url_frequency_format): url = join_url(self.url, frequency_to_str(self.frequency), "state.txt")
+        if self.standard_url_frequency_format: url = join_url(self.url, frequency_to_str(self.frequency), "state.txt")
         else: url = join_url(self.url, "state.txt")
         headers = {}
         if hasattr(self, "_user_agent"):
@@ -83,7 +83,7 @@ class Diff():
             str: Url to .osc.gz file.
         """
         sequence_number = sequence_number.zfill(9)
-        if (frequency):
+        if frequency:
             return join_url(url, frequency_to_str(frequency), sequence_number[:3], sequence_number[3:6], sequence_number[6:9] + ".osc.gz")
         else:
             return join_url(url, sequence_number[:3], sequence_number[3:6], sequence_number[6:9] + ".osc.gz")
@@ -117,7 +117,7 @@ class Diff():
 
         if not sequence_number: sequence_number = self.get_sequence_number()
 
-        if (self.standard_url_frequency_format): url = self._build_url(self.url, self.frequency, sequence_number)
+        if self.standard_url_frequency_format: url = self._build_url(self.url, self.frequency, sequence_number)
         else: url = self._build_url(self.url, None, sequence_number)
         headers = {}
         if hasattr(self, "_user_agent"):
