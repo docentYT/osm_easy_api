@@ -1,6 +1,7 @@
 from xml.etree import ElementTree
-from typing import Generator, cast
-import gzip # for typing
+from typing import Generator, cast, TYPE_CHECKING, TypeVar, Type
+if TYPE_CHECKING:
+    import gzip
 
 from ..data_classes import Node, Way, Relation, OsmChange, Action, Tags
 from ..data_classes.relation import Member
@@ -29,7 +30,7 @@ def _add_nodes_to_way_from_element(way: Way, element: ElementTree.Element) -> No
             way.nodes.append(Node(id=int(nd.attrib["ref"])))
 
 
-def _if_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
+def _is_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
     """Checks if provided element has all required tags.
 
     Args:
@@ -47,100 +48,57 @@ def _if_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
             if tag.attrib["k"] == tags: return True
         return False
     elif type(tags) == Tags:
-        good_tags_count = 0
+        matching_tags_counter = 0
         for tag in element:
             if tag.tag != "tag": continue
             if tag.attrib["k"] in tags and tag.attrib["v"] == tags[tag.attrib["k"]]:
-                good_tags_count += 1
-        return good_tags_count == len(tags)
+                matching_tags_counter += 1
+        return matching_tags_counter == len(tags)
     
-    raise ValueError("[ERROR::DIFF_PARSER::_IF_CORRECT] Unexpected return.")
+    raise ValueError("[ERROR::DIFF_PARSER::_IS_CORRECT] Unexpected return.")
 
-    # good_tags_count = 0
-    # for tag in element:
-    #     if tag.tag != "tag": continue
-    #     if type(tags) == Tags and tag.attrib["k"] in tags and tag.attrib["v"] == tags[tag.attrib["k"]]:
-    #         good_tags_count += 1
-    #     elif type(tags) == str:
-    #         if tag.attrib["k"] == tags:
-    #             return True
-    # return good_tags_count == len(tags)
 
-def _create_node_from_attributes(attributes: dict) -> Node:
+Node_Way_Relation = TypeVar("Node_Way_Relation", Node, Way, Relation)
+def _create_osm_object_from_attributes(elementType: Type[Node_Way_Relation], attributes: dict) -> Node_Way_Relation:
+
+    id = int(attributes["id"])
     visible = None
     if attributes.get("visible"):
         visible = True if attributes["visible"] == "true" else False
-    
-    user_id = -1
-    if attributes.get("uid"):
-        user_id = int(attributes["uid"])
-    return Node(
-        id =            int(    attributes["id"]        ),
-        visible =       visible,
-        version =       int(    attributes["version"]   ),
-        timestamp =     str(    attributes["timestamp"] ),
-        user_id =       user_id,
-        changeset_id =  int(    attributes["changeset"] ),
-        latitude =      str(    attributes.get("lat")   ),
-        longitude =     str(    attributes.get("lon")   )
-    )
+    version = int(attributes["version"])
+    timestamp = str(attributes["timestamp"])
+    user_id = int(attributes.get("uid", -1))
+    changeset_id = int(attributes["changeset"])
 
-def _create_way_from_attributes(attributes: dict) -> Way:
-    visible = None
-    if attributes.get("visible"):
-        visible = True if attributes["visible"] == "true" else False
+    element = elementType(id=id, visible=visible, version=version, timestamp=timestamp, user_id=user_id, changeset_id=changeset_id)
 
-    user_id = -1
-    if attributes.get("uid"):
-        user_id = int(attributes["uid"])
-    return Way(
-        id              = int(  attributes["id"]        ),
-        visible =       visible,
-        version         = int(  attributes["version"]   ),
-        timestamp       = str(  attributes["timestamp"] ),
-        user_id         = user_id,
-        changeset_id    = int(  attributes["changeset"] )
-    )
+    if type(element) == Node:
+        element.latitude = str(attributes.get("lat"))
+        element.longitude = str(attributes.get("lon"))
 
-def _create_relation_from_attributes(attributes: dict) -> Relation:
-    visible = None
-    if attributes.get("visible"):
-        visible = True if attributes["visible"] == "true" else False
-
-    user_id = -1
-    if attributes.get("uid"):
-        user_id = int(attributes["uid"])
-    return Relation(
-        id              = int(  attributes["id"]        ),
-        visible =       visible,
-        version         = int(  attributes["version"]   ),
-        timestamp       = str(  attributes["timestamp"] ),
-        user_id         = user_id,
-        changeset_id    = int(  attributes["changeset"] )
-    )
+    return element
 
 def _element_to_osm_object(element: ElementTree.Element) -> Node | Way | Relation:
     def append_tags(element: ElementTree.Element, append_to: Node | Way | Relation):
         for tag in element:
                     if tag.tag == "tag": append_to.tags.add(tag.attrib["k"], tag.attrib["v"])
-    match element.tag:
-        case "node": 
-            node = _create_node_from_attributes(element.attrib)
-            append_tags(element, node)
-            return node
-        case "way": 
-            way = _create_way_from_attributes(element.attrib)
-            _add_nodes_to_way_from_element(way, element)
-            append_tags(element, way)
-            return way
-        case "relation":
-            relation = _create_relation_from_attributes(element.attrib)
-            _add_members_to_relation_from_element(relation, element)
-            append_tags(element, relation)
-            return relation
-        case _: raise ValueError("[ERROR::DIFF_PARSER::_ELEMENT_TO_OSM_OBJECT] Unknown element tag:", element.tag)
 
-def OsmChange_parser_generator(file: gzip.GzipFile, sequence_number: str | None, required_tags: Tags | str = Tags()) -> Generator[tuple[Action, Node | Way | Relation] | Meta, None, None]:
+    osmObject = None
+    match element.tag:
+        case "node":
+            osmObject = _create_osm_object_from_attributes(Node, element.attrib)
+        case "way": 
+            osmObject = _create_osm_object_from_attributes(Way, element.attrib)
+            _add_nodes_to_way_from_element(osmObject, element)
+        case "relation":
+            osmObject = _create_osm_object_from_attributes(Relation, element.attrib)
+            _add_members_to_relation_from_element(osmObject, element)
+        case _: assert False, f"[ERROR::DIFF_PARSER::_ELEMENT_TO_OSM_OBJECT] Unknown element tag: {element.tag}"
+
+    append_tags(element, osmObject)
+    return osmObject
+
+def OsmChange_parser_generator(file: "gzip.GzipFile", sequence_number: str | None, required_tags: Tags | str = Tags()) -> Generator[tuple[Action, Node | Way | Relation] | Meta, None, None]:
     """Generator with elements in diff file. First yield will be Meta namedtuple.
 
     Args:
@@ -149,33 +107,24 @@ def OsmChange_parser_generator(file: gzip.GzipFile, sequence_number: str | None,
         required_tags (Tags | str, optional): Useful if you want to prefetch specific tags. Other tags will be ignored.
 
     Yields:
-        Generator[Meta | Node | Way | Relation, None, None]: First yield will be Meta namedtuple with data about diff. Next yields will be osm data classes.
+        Generator[tuple[Action, Node | Way | Relation] | Meta, None, None]: First yield will be Meta namedtuple with data about diff. Next yields will be osm data classes.
     """
-    action_string = ""
+    action: Action = Action.NONE
     try:
         file.seek(0)
     except: pass
-    iterator = ElementTree.iterparse(file, events=['start', 'end'])
+    iterator = ElementTree.iterparse(file, events=['start'])
     _, root = next(iterator)
     yield Meta(version=root.attrib["version"], generator=root.attrib["generator"], sequence_number=sequence_number or "")
     for event, element in iterator:
-        if element.tag in ("modify", "create", "delete") and event=="start": 
-            action_string = element.tag
-        elif element.tag in ("node", "way", "relation"):
-            if not element.attrib: continue
-
-            if _if_correct(element, required_tags):
-                node_way_relation = _element_to_osm_object(element)
-                assert node_way_relation, "[ERROR::DIFF_PARSER::OSMCHANGE_PARSER_GENERATOR] node_way_relation is equal to None!"
-                
-                # for tag in element:
-                #     if tag.tag == "tag": node_way_relation.tags.add(tag.attrib["k"], tag.attrib["v"])
-
-                action = STRING_TO_ACTION.get(action_string, Action.NONE)
-                yield(action, node_way_relation)
+        if element.tag in ("modify", "create", "delete"): 
+            action = STRING_TO_ACTION.get(element.tag, Action.NONE)
+        elif element.tag in ("node", "way", "relation") and _is_correct(element, required_tags):
+            osmObject = _element_to_osm_object(element)
+            yield(action, osmObject)
         element.clear()
 
-def OsmChange_parser(file: gzip.GzipFile, sequence_number: str | None, required_tags: Tags | str = Tags()) -> OsmChange:
+def OsmChange_parser(file: "gzip.GzipFile", sequence_number: str | None, required_tags: Tags | str = Tags()) -> OsmChange:
     """Creates OsmChange object from generator.
 
     Args:
