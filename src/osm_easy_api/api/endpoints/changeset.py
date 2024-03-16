@@ -10,7 +10,7 @@ from ... import Tags, Action
 from ...utils import join_url
 from ...data_classes import Changeset, OsmChange
 from ...api import exceptions
-from ...diff.diff_parser import OsmChange_parser_generator
+from ...diff.diff_parser import _OsmChange_parser_generator
 
 from .changeset_discussion import Changeset_Discussion_Container
 
@@ -222,7 +222,7 @@ class Changeset_Container:
 
         stream.raw.decode_content = True
         def generator() -> Generator[tuple['Action', 'Node | Way | Relation'], None, None]:   
-            gen = OsmChange_parser_generator(stream.raw, None)
+            gen = _OsmChange_parser_generator(stream.raw, None)
             next(gen) # for meta data
             for action, element in gen: # type: ignore
                 action = cast('Action', action)

@@ -5,7 +5,7 @@ from typing import Generator, cast
 
 import requests
 
-from .diff_parser import OsmChange_parser, OsmChange_parser_generator
+from .diff_parser import _OsmChange_parser, _OsmChange_parser_generator
 from ..data_classes import Tags, Node, Way, Relation, OsmChange, Action
 from ..data_classes.OsmChange import Meta
 
@@ -90,9 +90,9 @@ class Diff():
     @staticmethod
     def _return_generator_or_OsmChange(file: gzip.GzipFile, tags: Tags | str, sequence_number: str | None, generator: bool) -> tuple[Meta, Generator[tuple[Action, Node | Way | Relation], None, None]] | OsmChange:
         """Returns tuple(Meta, generator) or OsmChange class depending on generator boolean."""
-        if not generator: return OsmChange_parser(file, sequence_number, tags)
+        if not generator: return _OsmChange_parser(file, sequence_number, tags)
 
-        gen_to_return = OsmChange_parser_generator(file, sequence_number, tags)
+        gen_to_return = _OsmChange_parser_generator(file, sequence_number, tags)
         meta = cast(Meta, next(gen_to_return))
         gen_to_return = cast(Generator[tuple[Action, Node | Way | Relation], None, None], gen_to_return)
         return (meta, gen_to_return)

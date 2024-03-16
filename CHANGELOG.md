@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - In `elements.relations()` endpoint the `element` parameter has been renamed to `elementType`.
 - In `elements.full()` endpoint the `element` parameter has been renamed to `elementType`.
 - Type of `user_id` parameter in `changeset.get_query()` was changed from `str` to `int`.
+- `OsmChange_parser_generator()` and `OsmChange_parser()` from `diff` module are now 'private' functions. Use `Diff.get()` instead. 
 
 ### Removed
 - Support for `HTTP Basic authentication`: `username` and `password` parameters in `Api` class constructor.

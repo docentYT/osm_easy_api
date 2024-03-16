@@ -6,7 +6,7 @@ if TYPE_CHECKING: # pragma: no cover
 
 from ...api import exceptions
 # TODO: Update OsmChange_parser_generator to have more general usage
-from ...diff.diff_parser import OsmChange_parser_generator
+from ...diff.diff_parser import _OsmChange_parser_generator
 
 class Misc_Container:
         def __init__(self, outer):
@@ -91,7 +91,7 @@ class Misc_Container:
 
             response.raw.decode_content = True
             def generator():
-                gen = OsmChange_parser_generator(response.raw, None)
+                gen = _OsmChange_parser_generator(response.raw, None)
                 next(gen) # for meta data
                 for action, element in gen: # type: ignore
                     yield cast("Node | Way | Relation", element)
