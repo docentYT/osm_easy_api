@@ -71,10 +71,6 @@ class Notes_Container:
         Args:
             id (int): Note id.
 
-        Raises:
-            exceptions.IdNotFoundError: Note with given id cannot be found.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
-
         Returns:
             Note: Note object.
         """
@@ -95,8 +91,8 @@ class Notes_Container:
             limit (int, optional): Max number of notes (1 < limit < 10000). Defaults to 100.
             closed_days (int, optional): Number of days a note needs to be closed to no longer be returned (0 - only open, -1 - all). Defaults to 7.
 
-        Raises:
-            ValueError: Any of args limit is exceeded.
+        Custom exceptions:
+            - **400 -> ValueError:** Any of args limit is exceeded.
 
         Returns:
             list[Note]: List of notes.
@@ -135,10 +131,8 @@ class Notes_Container:
             id (int): Note id
             text (str): Comment text
 
-        Raises:
-            exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.NoteAlreadyClosed: Note is closed.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.NoteAlreadyClosed`:** Note is closed.
 
         Returns:
             Note: Note object of commented note
@@ -157,10 +151,8 @@ class Notes_Container:
             id (int): Note id.
             text (str | None, optional): Text to add as comment when closing the note. Defaults to None.
 
-        Raises:
-            exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.NoteAlreadyClosed: Note already closed.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.NoteAlreadyClosed`:** Note is closed.
 
         Returns:
             Note: Note object of closed note.
@@ -182,13 +174,11 @@ class Notes_Container:
             id (int): Note id.
             text (str | None, optional): Text to add as comment when reopening the note. Defaults to None.
 
-        Raises:
-            exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.NoteAlreadyClosed: Note already closed.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.NoteAlreadyOpen`:** Note is open.
 
         Returns:
-            Note: Note object of closed note.
+            Note: Note object of opened note.
         """
         url = self.outer._url.note["reopen"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
