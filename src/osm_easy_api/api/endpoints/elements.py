@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, TypeVar, Type, cast
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:
     from ...api import Api
 
 from copy import deepcopy

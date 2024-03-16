@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Generator, cast
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:
     from xml.etree import ElementTree
     from ... import Node, Way, Relation
     from ... import Api

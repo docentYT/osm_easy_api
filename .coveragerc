@@ -2,4 +2,12 @@
 source = src/osm_easy_api/*
 
 [run]
-omit = tests/*
+omit = 
+    tests/*
+    */__init__.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    # This covers both typing.TYPE_CHECKING and plain TYPE_CHECKING, with any amount of whitespace
+    if\s+(typing\.)?TYPE_CHECKING:

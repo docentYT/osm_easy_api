@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 import shutil
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:
     from ...api import Api
 
 # TODO: GPX full support and parser

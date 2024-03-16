@@ -1,7 +1,7 @@
 from xml.dom import minidom
 
 from typing import TYPE_CHECKING, Generator, Tuple, cast
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:
     from xml.etree import ElementTree
     from ...api import Api
     from ...data_classes import Node, Way, Relation
