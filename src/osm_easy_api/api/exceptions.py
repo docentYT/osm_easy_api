@@ -59,3 +59,4 @@ STATUS_CODE_EXCEPTIONS = {
     412: ValueError("{TEXT}"),
     429: TooManyRequests(),
 }
+"""These are all exceptions that can be reported by the API for each of `osm_easy_api.api.endpoints`, but some may override some of them according to the [official API specification](https://wiki.openstreetmap.org/wiki/API_v0.6)."""

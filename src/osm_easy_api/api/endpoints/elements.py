@@ -23,10 +23,8 @@ class Elements_Container:
             element (Node | Way | Relation): Type of element to create.
             changeset_id (int): Id of changeset to add to.
 
-        Raises:
-            ValueError: Error when creating element (bad element data)
-            exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor: Changeset has already been closed.
-            ValueError: Way has nodes that do not exist or are not visible / relation has elements that do not exist or are not visible.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor`:** Changeset has already been closed.
 
         Returns:
             int: Id of new element.
@@ -47,9 +45,8 @@ class Elements_Container:
             elementType (Type[Node_Way_Relation]): Element type.
             id (int): Element id.
 
-        Raises:
-            exceptions.IdNotFoundError: Not found element with given id and type.
-            exceptions.ElementDeleted: Element has been deleted. Maybe you should use elements.version() instead?
+        Custom exceptions:
+            - **410 -> `osm_easy_api.api.exceptions.ElementDeleted`:** Element has been deleted. Maybe you should use `version` instead?
 
         Returns:
             Node_Way_Relation: Representation of element.
@@ -74,11 +71,9 @@ class Elements_Container:
             element (Node | Way | Relation): Element with updated data. Version of element must be the same as in database. Unchanged data also must be provided.
             changeset_id (int): Changeset id in which you want to update element.
 
-        Raises:
-            ValueError: Error when updating element (bad element data) 
-            ValueError: Element version does not match the current database version.
-            exceptions.IdNotFoundError: Cannot find element with given id.
-            exceptions.IdNotFoundError: Way or relation has members/elements that do not exist or are not visible.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.ElementDeleted`:** Error when updating element (bad element data) OR element version does not match the current database version.
+            - **412 -> `osm_easy_api.api.exceptions.IdNotFoundError`:** Way or relation has members/elements that do not exist or are not visible.
 
         Returns:
             int: The new version number.
@@ -100,12 +95,8 @@ class Elements_Container:
             element (Node | Way | Relation): Element object which you want to delete. Id is not sufficient.
             changeset_id (int): Changeset id in which you want to delete element.
 
-        Raises:
-            ValueError: Error when deleting object (bad element data).
-            exceptions.IdNotFoundError: Cannot find element with given id (element.id).
-            exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor: Changeset has already been closed.
-            exceptions.ElementDeleted: Element has already been deleted.
-            ValueError: Node is still used in way or element is still member of relation.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor`:** Changeset has already been closed.
 
         Returns:
             int: The new version number.
@@ -125,9 +116,6 @@ class Elements_Container:
         Args:
             elementType (Type[Node_Way_Relation]): Element type to search for.
             id (int): Element id.
-
-        Raises:
-            exceptions.IdNotFoundError: cannot find element with given id.
 
         Returns:
             list[Node_Way_Relation]: List of previous versions of element.
@@ -151,9 +139,8 @@ class Elements_Container:
             id (int): Element id.
             version (int): Version number you are looking for.
 
-        Raises:
-            exceptions.IdNotFoundError: This version of the element is not available (due to redaction)
-            exceptions.IdNotFoundError: Cannot find element with given id.
+        Custom exceptions:
+            - **403 -> `osm_easy_api.api.exceptions.IdNotFoundError`:** This version of the element is not available (due to redaction).
 
         Returns:
             Node_Way_Relation: Element in specific version.
@@ -179,10 +166,8 @@ class Elements_Container:
             elementType (Type[Node_Way_Relation]): Elements type.
             ids (list[int]): List of ids you are looking for.
 
-        Raises:
-            ValueError: Parameters missing or wrong.
-            exceptions.IdNotFoundError: One of the elements could not be found.
-            ValueError: Request url was too long (too many ids.)
+        Custom exceptions:
+            - **414 -> ValueError:** Request url was too long (too many ids).
 
         Returns:
             list[Node_Way_Relation]: List of elements you are looking for.
@@ -252,10 +237,6 @@ class Elements_Container:
         Args:
             elementType (Type[Way_Relation]): Type of element.
             id (int): Element id.
-
-        Raises:
-            exceptions.IdNotFoundError: Cannot find element with given id.
-            exceptions.ElementDeleted: Element already deleted.
 
         Returns:
             Way_Relation: Way or Relation with complete data.

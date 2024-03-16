@@ -206,11 +206,6 @@ class Notes_Container:
         Args:
             id (int): Note id.
             text (str | None, optional): Text to add as comment when hiding the note. Defaults to None.
-
-        Raises:
-            exceptions.Forbidden: User does not have a moderator role.
-            exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
         """
         url = self.outer._url.note["hide"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
@@ -234,8 +229,8 @@ class Notes_Container:
             sort (str, optional): Which value should be used to sort notes ("updated_at" or "created_at"). Defaults to "updated_at".
             order (str, optional): Order of returned notes ("newset" or "oldest"). Defaults to "newest".
 
-        Raises:
-            ValueError: Limits exceeded.
+        Custom exceptions:
+            - **400 -> ValueError:** Limits exceeded.
 
         Returns:
             list[Note]: List of notes objects.

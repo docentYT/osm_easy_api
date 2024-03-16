@@ -16,7 +16,7 @@ class Misc_Container:
             """Returns API versions supported by this instance.
 
             Raises:
-                ValueError: [ERROR::API::MISC::versions] CAN'T FIND version
+                ValueError: [ERROR::API::MISC::versions] CAN'T FIND version.
 
             Returns:
                 list: List of supported versions by instance.
@@ -25,7 +25,7 @@ class Misc_Container:
             versions = []
             for element in gen:
                 if element.tag == "version": versions.append(element.text)
-            if len(versions) == 0: raise ValueError("[ERROR::API::MISC::versions] CAN'T FIND version")
+            if len(versions) == 0: raise ValueError("[ERROR::API::MISC::versions] CAN'T FIND version.")
             return versions
         
         def capabilities(self) -> dict:

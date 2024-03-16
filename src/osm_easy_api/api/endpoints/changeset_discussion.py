@@ -17,9 +17,8 @@ class Changeset_Discussion_Container:
             changeset_id (int): Changeset id.
             text (str): The comment text.
 
-        Raises:
-            exceptions.ChangesetNotClosed: Changeset must be closed to add comment.
-            exceptions.TooManyRequests: Request has been blocked due to rate limiting.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.ChangesetNotClosed`:** Changeset must be closed to add comment.
         """
         self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["comment"].format(id=changeset_id, text=urllib.parse.quote(text)), custom_status_code_exceptions={409: exceptions.ChangesetNotClosed()})
 
@@ -29,8 +28,8 @@ class Changeset_Discussion_Container:
         Args:
             changeset_id (int): Changeset id.
 
-        Raises:
-            exceptions.AlreadySubscribed: You are already subscribed to this changeset.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.AlreadySubscribed`:**  You are already subscribed to this changeset.
         """
         self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["subscribe"].format(id=changeset_id), custom_status_code_exceptions={409: exceptions.AlreadySubscribed()})
 
@@ -40,8 +39,8 @@ class Changeset_Discussion_Container:
         Args:
             changeset_id (int): Changeset id.
 
-        Raises:
-            exceptions.NotSubscribed: You are not subscribed to this changeset.
+        Custom exceptions:
+            - **404 -> `osm_easy_api.api.exceptions.NotSubscribed`:** You are not subscribed to this changeset.
         """
         self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unsubscribe"].format(id=changeset_id), custom_status_code_exceptions={404: exceptions.NotSubscribed()})
 
@@ -50,10 +49,6 @@ class Changeset_Discussion_Container:
 
         Args:
             comment_id (int): Comment id.
-
-        Raises:
-            exceptions.Forbidden: You are not a moderator.
-            exceptions.IdNotFoundError: Comment with provided id not found.
         """
         self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["hide"].format(comment_id=comment_id))
 
@@ -62,9 +57,5 @@ class Changeset_Discussion_Container:
 
         Args:
             comment_id (int): Comment id.
-
-        Raises:
-            exceptions.Forbidden: You are not a moderator.
-            exceptions.IdNotFoundError: Comment with provided id not found.
         """
         self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unhide"].format(comment_id=comment_id))

@@ -93,9 +93,6 @@ class Changeset_Container:
             id (int): Changeset ID.
             include_discussion (bool, optional): Include discussion or not. Defaults to False.
 
-        Raises:
-            exceptions.IdNotFoundError: Raises when there is no changeset with provided ID.
-
         Returns:
             Changeset: Changeset object.
         """
@@ -128,9 +125,8 @@ class Changeset_Container:
             changesets_id (list[int] | None, optional): List of ids to search for. Defaults to None.
             limit (int, optional): Specifies the maximum number of changesets returned. Must be between 1 and 100. Defaults to 100.
 
-        Raises:
-            ValueError: Invalid arguments.
-            exceptions.IdNotFoundError: user_id or display_name not found.
+        Custom exceptions:
+            - **404 -> ValueError:** Invalid arguments.
 
         Returns:
             list[Changeset]: List of Changeset objects.
@@ -168,8 +164,9 @@ class Changeset_Container:
 
         Raises:
             ValueError: If no comment and tags was provided.
-            exceptions.IdNotFoundError: When there is no changeset with given ID.
-            exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor: Changeset was already closed or you are not the author.
+
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor`:** Changeset was already closed or you are not the author.
 
         Returns:
             Changeset: New Changeset object.
@@ -207,9 +204,8 @@ class Changeset_Container:
         Args:
             id (int): Changeset ID.
 
-        Raises:
-            exceptions.IdNotFoundError: There is no changeset with given ID.
-            exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor: The changeset was already closer or you are not the author.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor`:** Changeset was already closed or you are not the author.
         """
         self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.changeset["close"].format(id = id), custom_status_code_exceptions={409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor("{TEXT}")})
 
@@ -218,9 +214,6 @@ class Changeset_Container:
 
         Args:
             id (int): Changeset ID.
-
-        Raises:
-            exceptions.IdNotFoundError: There is no changeset with given ID.
 
         Yields:
             Generator: Diff generator like in 'diff' module.
@@ -246,11 +239,12 @@ class Changeset_Container:
             osmChange (OsmChange): OsmChange instance with changes you want to upload. Action cannot be empty!
             make_osmChange_valid (bool): 
 
-        Raises:
-            exceptions.ErrorWhenParsingXML: Incorrect OsmChange object. Maybe missing elements attributes.
-            exceptions.IdNotFoundError: No changeset with provided ID or can't find element with ID in OsmChange.
-            exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor: Changeset already closed or you are not an author.
-            ValueError: Unexpected but correct error.
+        Custom exceptions:
+            - **400 -> `osm_easy_api.api.exceptions.ErrorWhenParsingXML`:** Incorrect OsmChange object. Maybe missing elements attributes.
+            - **404 -> `osm_easy_api.api.exceptions.IdNotFoundError`:** No changeset with provided ID or can't find element with ID in OsmChange.
+            - **409 -> `osm_easy_api.api.exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor`:** Changeset already closed or you are not an author.
+            - **400 -> `osm_easy_api.api.exceptions.ErrorWhenParsingXML`:** Incorrect OsmChange object. Maybe missing elements attributes.
+            OTHER -> ValueError: Unexpected but correct error.
         """
         self.outer._request(
             method=self.outer._RequestMethods.POST,

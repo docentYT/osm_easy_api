@@ -106,8 +106,8 @@ class User_Container:
         Args:
             key (str | None, optional): Key to search for. Defaults to None (Returns all preferences).
 
-        Raises:
-            ValueError: Preference not found if key was provided
+        Custom exceptions:
+            - **404 -> ValueError:** Preference not found if key was provided.
 
         Returns:
             dict[str, str]: Dictionary of preferences
@@ -115,7 +115,7 @@ class User_Container:
         url = self.outer._url.user["preferences"]
         if key:
             url += f"/{key}"
-            response = self.outer._request(self.outer._RequestMethods.GET, url, custom_status_code_exceptions={404: ValueError("Preference not found")})
+            response = self.outer._request(self.outer._RequestMethods.GET, url, custom_status_code_exceptions={404: ValueError("Preference not found.")})
             return {key: response.text}
         
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
@@ -151,9 +151,9 @@ class User_Container:
         Args:
             key (str): Key to delete.
 
-        Raises:
-            ValueError: Preference not found.
+        Custom exceptions:
+            - **404 -> ValueError:** Preference not found.
         """
         url = self.outer._url.user["preferences"]
         url += f"/{key}"
-        self.outer._request(self.outer._RequestMethods.DELETE, url, custom_status_code_exceptions={404: ValueError("Preference not found")})
+        self.outer._request(self.outer._RequestMethods.DELETE, url, custom_status_code_exceptions={404: ValueError("Preference not found.")})
