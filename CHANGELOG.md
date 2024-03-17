@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `oAuth2`: `access_token` parameter in `Api` class constructor.
 - `Unauthorized` exception. (No access token.)
 - `Forbidden` exception. (The access token does not support the needed scope or you must be a moderator.)
+- `gpx.create()` endpoint.
 
 ### Fixed
 - Types in `elements` endpoint.
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Type of `user_id` parameter in `changeset.get_query()` was changed from `str` to `int`.
 - `OsmChange_parser_generator()` and `OsmChange_parser()` from `diff` module are now 'private' functions. Use `Diff.get()` instead.
 - `notes.search()` endpoint throws `LimitsExceeded` exception instead of `ValueError`.
+- `page_number` paremeter in `gpx.get()` has now default value 0.
 
 ### Removed
 - Support for `HTTP Basic authentication`: `username` and `password` parameters in `Api` class constructor.

@@ -38,8 +38,8 @@ class Api():
         if user_agent:
             self._headers.update({"User-Agent": user_agent})
 
-    def _request(self, method: _RequestMethods, url: str, stream: bool = False, custom_status_code_exceptions: dict = {int: Exception}, body = None) -> "Response":
-        response = requests.request(str(method), url, stream=stream, data=body.encode('utf-8') if body else None, headers=self._headers)
+    def _request(self, method: _RequestMethods, url: str, stream: bool = False, files: dict | None = None, custom_status_code_exceptions: dict = {int: Exception}, body = None) -> "Response":
+        response = requests.request(str(method), url, stream=stream, files=files, data=body.encode('utf-8') if body else None, headers=self._headers)
         if response.status_code == 200: return response
 
         exception = custom_status_code_exceptions.get(response.status_code, None) or STATUS_CODE_EXCEPTIONS.get(response.status_code, None)
