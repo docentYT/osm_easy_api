@@ -71,3 +71,14 @@ class TestApiGpx(unittest.TestCase):
         })
         self.API.gpx.update(GPX_FILE)
         self.assertTrue(responses.assert_call_count(URL, 1))
+
+    @responses.activate
+    def test_delete(self):
+        URL = "https://test.pl/api/0.6/gpx/123"
+        responses.add(**{
+            "method": responses.DELETE,
+            "url": URL,
+            "status": 200,
+        })
+        self.API.gpx.delete(123)
+        self.assertTrue(responses.assert_call_count(URL, 1))
