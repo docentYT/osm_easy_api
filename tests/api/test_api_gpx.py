@@ -29,7 +29,7 @@ class TestApiGpx(unittest.TestCase):
                 "body": BODY,
                 "status": 200
             })
-            self.API.gpx.get(F_TO_PATH, "10", "20", "30", "40", 1)
+            self.API.gpx.get_gps_points(F_TO_PATH, "10", "20", "30", "40", 1)
             self.assertTrue(responses.assert_call_count(URL, 1))
             self.assertTrue(filecmp.cmp(F_FROM_PATH, F_TO_PATH, shallow=False))
             os.remove(F_TO_PATH)

@@ -33,7 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OsmChange_parser_generator()` and `OsmChange_parser()` from `diff` module are now 'private' functions. Use `Diff.get()` instead.
 - `notes.search()` endpoint throws `LimitsExceeded` exception instead of `ValueError`.
 - `page_number` paremeter in `gpx.get()` has now default value 0.
-- Now classes are imported from individual modules - not from the main library. See examples in the `README.md`. 
+- Now classes are imported from individual modules - not from the main library. See examples in the `README.md`.
+- `gpx.get()` renamed to `gpx.get_gps_points()`
 
 ### Removed
 - Support for `HTTP Basic authentication`: `username` and `password` parameters in `Api` class constructor.

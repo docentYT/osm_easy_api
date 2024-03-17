@@ -13,7 +13,7 @@ class Gpx_Container:
     def __init__(self, outer):
         self.outer: "Api" = outer
 
-    def get(self, file_to: str, left: str, bottom: str, right: str, top: str, page_number: int = 0) -> None:
+    def get_gps_points(self, file_to: str, left: str, bottom: str, right: str, top: str, page_number: int = 0) -> None:
         """Downloads gps points to file.
 
         Args:
