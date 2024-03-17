@@ -40,7 +40,6 @@ class Gpx_Container:
         Returns:
             int: ID of the new trace.
         """
-        # TODO: Enum instead of visibility string
         with open(file_from, "rb") as f:
             tags_string = None
             if tags:
@@ -70,3 +69,7 @@ class Gpx_Container:
         xml_str = root.toprettyxml()
         
         self.outer._request(method=self.outer._RequestMethods.PUT, url=self.outer._url.gpx["update"].format(id=gpx_file.id), body=xml_str)
+
+    def delete(self, id: int) -> None:
+        self.outer._request(method=self.outer._RequestMethods.DELETE, url=self.outer._url.gpx["delete"].format(id=id))
+        

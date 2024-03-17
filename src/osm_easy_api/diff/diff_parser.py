@@ -57,7 +57,7 @@ def _is_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
     
     raise ValueError("[ERROR::DIFF_PARSER::_IS_CORRECT] Unexpected return.")
 
-
+# TODO: Maybe move creation of object from xml to data classes?
 Node_Way_Relation = TypeVar("Node_Way_Relation", Node, Way, Relation)
 def _create_osm_object_from_attributes(element_type: Type[Node_Way_Relation], attributes: dict) -> Node_Way_Relation:
 
