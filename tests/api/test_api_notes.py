@@ -259,7 +259,7 @@ class TestApiNotes(unittest.TestCase):
         })
         def search():
             return self.API.notes.search(text = "test", limit=9999999)
-        self.assertRaises(ValueError, search) # FIXME: We have LimitsExceeded exception in api.exceptions
+        self.assertRaises(ApiExceptions.LimitsExceeded, search)
         self.assertTrue(responses.assert_call_count(URL_2, 1))
 
         EMPTY_BODY = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">

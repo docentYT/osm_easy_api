@@ -220,7 +220,7 @@ class Notes_Container:
             order (str, optional): Order of returned notes ("newset" or "oldest"). Defaults to "newest".
 
         Custom exceptions:
-            - **400 -> ValueError:** Limits exceeded.
+            - **400 -> `osm_easy_api.api.exceptions.LimitsExceeded`:** Limits exceeded.
 
         Returns:
             list[Note]: List of notes objects.
@@ -235,6 +235,6 @@ class Notes_Container:
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,
             url=url,
-            custom_status_code_exceptions={400: ValueError("Limits exceeded")})
+            custom_status_code_exceptions={400: exceptions.LimitsExceeded("{TEXT}")})
         
         return self._xml_to_notes_list(generator)
