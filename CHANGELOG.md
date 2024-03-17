@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Unauthorized` exception. (No access token.)
 - `Forbidden` exception. (The access token does not support the needed scope or you must be a moderator.)
 - `gpx.create()` endpoint.
+- `GpxFile` data class.
+- `Visibility` enum.
+- `gpx.update()` endpoint.
 
 ### Fixed
 - Types in `elements` endpoint.

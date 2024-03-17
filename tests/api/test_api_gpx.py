@@ -4,6 +4,8 @@ from responses.matchers import multipart_matcher
 import os
 import filecmp
 
+from osm_easy_api.data_classes import GpxFile, Visibility
+
 from ..fixtures.default_variables import TOKEN
 
 from osm_easy_api import Api
@@ -43,7 +45,7 @@ class TestApiGpx(unittest.TestCase):
                 {"file": f,
                 "description": (None, "desc"),
                 "tags": (None, "a,b"),
-                "visibility": (None, "visib")
+                "visibility": (None, Visibility.PRIVATE.value)
                 },
                 )
             
@@ -54,6 +56,19 @@ class TestApiGpx(unittest.TestCase):
                 "status": 200,
                 "match": [matcher]
             })
-            ID = self.API.gpx.create(F_FROM_PATH, "desc", "visib", ["a", "b"])
+            ID = self.API.gpx.create(F_FROM_PATH, "desc", Visibility.PRIVATE, ["a", "b"])
             self.assertTrue(responses.assert_call_count(URL, 1))
             self.assertEqual(ID, 1234)
+
+    @responses.activate
+    def test_update(self):
+        URL = "https://test.pl/api/0.6/gpx/123"
+        GPX_FILE = GpxFile(123, "aa", 123, Visibility.PUBLIC, False, "XXX", "lat", "lon", "desc", [])
+
+        responses.add(**{
+            "method": responses.PUT,
+            "url": URL,
+            "status": 200,
+        })
+        self.API.gpx.update(GPX_FILE)
+        self.assertTrue(responses.assert_call_count(URL, 1))
