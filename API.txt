@@ -57,10 +57,10 @@ NOTES
 ✅ GET /api/0.6/notes/#id - Get note by id
 ✅ POST /api/0.6/notes - Create new note
 ✅ POST /api/0.6/notes/#id/comment - Create new comment to note
-✅❓ POST /api/0.6/notes/#id/close - Close note
-✅❓ POST /api/0.6/notes/#id/reopen - Reopen note
-✅❓ MO: DELETE /api/0.6/notes/#id/ - Hide note.
-✅❓ GET /api/0.6/notes/search - Search for notes
+✅ POST /api/0.6/notes/#id/close - Close note
+✅ POST /api/0.6/notes/#id/reopen - Reopen note
+✅ MO: DELETE /api/0.6/notes/#id/ - Hide note.
+✅ GET /api/0.6/notes/search - Search for notes
 X GET /api/0.6/notes/feed?bbox=Left,Bottom,Right,Top - Get RSS feed for notes in bbox
 
 
