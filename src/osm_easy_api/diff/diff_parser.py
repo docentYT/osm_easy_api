@@ -59,7 +59,7 @@ def _is_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
 
 
 Node_Way_Relation = TypeVar("Node_Way_Relation", Node, Way, Relation)
-def _create_osm_object_from_attributes(elementType: Type[Node_Way_Relation], attributes: dict) -> Node_Way_Relation:
+def _create_osm_object_from_attributes(element_type: Type[Node_Way_Relation], attributes: dict) -> Node_Way_Relation:
 
     id = int(attributes["id"])
     visible = None
@@ -70,7 +70,7 @@ def _create_osm_object_from_attributes(elementType: Type[Node_Way_Relation], att
     user_id = int(attributes.get("uid", -1))
     changeset_id = int(attributes["changeset"])
 
-    element = elementType(id=id, visible=visible, version=version, timestamp=timestamp, user_id=user_id, changeset_id=changeset_id)
+    element = element_type(id=id, visible=visible, version=version, timestamp=timestamp, user_id=user_id, changeset_id=changeset_id)
 
     if type(element) == Node:
         element.latitude = str(attributes.get("lat"))

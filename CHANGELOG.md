@@ -18,12 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - The way http errors are handled.
-- In `elements.get()` endpoint the `element` parameter has been renamed to `elementType`.
-- In `elements.history()` endpoint the `element` parameter has been renamed to `elementType`.
-- In `elements.version()` endpoint the `element` parameter has been renamed to `elementType`.
-- In `elements.getQuery()` endpoint the `element` parameter has been renamed to `elementType`.
-- In `elements.relations()` endpoint the `element` parameter has been renamed to `elementType`.
-- In `elements.full()` endpoint the `element` parameter has been renamed to `elementType`.
+- In `elements.get()` endpoint the `element` parameter has been renamed to `element_type`.
+- In `elements.history()` endpoint the `element` parameter has been renamed to `element_type`.
+- In `elements.version()` endpoint the `element` parameter has been renamed to `element_type`.
+- In `elements.getQuery()` endpoint the `element` parameter has been renamed to `element_type`.
+- In `elements.relations()` endpoint the `element` parameter has been renamed to `element_type`.
+- In `elements.full()` endpoint the `element` parameter has been renamed to `element_type`.
 - Type of `user_id` parameter in `changeset.get_query()` was changed from `str` to `int`.
 - `OsmChange_parser_generator()` and `OsmChange_parser()` from `diff` module are now 'private' functions. Use `Diff.get()` instead.
 - `notes.search()` endpoint throws `LimitsExceeded` exception instead of `ValueError`.

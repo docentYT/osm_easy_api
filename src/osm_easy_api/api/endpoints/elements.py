@@ -38,11 +38,11 @@ class Elements_Container:
         
         return int(response.text)
 
-    def get(self, elementType: Type[Node_Way_Relation], id: int) -> Node_Way_Relation:
+    def get(self, element_type: Type[Node_Way_Relation], id: int) -> Node_Way_Relation:
         """""Get element by id
 
         Args:
-            elementType (Type[Node_Way_Relation]): Element type.
+            element_type (Type[Node_Way_Relation]): Element type.
             id (int): Element id.
 
         Custom exceptions:
@@ -51,7 +51,7 @@ class Elements_Container:
         Returns:
             Node_Way_Relation: Representation of element.
         """""
-        element_name = elementType.__name__.lower()
+        element_name = element_type.__name__.lower()
         url = self.outer._url.elements["read"].format(element_type=element_name, id=id)
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET,
             url=url,
@@ -60,7 +60,7 @@ class Elements_Container:
         for elem in generator:
             if elem.tag in ("node", "way", "relation"):
                 object = _element_to_osm_object(elem)
-                return cast(elementType, object)
+                return cast(element_type, object)
         
         assert False, "No objects to parse!"
     
@@ -110,17 +110,17 @@ class Elements_Container:
 
         return int(response.text)
     
-    def history(self, elementType: Type[Node_Way_Relation], id: int) -> list[Node_Way_Relation]:
+    def history(self, element_type: Type[Node_Way_Relation], id: int) -> list[Node_Way_Relation]:
         """Returns all old versions of element.
 
         Args:
-            elementType (Type[Node_Way_Relation]): Element type to search for.
+            element_type (Type[Node_Way_Relation]): Element type to search for.
             id (int): Element id.
 
         Returns:
             list[Node_Way_Relation]: List of previous versions of element.
         """
-        element_name = elementType.__name__.lower()
+        element_name = element_type.__name__.lower()
         url = self.outer._url.elements["history"].format(element_type=element_name, id=id)
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
@@ -131,11 +131,11 @@ class Elements_Container:
             
         return objects_list
     
-    def version(self, elementType: Type[Node_Way_Relation], id: int, version: int) -> Node_Way_Relation:
+    def version(self, element_type: Type[Node_Way_Relation], id: int, version: int) -> Node_Way_Relation:
         """Returns specific version of element.
 
         Args:
-            elementType (Type[Node_Way_Relation]): Element type.
+            element_type (Type[Node_Way_Relation]): Element type.
             id (int): Element id.
             version (int): Version number you are looking for.
 
@@ -145,7 +145,7 @@ class Elements_Container:
         Returns:
             Node_Way_Relation: Element in specific version.
         """
-        element_name = elementType.__name__.lower()
+        element_name = element_type.__name__.lower()
         url = self.outer._url.elements["version"].format(element_type=element_name, id=id, version=version)
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,
@@ -159,11 +159,11 @@ class Elements_Container:
                 return cast(Node_Way_Relation, _element_to_osm_object(elem))
         assert False, "[ERROR::API::ENDPOINTS::ELEMENTS::version] Cannot create an element."
     
-    def get_query(self, elementType: Type[Node_Way_Relation], ids: list[int]) -> list[Node_Way_Relation]:
+    def get_query(self, element_type: Type[Node_Way_Relation], ids: list[int]) -> list[Node_Way_Relation]:
         """Allows fetch multiple elements at once.
 
         Args:
-            elementType (Type[Node_Way_Relation]): Elements type.
+            element_type (Type[Node_Way_Relation]): Elements type.
             ids (list[int]): List of ids you are looking for.
 
         Custom exceptions:
@@ -172,7 +172,7 @@ class Elements_Container:
         Returns:
             list[Node_Way_Relation]: List of elements you are looking for.
         """
-        element_name = elementType.__name__.lower() + 's'
+        element_name = element_type.__name__.lower() + 's'
         param = f"?{element_name}="
         for id in ids: param += f"{id},"
         param = param[:-1]
@@ -186,22 +186,22 @@ class Elements_Container:
         
         objects_list = []
         for elem in generator:
-            if elem.tag == elementType.__name__.lower():
+            if elem.tag == element_type.__name__.lower():
                 objects_list.append(_element_to_osm_object(elem))
             
         return objects_list
     
-    def relations(self, elementType: Type[Node | Way | Relation], id: int) -> list[Relation]:
+    def relations(self, element_type: Type[Node | Way | Relation], id: int) -> list[Relation]:
         """Gets all relations that given element is in.
 
         Args:
-            elementType (Type[Node  |  Way  |  Relation]): Element type.
+            element_type (Type[Node  |  Way  |  Relation]): Element type.
             id (int): Element id.
 
         Returns:
             list[Relation]: List of Relations that element is in.
         """
-        element_name = elementType.__name__.lower()
+        element_name = element_type.__name__.lower()
         url = self.outer._url.elements["relations"].format(element_type=element_name, id=id)
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
@@ -231,17 +231,17 @@ class Elements_Container:
             
         return ways_list
     
-    def full(self, elementType: Type[Way_Relation], id: int) -> Way_Relation:
+    def full(self, element_type: Type[Way_Relation], id: int) -> Way_Relation:
         """Retrieves a way or relation and all other elements referenced by it. See https://wiki.openstreetmap.org/wiki/API_v0.6#Full:_GET_/api/0.6/[way|relation]/#id/full for more info.
 
         Args:
-            elementType (Type[Way_Relation]): Type of element.
+            element_type (Type[Way_Relation]): Type of element.
             id (int): Element id.
 
         Returns:
             Way_Relation: Way or Relation with complete data.
         """
-        element_name = elementType.__name__.lower()
+        element_name = element_type.__name__.lower()
         url = self.outer._url.elements["full"].format(element_type = element_name, id=id)
         generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
