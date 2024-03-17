@@ -8,8 +8,7 @@ from osm_easy_api.data_classes import GpxFile, Visibility
 
 from ..fixtures.default_variables import TOKEN
 
-from osm_easy_api import Api
-from osm_easy_api.api import exceptions as ApiExceptions
+from osm_easy_api.api import Api
 
 
 class TestApiGpx(unittest.TestCase):

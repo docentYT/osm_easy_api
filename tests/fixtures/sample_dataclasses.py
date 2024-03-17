@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from osm_easy_api import Node, Way, Relation, Member, Tags, User, Comment, Note
+from osm_easy_api.data_classes import Node, Way, Relation, Member, Tags, User, Comment, Note
 
 def node(key: str) -> Node:
     return deepcopy(_nodes[key])

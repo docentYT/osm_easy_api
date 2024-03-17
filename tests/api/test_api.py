@@ -1,6 +1,6 @@
 import unittest
 
-from osm_easy_api import Api
+from osm_easy_api.api import Api
 
 class TestApi(unittest.TestCase):
     def test_initialize(self):

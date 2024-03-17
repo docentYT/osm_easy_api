@@ -6,9 +6,8 @@ if TYPE_CHECKING:
     from ...api import Api
     from ...data_classes import Node, Way, Relation
 
-from ... import Tags, Action
 from ...utils import join_url
-from ...data_classes import Changeset, OsmChange
+from ...data_classes import Changeset, OsmChange, Tags, Action
 from ...api import exceptions
 from ...diff.diff_parser import _OsmChange_parser_generator
 

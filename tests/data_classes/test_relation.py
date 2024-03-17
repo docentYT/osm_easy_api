@@ -1,6 +1,6 @@
 import unittest
 
-from osm_easy_api import Relation, Way, Node, Tags
+from osm_easy_api.data_classes import Relation, Way, Node, Tags
 from osm_easy_api.data_classes.relation import Member as RelationMember
 from ..fixtures import sample_dataclasses
 

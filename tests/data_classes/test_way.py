@@ -1,6 +1,6 @@
 import unittest
 
-from osm_easy_api import Way, Tags
+from osm_easy_api.data_classes import Way, Tags
 from ..fixtures import sample_dataclasses
 
 class TestWay(unittest.TestCase):

@@ -3,7 +3,7 @@ import responses
 
 from ..fixtures.default_variables import TOKEN
 
-from osm_easy_api import Api
+from osm_easy_api.api import Api
 
 class TestApiElements(unittest.TestCase):
 

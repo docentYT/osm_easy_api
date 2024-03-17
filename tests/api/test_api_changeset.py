@@ -4,7 +4,7 @@ from copy import copy
 
 from ..fixtures.default_variables import TOKEN
 
-from osm_easy_api import Api
+from osm_easy_api.api import Api
 from osm_easy_api.data_classes import Changeset, Tags, Node
 from osm_easy_api.api import exceptions as ApiExceptions
 

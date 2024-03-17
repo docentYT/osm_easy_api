@@ -3,7 +3,7 @@ import gzip
 import os
 
 from osm_easy_api.diff.diff_parser import _OsmChange_parser
-from osm_easy_api import Node, Way, Relation, Action, Tags
+from osm_easy_api.data_classes import Node, Way, Relation, Action, Tags
 from osm_easy_api.data_classes.relation import Member
 
 class TestDiffParser(unittest.TestCase):

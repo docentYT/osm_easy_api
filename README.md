@@ -51,7 +51,8 @@ Due to the deprecation of HTTP Basic Auth you need an access token to use most a
 #### Print trees
 
 ```py
-from osm_easy_api import Node, Diff, Frequency
+from osm_easy_api.diff import Diff, Frequency
+from osm_easy_api.data_classes import Node
 
 # Download diff from last hour.
 d = Diff(Frequency.HOUR)
@@ -68,7 +69,8 @@ for action, element in gen:
 #### Print incorrectly tagged single tress
 
 ```py
-from osm_easy_api import Diff, Frequency, Action, Node
+from osm_easy_api.diff import Diff, Frequency
+from osm_easy_api.data_classes import Action, Node
 
 d = Diff(Frequency.DAY)
 
@@ -90,7 +92,8 @@ Node(id = 10208486717, visible = None, version = 1, changeset_id = 129216075, ti
 #### Add missing wikidata tag
 
 ```py
-from osm_easy_api import Api, Node, Tags
+from osm_easy_api.api import Api
+from osm_easy_api.data_classes import Node, Tags
 
 api = Api("https://master.apis.dev.openstreetmap.org", ACCESS_TOKEN)
 
@@ -106,7 +109,7 @@ api.changeset.close(my_changeset) # Close changeset.
 
 Note that the following codes do the same thing
 ```py
-from osm_easy_api import Diff, Frequency
+from osm_easy_api.diff import Diff, Frequency
 
 d = Diff(Frequency.DAY)
 
@@ -117,7 +120,8 @@ for action, element in gen:
         print(element)
 ```
 ```py
-from osm_easy_api import Diff, Frequency, Tags
+from osm_easy_api.diff import Diff, Frequency
+from osm_easy_api.data_classes import Tags
 
 d = Diff(Frequency.DAY)
 
@@ -130,7 +134,8 @@ but the second seems to be faster.
 
 Also you can use OsmChange object if you don't want to use generator
 ```py
-from osm_easy_api import Diff, Frequency, Action, Node
+from osm_easy_api.diff import Diff, Frequency
+from osm_easy_api.data_classes import Action, Node
 
 d = Diff(Frequency.MINUTE)
 

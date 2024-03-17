@@ -1,4 +1,4 @@
-from osm_easy_api import Note, Comment, User
+from osm_easy_api.data_classes import Note, Comment, User
 
 XML_RESPONSE_BODY = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
 <note lon="20.4660000" lat="52.2722000">

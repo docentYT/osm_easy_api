@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING, Generator, cast
 if TYPE_CHECKING:
     from xml.etree import ElementTree
-    from ... import Node, Way, Relation
-    from ... import Api
+    from ...data_classes import Node, Way, Relation
+    from ...api import Api
 
 from ...api import exceptions
 # TODO: Update OsmChange_parser_generator to have more general usage

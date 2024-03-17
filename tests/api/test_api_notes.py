@@ -4,7 +4,8 @@ import responses
 from ..fixtures.default_variables import TOKEN
 from ..fixtures.stubs import note_stub
 
-from osm_easy_api import Api, Note
+from osm_easy_api.api import Api
+from osm_easy_api.data_classes import Note
 from osm_easy_api.api import exceptions as ApiExceptions
 
 def _are_notes_equal(first: Note, second: Note):
