@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Visibility` enum.
 - `gpx.update()` endpoint.
 - `gpx.delete()` endpoint.
+- `gpx.get_details()` endpoint.
 
 ### Fixed
 - Types in `elements` endpoint.

@@ -71,5 +71,60 @@ class Gpx_Container:
         self.outer._request(method=self.outer._RequestMethods.PUT, url=self.outer._url.gpx["update"].format(id=gpx_file.id), body=xml_str)
 
     def delete(self, id: int) -> None:
+        """Deletes a GPX file.
+
+        Args:
+            id (int): ID of a GPX file to delete.
+        """
         self.outer._request(method=self.outer._RequestMethods.DELETE, url=self.outer._url.gpx["delete"].format(id=id))
-        
+    
+    def get_details(self, id: int) -> GpxFile:
+        """Get details about trace.
+
+        Args:
+            id (int): ID of a GPX file.
+
+        Returns:
+            GpxFile: Requested GPX file details.
+        """
+        string_to_visibility = {
+            "identifiable": Visibility.IDENTIFIABLE,
+            "public": Visibility.PUBLIC,
+            "trackable": Visibility.TRACKABLE,
+            "private": Visibility.PRIVATE
+        }
+
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=self.outer._url.gpx["details"].format(id=id))
+
+        description = None
+        tags = []
+
+        for element in generator:
+            if element.tag == "description": description = element.text
+            elif element.tag == "tag": tags.append(element.text)
+            elif element.tag == "gpx_file": 
+                id = int(element.get("id", -1))
+                name = element.get("name")
+                user_id = int(element.get("uid", -1))
+                visibility = string_to_visibility.get(element.get("visibility", ""))
+                pending = True if element.get("pending") == "true" else False
+                timestamp = element.get("timestamp")
+                latitude = element.get("lat")
+                longitude = element.get("lon")
+
+                assert name and visibility and timestamp and latitude and longitude and description, "[ERROR::API::ENDPOINTS::GPX::GET_DETAILS] missing members."
+
+                return GpxFile(
+                    id=id,
+                    name=name,
+                    user_id=user_id,
+                    visibility=visibility,
+                    pending=pending,
+                    timestamp=timestamp,
+                    latitude=latitude,
+                    longitude=longitude,
+                    description=description,
+                    tags=tags
+                )
+            
+        assert False, "[ERROR::API::ENDPOINTS::GPX::GET_DETAILS] No GpxFile."

@@ -50,7 +50,8 @@ class URLs:
             "get": six_url + "/trackpoints?bbox={left},{bottom},{right},{top}&page={page_number}",
             "create": six_url + "/gpx/create",
             "update": six_url + "/gpx/{id}",
-            "delete": six_url + "/gpx/{id}"
+            "delete": six_url + "/gpx/{id}",
+            "details": six_url + "/gpx/{id}/details"
         }
 
         self.user: Dict[str, str] = {

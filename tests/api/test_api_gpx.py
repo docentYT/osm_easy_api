@@ -82,3 +82,35 @@ class TestApiGpx(unittest.TestCase):
         })
         self.API.gpx.delete(123)
         self.assertTrue(responses.assert_call_count(URL, 1))
+
+    @responses.activate
+    def test_get_details(self):
+        URL = "https://test.pl/api/0.6/gpx/2418/details"
+        BODY = """<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+	<gpx_file id="2418" name="aa.gpx" uid="18179" user="kwiatek_123 bot" visibility="trackable" pending="false" timestamp="2024-03-17T18:48:06Z" lat="52.238983" lon="21.040647">
+		<description>HELLO WORLD</description>
+		<tag>C</tag>
+		<tag>B</tag>
+		<tag>A</tag>
+	</gpx_file>
+</osm>
+"""
+        responses.add(**{
+            "method": responses.GET,
+            "url": URL,
+            "body": BODY,
+            "status": 200,
+        })
+        gpxFile = self.API.gpx.get_details(2418)
+        self.assertTrue(responses.assert_call_count(URL, 1))
+        self.assertEqual(gpxFile.id, 2418)
+        self.assertEqual(gpxFile.name, "aa.gpx")
+        self.assertEqual(gpxFile.user_id, 18179)
+        self.assertEqual(gpxFile.visibility, Visibility.TRACKABLE)
+        self.assertEqual(gpxFile.pending, False)
+        self.assertEqual(gpxFile.timestamp, "2024-03-17T18:48:06Z")
+        self.assertEqual(gpxFile.latitude, "52.238983")
+        self.assertEqual(gpxFile.longitude, "21.040647")
+        self.assertEqual(gpxFile.description, "HELLO WORLD")
+        self.assertEqual(gpxFile.tags, ["C", "B", "A"])
