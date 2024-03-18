@@ -1,6 +1,10 @@
 from dataclasses import dataclass, field
 from copy import copy
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
+
 from ..data_classes.osm_object_primitive import osm_object_primitive
 from ..data_classes.node import Node
 
@@ -23,6 +27,13 @@ class Way(osm_object_primitive):
                 node_element = node._to_xml(changeset_id, way_version=True)
                 element.appendChild(node_element)
             return element
+        
+    @classmethod    
+    def _from_xml(cls, element: 'Element'):
+        way: Way = super()._from_xml(element)
+        for nd in element:
+            if nd.tag == "nd": way.nodes.append(Node(id=int(nd.attrib["ref"])))
+        return way
         
     def to_dict(self) -> dict[str, str | list[dict[str, str]]]:
         super_dict: dict[str, str | list[dict[str, str]]] = super().to_dict() # type: ignore

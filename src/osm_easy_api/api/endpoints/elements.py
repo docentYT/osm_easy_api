@@ -7,7 +7,7 @@ from copy import deepcopy
 from ...api import exceptions
 from ...data_classes import Node, Way, Relation
 from ...data_classes.relation import Member
-from ...diff.diff_parser import _element_to_osm_object
+from ...utils import element_to_osm_object
 
 Node_Way_Relation = TypeVar("Node_Way_Relation", Node, Way, Relation)
 Way_Relation = TypeVar("Way_Relation", Way, Relation)
@@ -59,7 +59,7 @@ class Elements_Container:
         
         for elem in generator:
             if elem.tag in ("node", "way", "relation"):
-                object = _element_to_osm_object(elem)
+                object = element_to_osm_object(elem)
                 return cast(element_type, object)
         
         assert False, "No objects to parse!"
@@ -127,7 +127,7 @@ class Elements_Container:
         objects_list = []
         for elem in generator:
             if elem.tag == element_name:
-                objects_list.append(_element_to_osm_object(elem))
+                objects_list.append(element_to_osm_object(elem))
             
         return objects_list
     
@@ -156,7 +156,7 @@ class Elements_Container:
     
         for elem in generator:
             if elem.tag in ("node", "way", "relation"):
-                return cast(Node_Way_Relation, _element_to_osm_object(elem))
+                return cast(Node_Way_Relation, element_to_osm_object(elem))
         assert False, "[ERROR::API::ENDPOINTS::ELEMENTS::version] Cannot create an element."
     
     def get_query(self, element_type: Type[Node_Way_Relation], ids: list[int]) -> list[Node_Way_Relation]:
@@ -187,7 +187,7 @@ class Elements_Container:
         objects_list = []
         for elem in generator:
             if elem.tag == element_type.__name__.lower():
-                objects_list.append(_element_to_osm_object(elem))
+                objects_list.append(element_to_osm_object(elem))
             
         return objects_list
     
@@ -208,7 +208,7 @@ class Elements_Container:
         relations_list = []
         for elem in generator:
             if elem.tag == "relation":
-                relations_list.append(_element_to_osm_object(elem))
+                relations_list.append(element_to_osm_object(elem))
             
         return relations_list
     
@@ -227,7 +227,7 @@ class Elements_Container:
         ways_list = []
         for elem in generator:
             if elem.tag == "way":
-                ways_list.append(_element_to_osm_object(elem))
+                ways_list.append(element_to_osm_object(elem))
             
         return ways_list
     
@@ -250,15 +250,15 @@ class Elements_Container:
         relations_dict: dict[int, Relation] = {}
         for elem in generator:
             if elem.tag == "node":
-                node = cast(Node, _element_to_osm_object(elem))
+                node = cast(Node, element_to_osm_object(elem))
                 assert node.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
                 nodes_dict.update({node.id: node})
             if elem.tag == "way":
-                way = cast(Way, _element_to_osm_object(elem))
+                way = cast(Way, element_to_osm_object(elem))
                 assert way.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
                 ways_dict.update({way.id: way})
             if elem.tag == "relation" and element_name == "relation":
-                relation = cast(Relation, _element_to_osm_object(elem))
+                relation = cast(Relation, element_to_osm_object(elem))
                 assert relation.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
                 relations_dict.update({relation.id: relation})
         

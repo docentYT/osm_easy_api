@@ -1,34 +1,17 @@
 from xml.etree import ElementTree
-from typing import Generator, cast, TYPE_CHECKING, TypeVar, Type
+from typing import Generator, cast, TYPE_CHECKING
 if TYPE_CHECKING:
     import gzip
 
 from ..data_classes import Node, Way, Relation, OsmChange, Action, Tags
-from ..data_classes.relation import Member
 from ..data_classes.OsmChange import Meta
+from ..utils import element_to_osm_object
 
 STRING_TO_ACTION = {
     "create": Action.CREATE,
     "modify": Action.MODIFY,
     "delete": Action.DELETE
 }
-
-def _add_members_to_relation_from_element(relation: Relation, element: ElementTree.Element) -> None:
-    def _append_member(relation: Relation, type: type[Node | Way | Relation], member_attrib: dict) -> None:
-        relation.members.append(Member(type(id=int(member_attrib["ref"])), member_attrib["role"]))
-
-    for member in element:
-        if member.tag == "member":
-            match member.attrib["type"]:
-                case "node":        _append_member(relation, Node,      member.attrib)
-                case "way":         _append_member(relation, Way,       member.attrib)
-                case "relation":    _append_member(relation, Relation,  member.attrib)
-
-def _add_nodes_to_way_from_element(way: Way, element: ElementTree.Element) -> None:
-    for nd in element:
-        if nd.tag == "nd":
-            way.nodes.append(Node(id=int(nd.attrib["ref"])))
-
 
 def _is_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
     """Checks if provided element has all required tags.
@@ -57,47 +40,6 @@ def _is_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
     
     raise ValueError("[ERROR::DIFF_PARSER::_IS_CORRECT] Unexpected return.")
 
-# TODO: Maybe move creation of object from xml to data classes?
-Node_Way_Relation = TypeVar("Node_Way_Relation", Node, Way, Relation)
-def _create_osm_object_from_attributes(element_type: Type[Node_Way_Relation], attributes: dict) -> Node_Way_Relation:
-
-    id = int(attributes["id"])
-    visible = None
-    if attributes.get("visible"):
-        visible = True if attributes["visible"] == "true" else False
-    version = int(attributes["version"])
-    timestamp = str(attributes["timestamp"])
-    user_id = int(attributes.get("uid", -1))
-    changeset_id = int(attributes["changeset"])
-
-    element = element_type(id=id, visible=visible, version=version, timestamp=timestamp, user_id=user_id, changeset_id=changeset_id)
-
-    if type(element) == Node:
-        element.latitude = str(attributes.get("lat"))
-        element.longitude = str(attributes.get("lon"))
-
-    return element
-
-def _element_to_osm_object(element: ElementTree.Element) -> Node | Way | Relation:
-    def append_tags(element: ElementTree.Element, append_to: Node | Way | Relation):
-        for tag in element:
-                    if tag.tag == "tag": append_to.tags.add(tag.attrib["k"], tag.attrib["v"])
-
-    osmObject = None
-    match element.tag:
-        case "node":
-            osmObject = _create_osm_object_from_attributes(Node, element.attrib)
-        case "way": 
-            osmObject = _create_osm_object_from_attributes(Way, element.attrib)
-            _add_nodes_to_way_from_element(osmObject, element)
-        case "relation":
-            osmObject = _create_osm_object_from_attributes(Relation, element.attrib)
-            _add_members_to_relation_from_element(osmObject, element)
-        case _: assert False, f"[ERROR::DIFF_PARSER::_ELEMENT_TO_OSM_OBJECT] Unknown element tag: {element.tag}"
-
-    append_tags(element, osmObject)
-    return osmObject
-
 def _OsmChange_parser_generator(file: "gzip.GzipFile", sequence_number: str | None, required_tags: Tags | str = Tags()) -> Generator[tuple[Action, Node | Way | Relation] | Meta, None, None]:
     """Generator with elements in diff file. First yield will be Meta namedtuple.
 
@@ -120,7 +62,7 @@ def _OsmChange_parser_generator(file: "gzip.GzipFile", sequence_number: str | No
         if element.tag in ("modify", "create", "delete"): 
             action = STRING_TO_ACTION.get(element.tag, Action.NONE)
         elif element.tag in ("node", "way", "relation") and _is_correct(element, required_tags):
-            osmObject = _element_to_osm_object(element)
+            osmObject = element_to_osm_object(element)
             yield(action, osmObject)
         element.clear()
 

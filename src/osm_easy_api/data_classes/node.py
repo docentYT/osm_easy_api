@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 from xml.dom import minidom
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from xml.etree import ElementTree
+
 from ..data_classes.osm_object_primitive import osm_object_primitive
 
 @dataclass
@@ -27,3 +31,10 @@ class Node(osm_object_primitive):
             for tag in self.tags._to_xml():
                 element.appendChild(tag)
             return element
+        
+    @classmethod    
+    def _from_xml(cls, element: 'ElementTree.Element'):
+        node: Node = super()._from_xml(element)
+        node.latitude = str(element.attrib.get("lat"))
+        node.longitude = str(element.attrib.get("lon"))
+        return node

@@ -2,7 +2,7 @@ import requests
 from xml.etree import ElementTree
 from enum import Enum
 
-from typing import TYPE_CHECKING, Generator, Tuple
+from typing import TYPE_CHECKING, Generator
 if TYPE_CHECKING:
     from urllib3.response import HTTPResponse
     from requests.models import Response
