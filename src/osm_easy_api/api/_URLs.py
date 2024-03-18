@@ -47,11 +47,12 @@ class URLs:
         }
 
         self.gpx: Dict[str, str] = {
-            "get": six_url + "/trackpoints?bbox={left},{bottom},{right},{top}&page={page_number}",
+            "get_gps_points": six_url + "/trackpoints?bbox={left},{bottom},{right},{top}&page={page_number}",
             "create": six_url + "/gpx/create",
             "update": six_url + "/gpx/{id}",
             "delete": six_url + "/gpx/{id}",
-            "details": six_url + "/gpx/{id}/details"
+            "details": six_url + "/gpx/{id}/details",
+            "get_file": six_url + "/gpx/{id}/data"
         }
 
         self.user: Dict[str, str] = {

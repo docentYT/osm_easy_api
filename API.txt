@@ -40,8 +40,8 @@ GPS TRACES
 ✅ POST /api/0.6/gpx/create - Create new GPS trace from GPX file
 ✅ OO: PUT /api/0.6/gpx/#id - Update gps trace
 ✅ OO: DELETE /api/0.6/gpx/#id - Delete gps trace
-GET /api/0.6/gpx/#id/details - Get osm data about GPS trace OO: if private
-GET /api/0.6/gpx/#id/data - Get GPX file for trace OO: if private
+✅ GET /api/0.6/gpx/#id/details - Get osm data about GPS trace OO: if private
+✅ GET /api/0.6/gpx/#id/data - Get GPX file for trace OO: if private
 OO: GET /api/0.6/user/gpx_files - Get all traces for owner account
 
 USERS ✅

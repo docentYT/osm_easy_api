@@ -24,7 +24,7 @@ class Gpx_Container:
             top (int): Bounding box
             page_number (int, optional): Which group of 5 000 points you want to get. Indexed from 0. Defaults to 0.
         """
-        response = self.outer._request(self.outer._RequestMethods.GET, self.outer._url.gpx["get"].format(left=left, bottom=bottom, right=right, top=top, page_number=page_number), stream=True)
+        response = self.outer._request(self.outer._RequestMethods.GET, self.outer._url.gpx["get_gps_points"].format(left=left, bottom=bottom, right=right, top=top, page_number=page_number), stream=True)
         with open(file_to, "wb") as f_to:
             shutil.copyfileobj(response.raw, f_to)
 
@@ -128,3 +128,14 @@ class Gpx_Container:
                 )
             
         assert False, "[ERROR::API::ENDPOINTS::GPX::GET_DETAILS] No GpxFile."
+
+    def get_file(self, file_to: str, id: int) -> None:
+        """Downloads GPX file.
+
+        Args:
+            file_to (str): Path where you want to save gpx.
+            id (int): ID of a GPX file to download.
+        """
+        response = self.outer._request(self.outer._RequestMethods.GET, self.outer._url.gpx["get_file"].format(id=id), stream=True)
+        with open(file_to, "wb") as f_to:
+            shutil.copyfileobj(response.raw, f_to)

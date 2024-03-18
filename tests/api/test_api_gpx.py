@@ -17,7 +17,7 @@ class TestApiGpx(unittest.TestCase):
         cls.API = Api(url="https://test.pl", access_token=TOKEN)
 
     @responses.activate
-    def test_get(self):
+    def test_get_gps_points(self):
         URL = "https://test.pl/api/0.6/trackpoints?bbox=10,20,30,40&page=1"
         F_FROM_PATH = os.path.join("tests", "fixtures", "gps_points.gpx")
         F_TO_PATH = os.path.join("tests", "fixtures", "write_gps_points.gpx")
@@ -114,3 +114,21 @@ class TestApiGpx(unittest.TestCase):
         self.assertEqual(gpxFile.longitude, "21.040647")
         self.assertEqual(gpxFile.description, "HELLO WORLD")
         self.assertEqual(gpxFile.tags, ["C", "B", "A"])
+
+    @responses.activate
+    def test_get_file(self):
+        URL = "https://test.pl/api/0.6/gpx/2418/data"
+        F_FROM_PATH = os.path.join("tests", "fixtures", "gps_points.gpx")
+        F_TO_PATH = os.path.join("tests", "fixtures", "write_gps_points.gpx")
+
+        with open(F_FROM_PATH, "rb") as BODY:
+            responses.add(**{
+                "method": responses.GET,
+                "url": URL,
+                "body": BODY,
+                "status": 200
+            })
+            self.API.gpx.get_file(F_TO_PATH, 2418)
+            self.assertTrue(responses.assert_call_count(URL, 1))
+            self.assertTrue(filecmp.cmp(F_FROM_PATH, F_TO_PATH, shallow=False))
+            os.remove(F_TO_PATH)

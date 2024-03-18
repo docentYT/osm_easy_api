@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `gpx.update()` endpoint.
 - `gpx.delete()` endpoint.
 - `gpx.get_details()` endpoint.
+- `gpx.get_file()` endpoint.
 
 ### Fixed
 - Types in `elements` endpoint.
