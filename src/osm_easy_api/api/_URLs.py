@@ -52,7 +52,8 @@ class URLs:
             "update": six_url + "/gpx/{id}",
             "delete": six_url + "/gpx/{id}",
             "details": six_url + "/gpx/{id}/details",
-            "get_file": six_url + "/gpx/{id}/data"
+            "get_file": six_url + "/gpx/{id}/data",
+            "list": six_url + "/user/gpx_files"
         }
 
         self.user: Dict[str, str] = {

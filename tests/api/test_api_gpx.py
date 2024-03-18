@@ -132,3 +132,52 @@ class TestApiGpx(unittest.TestCase):
             self.assertTrue(responses.assert_call_count(URL, 1))
             self.assertTrue(filecmp.cmp(F_FROM_PATH, F_TO_PATH, shallow=False))
             os.remove(F_TO_PATH)
+
+    @responses.activate
+    def test_list_details(self):
+        URL = "https://test.pl/api/0.6/user/gpx_files"
+        BODY = """<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+	<gpx_file id="2418" name="aa.gpx" uid="18179" user="kwiatek_123 bot" visibility="trackable" pending="false" timestamp="2024-03-17T18:48:06Z" lat="52.238983" lon="21.040647">
+		<description>HELLO WORLD</description>
+		<tag>C</tag>
+		<tag>B</tag>
+		<tag>A</tag>
+	</gpx_file>
+	<gpx_file id="2417" name="aa.gpx" uid="18179" user="kwiatek_123 bot" visibility="trackable" pending="false" timestamp="2024-03-17T18:44:07Z" lat="52.238983" lon="21.040647">
+		<description>ęśąćź#$%!#@$%ęśąćź</description>
+		<tag>ęśąćź!@$*()</tag>
+		<tag>ęśąćź!@</tag>
+	</gpx_file>
+</osm>
+"""
+        responses.add(**{
+            "method": responses.GET,
+            "url": URL,
+            "body": BODY,
+            "status": 200,
+        })
+        gpxFiles = self.API.gpx.list_details()
+        self.assertTrue(responses.assert_call_count(URL, 1))
+        self.assertEqual(gpxFiles[0].id, 2418)
+        self.assertEqual(gpxFiles[0].name, "aa.gpx")
+        self.assertEqual(gpxFiles[0].user_id, 18179)
+        self.assertEqual(gpxFiles[0].visibility, Visibility.TRACKABLE)
+        self.assertEqual(gpxFiles[0].pending, False)
+        self.assertEqual(gpxFiles[0].timestamp, "2024-03-17T18:48:06Z")
+        self.assertEqual(gpxFiles[0].latitude, "52.238983")
+        self.assertEqual(gpxFiles[0].longitude, "21.040647")
+        self.assertEqual(gpxFiles[0].description, "HELLO WORLD")
+        self.assertEqual(gpxFiles[0].tags, ["C", "B", "A"])
+
+        self.assertEqual(gpxFiles[1].id, 2417)
+        self.assertEqual(gpxFiles[1].name, "aa.gpx")
+        self.assertEqual(gpxFiles[1].user_id, 18179)
+        self.assertEqual(gpxFiles[1].visibility, Visibility.TRACKABLE)
+        self.assertEqual(gpxFiles[1].pending, False)
+        self.assertEqual(gpxFiles[1].timestamp, "2024-03-17T18:44:07Z")
+        self.assertEqual(gpxFiles[1].latitude, "52.238983")
+        self.assertEqual(gpxFiles[1].longitude, "21.040647")
+        self.assertEqual(gpxFiles[1].description, "ęśąćź#$%!#@$%ęśąćź")
+        #                                   ęśąćź!@$^&*()
+        self.assertEqual(gpxFiles[1].tags, ["ęśąćź!@$*()", "ęśąćź!@"])

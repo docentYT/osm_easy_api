@@ -42,7 +42,7 @@ GPS TRACES
 ✅ OO: DELETE /api/0.6/gpx/#id - Delete gps trace
 ✅ GET /api/0.6/gpx/#id/details - Get osm data about GPS trace OO: if private
 ✅ GET /api/0.6/gpx/#id/data - Get GPX file for trace OO: if private
-OO: GET /api/0.6/user/gpx_files - Get all traces for owner account
+✅ OO: GET /api/0.6/user/gpx_files - Get all traces for owner account
 
 USERS ✅
 ✅ GET /api/0.6/user/#id - Get user data by id.
