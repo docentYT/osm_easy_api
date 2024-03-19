@@ -1,10 +1,11 @@
 import unittest
 import responses
 import os
+import filecmp
 
 from osm_easy_api.diff import Diff, Frequency
 from osm_easy_api.data_classes import OsmChange, Node, Way, Relation, Action
-
+from ..fixtures.compare_files import _compare_files
 
 class TestDiff(unittest.TestCase):
     @classmethod
@@ -118,6 +119,9 @@ class TestDiff(unittest.TestCase):
 
     @responses.activate
     def test_diff_get(self):
+        FILE_FROM = os.path.join("tests", "fixtures", "hour.xml.gz")
+        FILE_TO = os.path.join("tests", "fixtures", "test_diff_get_file_to.xml.gz")
+
         def check_osm_change(osm_change: OsmChange):
             self.assertEqual(osm_change.get(Node, Action.CREATE).__len__(),  2)
             self.assertEqual(osm_change.get(Node, Action.MODIFY).__len__(),  14)
@@ -134,7 +138,7 @@ class TestDiff(unittest.TestCase):
             self.assertEqual(osm_change.get(Relation, Action.DELETE).__len__(),   0)
             self.assertEqual(osm_change.get(Relation, Action.NONE).__len__(),     0)
 
-        with open(os.path.join("tests", "fixtures", "hour.xml.gz"), "rb") as f:
+        with open(FILE_FROM, "rb") as f:
             responses.add(**{
                 "method": responses.GET,
                 "url": "https://test.pl/minute/005/315/422.osc.gz",
@@ -150,7 +154,7 @@ class TestDiff(unittest.TestCase):
             self.assertTrue(responses.assert_call_count("https://test.pl/minute/state.txt", 0))
             self.assertTrue(responses.assert_call_count("https://test.pl/minute/005/315/422.osc.gz", 1))
 
-        with open(os.path.join("tests", "fixtures", "hour.xml.gz"), "rb") as f:
+        with open(FILE_FROM, "rb") as f:
             responses.add(**{
                 "method": responses.GET,
                 "url": "https://test.pl/minute/005/315/422.osc.gz",
@@ -172,3 +176,24 @@ timestamp=2024-03-18T19\:33\:45Z""",
             check_osm_change(osm_change)
             self.assertTrue(responses.assert_call_count("https://test.pl/minute/state.txt", 1))
             self.assertTrue(responses.assert_call_count("https://test.pl/minute/005/315/422.osc.gz", 2))
+
+        osm_change = DIFF.get(file_from=FILE_FROM, generator=False)
+        assert isinstance(osm_change, OsmChange)
+        check_osm_change(osm_change)
+        self.assertTrue(responses.assert_call_count("https://test.pl/minute/state.txt", 1))
+        self.assertTrue(responses.assert_call_count("https://test.pl/minute/005/315/422.osc.gz", 2))
+
+        with open(FILE_FROM, "rb") as f:
+            responses.add(**{
+                "method": responses.GET,
+                "url": "https://test.pl/minute/005/315/422.osc.gz",
+                "body": f,
+                "status": 200
+            })
+            osm_change = DIFF.get(file_to=FILE_TO, sequence_number=self.SEQUENCE_NUMBER, generator=False)
+            assert isinstance(osm_change, OsmChange)
+            check_osm_change(osm_change)
+            self.assertTrue(_compare_files(FILE_FROM, FILE_TO))
+            os.remove(FILE_TO)
+            self.assertTrue(responses.assert_call_count("https://test.pl/minute/state.txt", 1))
+            self.assertTrue(responses.assert_call_count("https://test.pl/minute/005/315/422.osc.gz", 3))
