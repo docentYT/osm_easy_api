@@ -9,6 +9,9 @@ from osm_easy_api.data_classes import Node, Way, Relation
 from osm_easy_api.api import exceptions as ApiExceptions
 
 class TestApiElements(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.API = Api(url="https://test.pl", access_token=TOKEN)
 
     @responses.activate
     def test_create(self):
@@ -20,9 +23,8 @@ class TestApiElements(unittest.TestCase):
         })
 
         def create_node():
-            return api.elements.create(node, 123)
-
-        api = Api(url="https://test.pl", access_token=TOKEN)
+            return self.API.elements.create(node, 123)
+        
         node = Node(latitude="123", longitude="321")
         self.assertEqual(create_node(), 1)
 
@@ -72,9 +74,8 @@ class TestApiElements(unittest.TestCase):
         })
 
         def get_node():
-            return api.elements.get(Node, 123)
+            return self.API.elements.get(Node, 123)
 
-        api = Api(url="https://test.pl", access_token=TOKEN)
         node = get_node()
         self.assertEqual(str(node), should_be)
 
@@ -120,11 +121,10 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api(url="https://test.pl", access_token=TOKEN)
-        node = api.elements.get(Node, 123)
+        node = self.API.elements.get(Node, 123)
         node.latitude = "1"
-        self.assertEqual(api.elements.update(node, 1), 2)
-        node = api.elements.get(Node, 123)
+        self.assertEqual(self.API.elements.update(node, 1), 2)
+        node = self.API.elements.get(Node, 123)
         self.assertEqual(str(node), should_be)
 
     @responses.activate
@@ -136,9 +136,8 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api(url="https://test.pl", access_token=TOKEN)
         node = Node(123)
-        new_version = api.elements.delete(node, 333)
+        new_version = self.API.elements.delete(node, 333)
         self.assertEqual(new_version, 3)
 
     @responses.activate
@@ -161,8 +160,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api(url="https://test.pl", access_token=TOKEN)
-        history = api.elements.history(Node, 123)
+        history = self.API.elements.history(Node, 123)
         self.assertEqual(len(history), 4)
         self.assertEqual(history[3].user_id, 10688)
         self.assertEqual(history[3].visible, True)
@@ -182,8 +180,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api(url="https://test.pl", access_token=TOKEN)
-        version = api.elements.version(Node, 123, 4)
+        version = self.API.elements.version(Node, 123, 4)
         self.assertEqual(version.user_id, 10688)
 
     @responses.activate
@@ -205,8 +202,7 @@ class TestApiElements(unittest.TestCase):
                     "status": 200
                 })
 
-        api = Api(url="https://test.pl", access_token=TOKEN)
-        nodes = api.elements.get_query(Node, [1, 2])
+        nodes = self.API.elements.get_query(Node, [1, 2])
         self.assertEqual(nodes[0].user_id, 12342)
         self.assertEqual(nodes[1].user_id, 10021)
 
@@ -237,8 +233,7 @@ class TestApiElements(unittest.TestCase):
                     "status": 200
                 })
         
-        api = Api(url="https://test.pl", access_token=TOKEN)
-        relations = api.elements.relations(Way, 111)
+        relations = self.API.elements.relations(Way, 111)
         self.assertEqual(relations[0].id, 79)
         self.assertEqual(relations[1].members[0].role, "outer")
 
@@ -259,8 +254,7 @@ class TestApiElements(unittest.TestCase):
                             "status": 200
                         })
                 
-        api = Api(url="https://test.pl", access_token=TOKEN)
-        ways = api.elements.ways(111)
+        ways = self.API.elements.ways(111)
         self.assertEqual(ways[0].id, 5638)
         self.assertEqual(ways[1].nodes[0].id, 1368)
 
@@ -452,8 +446,7 @@ class TestApiElements(unittest.TestCase):
                             "status": 200
                         })
                 
-        api = Api(url="https://test.pl", access_token=TOKEN)
-        relation = api.elements.full(Relation, 226)
+        relation = self.API.elements.full(Relation, 226)
         self.assertEqual(relation.id, 226)
         self.assertEqual(relation.members[1].element.id, 6178)
         self.assertEqual(relation.members[2].element.id, 6179)
@@ -499,7 +492,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        way = api.elements.full(Way, 226)
+        way = self.API.elements.full(Way, 226)
         self.assertEqual(way.id, 226)
         self.assertEqual(way.nodes[0].id, 5281)
         self.assertEqual(way.nodes[0].latitude, "58.5769849")
@@ -516,6 +509,17 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api(url="https://test.pl", access_token=TOKEN)
-        history = api.elements.history(Node, 123)
+        history = self.API.elements.history(Node, 123)
         self.assertEqual(history[0].user_id, -1)
+
+    @responses.activate
+    def test_redaction(self):
+        URL = "https://test.pl/api/0.6/node/123/4/redact?redaction=13"
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 200
+        })
+
+        self.API.elements.redaction(Node, 123, 4, 13)
+        self.assertTrue(responses.assert_call_count(URL, 1))
