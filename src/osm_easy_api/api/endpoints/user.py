@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Generator
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:
     from xml.etree import ElementTree
     from ...api import Api
 
@@ -63,10 +63,9 @@ class User_Container:
         Returns:
             User: User object.
         """
-        generator = self.outer._get_generator(
-            url=self.outer._url.user["get"].format(id=id),
-            auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=True)
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
+            url=self.outer._url.user["get"].format(id=id))
         
         return self._xml_to_users_list(generator)[0]
     
@@ -83,10 +82,9 @@ class User_Container:
         for id in ids:
             param += f"{id},"
         param = param[:-1]
-        generator = self.outer._get_generator(
-            url=self.outer._url.user["get_query"] + param,
-            auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=True)
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
+            url=self.outer._url.user["get_query"] + param)
         
         return self._xml_to_users_list(generator)
     
@@ -96,10 +94,9 @@ class User_Container:
         Returns:
             User: User object.
         """
-        generator = self.outer._get_generator(
-            url=self.outer._url.user["get_current"],
-            auth_requirement=self.outer._Requirement.YES,
-            auto_status_code_handling=True)
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
+            url=self.outer._url.user["get_current"])
         
         return self._xml_to_users_list(generator)[0]
     
@@ -109,8 +106,8 @@ class User_Container:
         Args:
             key (str | None, optional): Key to search for. Defaults to None (Returns all preferences).
 
-        Raises:
-            ValueError: Preference not found if key was provided
+        Custom exceptions:
+            - **404 -> ValueError:** Preference not found if key was provided.
 
         Returns:
             dict[str, str]: Dictionary of preferences
@@ -118,17 +115,10 @@ class User_Container:
         url = self.outer._url.user["preferences"]
         if key:
             url += f"/{key}"
-            response = self.outer._request(self.outer._RequestMethods.GET, url, self.outer._Requirement.YES, auto_status_code_handling=False)
-            match response.status_code:
-                case 200: pass
-                case 404: raise ValueError("Preference not found")
-                case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+            response = self.outer._request(self.outer._RequestMethods.GET, url, custom_status_code_exceptions={404: ValueError("Preference not found.")})
             return {key: response.text}
         
-        generator = self.outer._get_generator(
-            url=url,
-            auth_requirement=self.outer._Requirement.YES,
-            auto_status_code_handling=True)
+        generator = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=url)
         
         preferences = {}
         for element in generator:
@@ -153,7 +143,7 @@ class User_Container:
         root.appendChild(preferences_element)
         xml_str = root.toprettyxml(indent="\t")
 
-        self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.user["preferences"], self.outer._Requirement.YES, stream=True, body=xml_str)
+        self.outer._request(self.outer._RequestMethods.PUT, self.outer._url.user["preferences"], stream=True, body=xml_str)
         
     def delete_preference(self, key: str) -> None:
         """Deletes only one preference with given key.
@@ -161,13 +151,9 @@ class User_Container:
         Args:
             key (str): Key to delete.
 
-        Raises:
-            ValueError: Preference not found.
+        Custom exceptions:
+            - **404 -> ValueError:** Preference not found.
         """
         url = self.outer._url.user["preferences"]
         url += f"/{key}"
-        response = self.outer._request(self.outer._RequestMethods.DELETE, url, self.outer._Requirement.YES, auto_status_code_handling=False)
-        match response.status_code:
-            case 200: pass
-            case 404: raise ValueError("Preference not found")
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github."
+        self.outer._request(self.outer._RequestMethods.DELETE, url, custom_status_code_exceptions={404: ValueError("Preference not found.")})

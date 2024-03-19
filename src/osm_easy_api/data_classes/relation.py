@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
-from typing import NamedTuple
 from copy import copy
+from typing import NamedTuple, TYPE_CHECKING
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
 
 from ..data_classes.osm_object_primitive import osm_object_primitive
 from ..data_classes import Node, Way
@@ -28,6 +30,22 @@ class Relation(osm_object_primitive):
                 element.appendChild(member._to_xml(changeset_id=changeset_id, member_version=True, role=role))
 
             return element
+        
+    @classmethod    
+    def _from_xml(cls, element: 'Element'):
+        relation: Relation = super()._from_xml(element)
+        
+        def _append_member(type: type[Node | Way | Relation], member_attrib: dict) -> None:
+            relation.members.append(Member(type(id=int(member_attrib["ref"])), member_attrib["role"]))
+
+        for member in element:
+            if member.tag == "member":
+                match member.attrib["type"]:
+                    case "node":        _append_member(Node,        member.attrib)
+                    case "way":         _append_member(Way,         member.attrib)
+                    case "relation":    _append_member(Relation,    member.attrib)
+
+        return relation
         
     def to_dict(self) -> dict[str, str | list[_MEMBER_DICTIONARY_TYPE]]:
         super_dict: dict[str, str | list[_MEMBER_DICTIONARY_TYPE]] = super().to_dict() # type: ignore

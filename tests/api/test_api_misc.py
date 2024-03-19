@@ -1,9 +1,7 @@
 import unittest
 import responses
 
-from ..fixtures.default_variables import LOGIN, PASSWORD
-
-from osm_easy_api import Api
+from osm_easy_api.api import Api
 from osm_easy_api.api import exceptions as ApiExceptions
 
 class TestApi(unittest.TestCase):

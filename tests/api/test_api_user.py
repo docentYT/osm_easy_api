@@ -1,9 +1,9 @@
 import unittest
 import responses
 
-from ..fixtures.default_variables import LOGIN, PASSWORD
+from ..fixtures.default_variables import TOKEN
 
-from osm_easy_api import Api
+from osm_easy_api.api import Api
 
 class TestApiElements(unittest.TestCase):
 
@@ -32,7 +32,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         user = api.user.get(123)
         self.assertEqual(user.display_name, "guggis")
         self.assertEqual(user.img_url, "https://www.gravatar.com/avatar/123.png")
@@ -63,7 +63,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         user = api.user.get_query([123])[0]
         self.assertEqual(user.display_name, "guggis")
         self.assertEqual(user.img_url, "https://www.gravatar.com/avatar/123.png")
@@ -91,7 +91,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         preferences = api.user.get_preferences()
         self.assertEqual(preferences, {"a": "b", "c": "d"})
         preferences = api.user.get_preferences("c")
@@ -106,7 +106,7 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         api.user.set_preferences({"a": "b"})
 
     @responses.activate
@@ -118,5 +118,5 @@ class TestApiElements(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
+        api = Api(url="https://test.pl", access_token=TOKEN)
         api.user.delete_preference("c")

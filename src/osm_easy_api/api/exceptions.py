@@ -28,9 +28,6 @@ class AlreadySubscribed(Exception):
 class NotSubscribed(Exception):
     pass
 
-class NotAModerator(Exception):
-    pass
-
 class ElementDeleted(Exception):
     pass
 
@@ -42,3 +39,24 @@ class NoteAlreadyOpen(Exception):
 
 class TooManyRequests(Exception):
     pass
+
+class Unauthorized(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+class Forbidden(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+STATUS_CODE_EXCEPTIONS = {
+    401: Unauthorized("You must provide an access token in order to use this endpoint."),
+    403: Forbidden("Either the access token does not support the needed scope or you must be a moderator to use this endpoint."),
+    400: ValueError("{TEXT}"),
+    404: IdNotFoundError(),
+    410: ElementDeleted(),
+    412: ValueError("{TEXT}"),
+    429: TooManyRequests(),
+}
+"""These are all exceptions that can be reported by the API for each of `osm_easy_api.api.endpoints`, but some may override some of them according to the [official API specification](https://wiki.openstreetmap.org/wiki/API_v0.6)."""

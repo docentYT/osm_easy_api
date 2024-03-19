@@ -1,6 +1,6 @@
 import unittest
 
-from osm_easy_api import Tags
+from osm_easy_api.data_classes import Tags
 from ..fixtures import sample_dataclasses
 
 class TestTags(unittest.TestCase):

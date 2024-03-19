@@ -2,6 +2,10 @@ from dataclasses import dataclass, field
 from xml.dom import minidom
 from copy import copy
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
+
 from ..data_classes.tags import Tags
 
 @dataclass
@@ -36,6 +40,23 @@ class osm_object_primitive():
             element.setAttribute("version",     str(self.version))
             element.setAttribute("changeset",   str(changeset_id))
             return element
+
+    @classmethod    
+    def _from_xml(cls, element: 'Element'):
+        attrib = element.attrib
+        id = int(attrib["id"])
+        visible = None
+        if attrib.get("visible"):
+            visible = True if attrib["visible"] == "true" else False
+        version = int(attrib["version"])
+        timestamp = str(attrib["timestamp"])
+        user_id = int(attrib.get("uid", -1))
+        changeset_id = int(attrib["changeset"])
+        obj = cls(id=id, visible=visible, version=version, timestamp=timestamp, user_id=user_id, changeset_id=changeset_id)
+        for tag in element:
+            if tag.tag == "tag": obj.tags.add(tag.attrib["k"], tag.attrib["v"])
+
+        return obj
         
     def to_dict(self) -> dict[str, str]:
         """Returns a dictionary that corresponds to the attributes of the object. In addition, a 'type' key is added to specify the type of element.

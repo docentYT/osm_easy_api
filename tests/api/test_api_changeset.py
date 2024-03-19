@@ -2,13 +2,21 @@ import unittest
 import responses
 from copy import copy
 
-from ..fixtures.default_variables import LOGIN, PASSWORD
+from ..fixtures.default_variables import TOKEN
 
-from osm_easy_api import Api
-from osm_easy_api.data_classes import Changeset, Tags, Node
+from osm_easy_api.api import Api
+from osm_easy_api.data_classes import Changeset, Tags, Node, OsmChange, Action
 from osm_easy_api.api import exceptions as ApiExceptions
+from ..fixtures import sample_dataclasses 
+from ..fixtures.stubs import changeset_stub 
+
+def _are_changesets_equal(first: Changeset, second: Changeset):
+    return first.to_dict() == second.to_dict()
 
 class TestApiChangeset(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.API = Api(url="https://test.pl", access_token=TOKEN)
 
     @responses.activate
     def test_create(self):
@@ -19,53 +27,20 @@ class TestApiChangeset(unittest.TestCase):
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
-        self.assertEqual(api.changeset.create("ABC"), 111)
+        self.assertEqual(self.API.changeset.create("ABC"), 111)
+        self.assertEqual(self.API.changeset.create("ABC", tags=Tags({"alfa": "beta"})), 111)
 
     @responses.activate
     def test_get(self):
-        body = """<?xml version="1.0" encoding="UTF-8"?>
-            <osm version="0.6" generator="CGImap 0.8.8 (3619885 faffy.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
-                <changeset id="111" created_at="2022-12-26T13:33:40Z" closed_at="2022-12-26T14:22:04Z" open="false" user="kwiatek_123 bot" uid="18179" comments_count="1" changes_count="0">
-                    <tag k="testing" v="yes"/>
-                    <tag k="created_by" v="osm-python-api"/>
-                    <tag k="comment" v="aaa"/>
-                    <discussion>
-                        <comment date="2022-12-26T14:22:22Z" uid="18179" user="kwiatek_123 bot">
-                            <text>abc</text>
-                        </comment>
-                    </discussion>
-                </changeset>
-            </osm>
-        """
         responses.add(**{
             "method": responses.GET,
             "url": "https://test.pl/api/0.6/changeset/111?include_discussion=true",
-            "body": body,
+            "body": changeset_stub.XML_RESPONSE_BODY,
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
-        changeset = Changeset(
-            111,
-            "2022-12-26T13:33:40Z",
-            False,
-            "18179",
-            "1",
-            "0",
-            Tags({"testing": "yes", "created_by": "osm-python-api", "comment": "aaa"}),
-            [{"date": "2022-12-26T14:22:22Z", "user_id": "18179", "text": "abc"}]
-        )
-
-        testing_changeset = api.changeset.get(111, True)
-        self.assertEqual(testing_changeset.id, changeset.id)
-        self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
-        self.assertEqual(testing_changeset.open, changeset.open)
-        self.assertEqual(testing_changeset.user_id, changeset.user_id)
-        self.assertEqual(testing_changeset.comments_count, changeset.comments_count)
-        self.assertEqual(testing_changeset.changes_count, changeset.changes_count)
-        self.assertEqual(testing_changeset.tags, changeset.tags)
-        self.assertEqual(testing_changeset.discussion, changeset.discussion)
+        testing_changeset = self.API.changeset.get(111, True)
+        self.assertTrue(_are_changesets_equal(testing_changeset, changeset_stub.OBJECT))
 
         responses.add(**{
             "method": responses.GET,
@@ -74,7 +49,7 @@ class TestApiChangeset(unittest.TestCase):
         })
 
         def get():
-            return api.changeset.get(111, True)
+            return self.API.changeset.get(111, True)
         
         self.assertRaises(ApiExceptions.IdNotFoundError, get)
 
@@ -91,12 +66,11 @@ class TestApiChangeset(unittest.TestCase):
         """
         responses.add(**{
             "method": responses.GET,
-            "url": "https://test.pl/api/0.6/changesets/?user=18179&limit=100",
+            "url": "https://test.pl/api/0.6/changesets/?user=18179&changesets=111,222&order=newest&limit=100",
             "body": body,
             "status": 200
         })
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
         changeset = Changeset(
             222,
             "2023-01-10T16:48:58Z",
@@ -107,94 +81,40 @@ class TestApiChangeset(unittest.TestCase):
             Tags({"comment": "Upload relation test"})
         )
 
-        testing_changeset = api.changeset.get_query(user_id="18179")[1]
-        self.assertEqual(testing_changeset.id, changeset.id)
-        self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
-        self.assertEqual(testing_changeset.open, changeset.open)
-        self.assertEqual(testing_changeset.user_id, changeset.user_id)
-        self.assertEqual(testing_changeset.comments_count, changeset.comments_count)
-        self.assertEqual(testing_changeset.changes_count, changeset.changes_count)
-        self.assertEqual(testing_changeset.tags, changeset.tags)
+        testing_changeset = self.API.changeset.get_query(user_id=18179, changesets_id=[111, 222])[1]
+        self.assertTrue(_are_changesets_equal(testing_changeset, changeset))
 
-        body = """<osm version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
-    <changeset id="111" created_at="2023-01-10T16:49:30Z" open="false" comments_count="0" changes_count="3" closed_at="2023-01-10T16:52:52Z" min_lat="52.2423700" min_lon="21.1171000" max_lat="52.2423700" max_lon="21.1171000" uid="18179" user="kwiatek_123 bot">
-        <tag k="comment" v="Upload relation test"/>
-    </changeset>
-</osm>
-        """
+        body = changeset_stub.XML_RESPONSE_BODY
 
         responses.add(**{
             "method": responses.GET,
-            "url": "https://test.pl/api/0.6/changesets/?user=18179&limit=1",
+            "url": "https://test.pl/api/0.6/changesets/?user=18179&order=newest&limit=1",
             "body": body,
             "status": 200
         })
-        changeset_list = api.changeset.get_query(user_id="18179", limit=1)
+        changeset_list = self.API.changeset.get_query(user_id=18179, limit=1)
         self.assertEqual(changeset_list.__len__(), 1)
-
-        responses.add(**{
-            "method": responses.GET,
-            "url": "https://test.pl/api/0.6/changeset/111?include_discussion=true",
-            "status": 404
-        })
-
-        def get():
-            return api.changeset.get(111, True)
-        
-        self.assertRaises(ApiExceptions.IdNotFoundError, get)
 
     @responses.activate
     def test_update(self):
-        body = """<?xml version="1.0" encoding="UTF-8"?>
-            <osm version="0.6" generator="CGImap 0.8.8 (3619885 faffy.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
-                <changeset id="111" created_at="2022-12-26T13:33:40Z" closed_at="2022-12-26T14:22:04Z" open="false" user="kwiatek_123 bot" uid="18179" comments_count="1" changes_count="0">
-                    <tag k="testing" v="yes"/>
-                    <tag k="created_by" v="osm-python-api"/>
-                    <tag k="comment" v="aaa"/>
-                    <discussion>
-                        <comment date="2022-12-26T14:22:22Z" uid="18179" user="kwiatek_123 bot">
-                            <text>abc</text>
-                        </comment>
-                    </discussion>
-                </changeset>
-            </osm>
-        """
         responses.add(**{
             "method": responses.PUT,
             "url": "https://test.pl/api/0.6/changeset/111",
-            "body": body,
+            "body": changeset_stub.XML_RESPONSE_BODY,
             "status": 200
         })
 
-        changeset = Changeset(
-            111,
-            "2022-12-26T13:33:40Z",
-            False,
-            "18179",
-            "1",
-            "0",
-            Tags({"testing": "yes", "created_by": "osm-python-api", "comment": "aaa"}),
-            [{"date": "2022-12-26T14:22:22Z", "user_id": "18179", "text": "abc"}]
-        )
+        testing_changeset = self.API.changeset.update(111, "BBB")
+        self.assertTrue(_are_changesets_equal(testing_changeset, changeset_stub.OBJECT))
 
-        api = Api("https://test.pl", LOGIN, PASSWORD)
-
-        testing_changeset = api.changeset.update(111, "BBB")
-        self.assertEqual(testing_changeset.id, changeset.id)
-        self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
-        self.assertEqual(testing_changeset.open, changeset.open)
-        self.assertEqual(testing_changeset.user_id, changeset.user_id)
-        self.assertEqual(testing_changeset.comments_count, changeset.comments_count)
-        self.assertEqual(testing_changeset.changes_count, changeset.changes_count)
-        self.assertEqual(testing_changeset.tags, changeset.tags)
-        self.assertEqual(testing_changeset.discussion, changeset.discussion)
+        testing_changeset = self.API.changeset.update(111, "BBB" , Tags({"testing": "yes"}))
+        self.assertTrue(_are_changesets_equal(testing_changeset, changeset_stub.OBJECT))
 
         def update():
-            return api.changeset.update(111, "BBB")
+            return self.API.changeset.update(111, "BBB")
         responses.add(**{
             "method": responses.PUT,
             "url": "https://test.pl/api/0.6/changeset/111",
-            "body": body,
             "status": 404
         })
         self.assertRaises(ApiExceptions.IdNotFoundError, update)
@@ -202,38 +122,26 @@ class TestApiChangeset(unittest.TestCase):
         responses.add(**{
             "method": responses.PUT,
             "url": "https://test.pl/api/0.6/changeset/111",
-            "body": body,
             "status": 409
         })
         self.assertRaises(ApiExceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor, update)
     
     @responses.activate
     def test_close(self):
-        responses.add(**{
-            "method": responses.PUT,
-            "url": "https://test.pl/api/0.6/changeset/create",
-            "body": "111",
-            "status": 200
-        })
-
+        def close():
+            return self.API.changeset.close(111)
+        
         responses.add(**{
             "method": responses.PUT,
             "url": "https://test.pl/api/0.6/changeset/111/close",
             "body": "111",
             "status": 200
         })
-
-        api = Api("https://test.pl", LOGIN, PASSWORD)
-        changeset_id = api.changeset.create("ABC")
-        def close():
-            return api.changeset.close(changeset_id)
-
         close()
 
         responses.add(**{
             "method": responses.PUT,
             "url": "https://test.pl/api/0.6/changeset/111/close",
-            "body": "111",
             "status": 404
         })
         self.assertRaises(ApiExceptions.IdNotFoundError, close)
@@ -248,6 +156,9 @@ class TestApiChangeset(unittest.TestCase):
 
     @responses.activate
     def test_download(self):
+        def download():
+            return self.API.changeset.download(111)
+
         body = """<?xml version="1.0" encoding="UTF-8"?>
         <osmChange version="0.6" generator="CGImap 0.8.8 (3619883 faffy.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
             <create>
@@ -268,10 +179,7 @@ class TestApiChangeset(unittest.TestCase):
             "body": body,
             "status": 200
         })
-
-        api = Api("https://test.pl")
-
-        generator = api.changeset.download(111)
+        generator = download()
         
         second_node = None
         for action, element in generator:
@@ -284,11 +192,61 @@ class TestApiChangeset(unittest.TestCase):
         responses.add(**{
             "method": responses.GET,
             "url": "https://test.pl/api/0.6/changeset/111/download",
-            "body": body,
             "status": 404
         })
-
-        def download():
-            return api.changeset.download(111)
-        
         self.assertRaises(ApiExceptions.IdNotFoundError, download)
+
+    @responses.activate
+    def test_upload(self):
+        URL = "https://test.pl/api/0.6/changeset/123/upload"
+
+        osmChange = OsmChange("0.1", "unittest", "123")
+        osmChange.add(sample_dataclasses.node("simple_1"))
+        should_print = "OsmChange(version=0.1, generator=unittest, sequence_number=123. Node: Create(0), Modify(0), Delete(0), None(1). Way: Create(0), Modify(0), Delete(0), None(0). Relation: Create(0), Modify(0), Delete(0), None(0)."
+        self.assertEqual(str(osmChange), should_print)
+        osmChange.add(sample_dataclasses.node("simple_2"), Action.MODIFY)
+        osmChange.add(sample_dataclasses.way("simple_1"), Action.MODIFY)
+
+        def upload():
+            return self.API.changeset.upload(123, osmChange)
+        
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "body": None, # TODO: To be supported
+            "status": 200
+        })
+        upload()
+        self.assertTrue(responses.assert_call_count(URL, 1))
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 400
+        })
+        self.assertRaises(ApiExceptions.ErrorWhenParsingXML, upload)
+        self.assertTrue(responses.assert_call_count(URL, 2))
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 404
+        })
+        self.assertRaises(ApiExceptions.IdNotFoundError, upload)
+        self.assertTrue(responses.assert_call_count(URL, 3))
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 409
+        })
+        self.assertRaises(ApiExceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor, upload)
+        self.assertTrue(responses.assert_call_count(URL, 4))
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 999
+        })
+        self.assertRaises(ValueError, upload)
+        self.assertTrue(responses.assert_call_count(URL, 5))

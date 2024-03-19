@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:
     from ...api import Api
 
 from ...api import exceptions
@@ -17,17 +17,10 @@ class Changeset_Discussion_Container:
             changeset_id (int): Changeset id.
             text (str): The comment text.
 
-        Raises:
-            exceptions.ChangesetNotClosed: Changeset must be closed to add comment.
-            exceptions.TooManyRequests: Request has been blocked due to rate limiting.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.ChangesetNotClosed`:** Changeset must be closed to add comment.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["comment"].format(id=changeset_id, text=urllib.parse.quote(text)), self.outer._Requirement.YES, auto_status_code_handling=False)
-        
-        match response.status_code:
-            case 200: pass
-            case 409: raise exceptions.ChangesetNotClosed()
-            case 429: raise exceptions.TooManyRequests()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["comment"].format(id=changeset_id, text=urllib.parse.quote(text)), custom_status_code_exceptions={409: exceptions.ChangesetNotClosed()})
 
     def subscribe(self, changeset_id: int) -> None:
         """Subscribe to the discussion to receive notifications for new comments.
@@ -35,15 +28,10 @@ class Changeset_Discussion_Container:
         Args:
             changeset_id (int): Changeset id.
 
-        Raises:
-            exceptions.AlreadySubscribed: You are already subscribed to this changeset.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.AlreadySubscribed`:**  You are already subscribed to this changeset.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["subscribe"].format(id=changeset_id), self.outer._Requirement.YES, auto_status_code_handling=False)
-        
-        match response.status_code:
-            case 200: pass
-            case 409: raise exceptions.AlreadySubscribed()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["subscribe"].format(id=changeset_id), custom_status_code_exceptions={409: exceptions.AlreadySubscribed()})
 
     def unsubscribe(self, changeset_id: int) -> None:
         """Unsubscribe from discussion to stop receiving notifications.
@@ -51,48 +39,23 @@ class Changeset_Discussion_Container:
         Args:
             changeset_id (int): Changeset id.
 
-        Raises:
-            exceptions.NotSubscribed: You are not subscribed to this changeset.
+        Custom exceptions:
+            - **404 -> `osm_easy_api.api.exceptions.NotSubscribed`:** You are not subscribed to this changeset.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unsubscribe"].format(id=changeset_id), self.outer._Requirement.YES, auto_status_code_handling=False)
-        
-        match response.status_code:
-            case 200: pass
-            case 404: raise exceptions.NotSubscribed()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unsubscribe"].format(id=changeset_id), custom_status_code_exceptions={404: exceptions.NotSubscribed()})
 
     def hide(self, comment_id: int) -> None:
         """Set visible flag on changeset comment to false. MODERATOR ONLY!
 
         Args:
             comment_id (int): Comment id.
-
-        Raises:
-            exceptions.NotAModerator: You are not a moderator.
-            exceptions.IdNotFoundError: Comment with provided id not found.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["hide"].format(comment_id=comment_id), self.outer._Requirement.YES, auto_status_code_handling=False)
-        
-        match response.status_code:
-            case 200: pass
-            case 403: raise exceptions.NotAModerator()
-            case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["hide"].format(comment_id=comment_id))
 
     def unhide(self, comment_id: int) -> None:
         """Set visible flag on changeset comment to true. MODERATOR ONLY!
 
         Args:
             comment_id (int): Comment id.
-
-        Raises:
-            exceptions.NotAModerator: You are not a moderator.
-            exceptions.IdNotFoundError: Comment with provided id not found.
         """
-        response = self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unhide"].format(comment_id=comment_id), self.outer._Requirement.YES, auto_status_code_handling=False)
-        
-        match response.status_code:
-            case 200: pass
-            case 403: raise exceptions.NotAModerator()
-            case 404: raise exceptions.IdNotFoundError()
-            case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
+        self.outer._request(self.outer._RequestMethods.POST, self.outer._url.changeset_discussion["unhide"].format(comment_id=comment_id))

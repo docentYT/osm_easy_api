@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Generator
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:
     from xml.etree import ElementTree
     from ...api import Api
 
@@ -21,7 +21,7 @@ class Notes_Container:
         for element in generator:
             match element.tag:
                 case "id":
-                    assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'"
+                    assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'" # pragma: no cover
                     temp_note.id = int(element.text)
                 case "date_created":
                     temp_note.note_created_at = element.text
@@ -34,11 +34,11 @@ class Notes_Container:
                         for comment_tag in comment:
                             # Comment specific data
                             if comment_tag.tag == "date":
-                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'date'"
+                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'date'" # pragma: no cover
                                 temp_comment.comment_created_at = comment_tag.text
                             # User specific data
                             elif comment_tag.tag == "uid":
-                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'uid'"
+                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'uid'" # pragma: no cover
                                 temp_user.id = int(comment_tag.text)
                             elif comment_tag.tag == "user":
                                 temp_user.display_name = comment_tag.text
@@ -71,23 +71,12 @@ class Notes_Container:
         Args:
             id (int): Note id.
 
-        Raises:
-            exceptions.IdNotFoundError: Note with given id cannot be found.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
-
         Returns:
             Note: Note object.
         """
-        status_code, generator = self.outer._get_generator(
-            url=self.outer._url.note["get"].format(id=id),
-            auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
+            url=self.outer._url.note["get"].format(id=id))
         
         return self._xml_to_notes_list(generator)[0]
     
@@ -102,24 +91,19 @@ class Notes_Container:
             limit (int, optional): Max number of notes (1 < limit < 10000). Defaults to 100.
             closed_days (int, optional): Number of days a note needs to be closed to no longer be returned (0 - only open, -1 - all). Defaults to 7.
 
-        Raises:
-            ValueError: Any of args limit is exceeded.
+        Custom exceptions:
+            - **400 -> ValueError:** Any of args limit is exceeded.
 
         Returns:
             list[Note]: List of notes.
         """
         url=self.outer._url.note["get_bbox"].format(left=left, bottom=bottom, right=right, top=top, limit=limit, closed_days=closed_days)
 
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=False
+            custom_status_code_exceptions={400: ValueError("Limits exceeded")}
         )
-
-        match status_code:
-            case 200: pass
-            case 400: raise ValueError("Limits exceeded")
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
 
         return self._xml_to_notes_list(generator)
     
@@ -134,10 +118,9 @@ class Notes_Container:
         Returns:
             Note: Object of newly created note.
         """
-        generator = self.outer._post_generator(
-            url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=urllib.parse.quote(text)),
-            auth_requirement=self.outer._Requirement.OPTIONAL,
-            auto_status_code_handling=True)
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.POST,
+            url=self.outer._url.note["create"].format(latitude=latitude, longitude=longitude, text=urllib.parse.quote(text)))
         
         return self._xml_to_notes_list(generator)[0]
     
@@ -148,25 +131,16 @@ class Notes_Container:
             id (int): Note id
             text (str): Comment text
 
-        Raises:
-            exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.NoteAlreadyClosed: Note is closed.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.NoteAlreadyClosed`:** Note is closed.
 
         Returns:
             Note: Note object of commented note
         """
-        status_code, generator = self.outer._post_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.POST,
             url=self.outer._url.note["comment"].format(id=id, text=urllib.parse.quote(text)),
-            auth_requirement=self.outer._Requirement.YES,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.NoteAlreadyClosed()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={409: exceptions.NoteAlreadyClosed()})
 
         return self._xml_to_notes_list(generator)[0]
     
@@ -177,10 +151,8 @@ class Notes_Container:
             id (int): Note id.
             text (str | None, optional): Text to add as comment when closing the note. Defaults to None.
 
-        Raises:
-            exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.NoteAlreadyClosed: Note already closed.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.NoteAlreadyClosed`:** Note is closed.
 
         Returns:
             Note: Note object of closed note.
@@ -188,17 +160,10 @@ class Notes_Container:
         url = self.outer._url.note["close"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, generator = self.outer._post_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.POST,
             url=url+param,
-            auth_requirement=self.outer._Requirement.YES,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.NoteAlreadyClosed()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={409: exceptions.NoteAlreadyClosed()})
 
         return self._xml_to_notes_list(generator)[0]
     
@@ -209,28 +174,19 @@ class Notes_Container:
             id (int): Note id.
             text (str | None, optional): Text to add as comment when reopening the note. Defaults to None.
 
-        Raises:
-            exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.NoteAlreadyClosed: Note already closed.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
+        Custom exceptions:
+            - **409 -> `osm_easy_api.api.exceptions.NoteAlreadyOpen`:** Note is open.
 
         Returns:
-            Note: Note object of closed note.
+            Note: Note object of opened note.
         """
         url = self.outer._url.note["reopen"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, generator = self.outer._post_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.POST,
             url=url+param,
-            auth_requirement=self.outer._Requirement.YES,
-            auto_status_code_handling=False)
-        
-        match status_code:
-            case 200: pass
-            case 404: raise exceptions.IdNotFoundError()
-            case 409: raise exceptions.NoteAlreadyOpen()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
+            custom_status_code_exceptions={409: exceptions.NoteAlreadyOpen()})
 
         return self._xml_to_notes_list(generator)[0]
     
@@ -240,29 +196,15 @@ class Notes_Container:
         Args:
             id (int): Note id.
             text (str | None, optional): Text to add as comment when hiding the note. Defaults to None.
-
-        Raises:
-            exceptions.NotAModerator: User does not have a moderator role.
-            exceptions.IdNotFoundError: Cannot find note with given id.
-            exceptions.ElementDeleted: Note with given id has been hidden by a moderator.
         """
         url = self.outer._url.note["hide"].format(id=id, text=text)
         param = f"?text={text}" if text else ""
 
-        status_code, response = self.outer._request(
+        self.outer._request(
             method=self.outer._RequestMethods.DELETE,
             url=url+param,
-            auth_requirement=self.outer._Requirement.YES,
-            stream=False,
-            auto_status_code_handling=False
+            stream=False
         )
-
-        match status_code:
-            case 200: pass
-            case 403: raise exceptions.NotAModerator()
-            case 404: raise exceptions.IdNotFoundError()
-            case 410: raise exceptions.ElementDeleted()
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
     
     def search(self, text: str, limit: int = 100, closed_days: int = 7, user_id: int | None = None, from_date: str | None = None, to_date: str | None = None, sort: str = "updated_at", order: str = "newest") -> list[Note]:
         """Search for notes with initial text and comments.
@@ -277,8 +219,8 @@ class Notes_Container:
             sort (str, optional): Which value should be used to sort notes ("updated_at" or "created_at"). Defaults to "updated_at".
             order (str, optional): Order of returned notes ("newset" or "oldest"). Defaults to "newest".
 
-        Raises:
-            ValueError: Limits exceeded.
+        Custom exceptions:
+            - **400 -> `osm_easy_api.api.exceptions.LimitsExceeded`:** Limits exceeded.
 
         Returns:
             list[Note]: List of notes objects.
@@ -290,17 +232,9 @@ class Notes_Container:
         if sort: url += f"&sort={sort}"
         if order: url += f"&order={order}"
 
-        status_code, generator = self.outer._get_generator(
+        generator = self.outer._request_generator(
+            method=self.outer._RequestMethods.GET,
             url=url,
-            auth_requirement=self.outer._Requirement.NO,
-            auto_status_code_handling=False)
+            custom_status_code_exceptions={400: exceptions.LimitsExceeded("{TEXT}")})
         
-        match status_code:
-            case 200: pass
-            case 400: raise ValueError("Limits exceeded")
-            case _: assert False, f"Unexpected response status code {status_code}. Please report it on github." # pragma: no cover
-
-        try:
-            return self._xml_to_notes_list(generator)
-        except:
-            return []
+        return self._xml_to_notes_list(generator)

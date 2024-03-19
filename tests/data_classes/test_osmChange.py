@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from osm_easy_api import Node, Way, OsmChange, Action, Tags, Relation
+from osm_easy_api.data_classes import Node, Way, OsmChange, Action, Tags, Relation
 from ..fixtures import sample_dataclasses
 
 class TestOsmChange(unittest.TestCase):

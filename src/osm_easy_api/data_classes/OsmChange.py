@@ -116,10 +116,8 @@ class OsmChange():
             str: xml string.
         """
         osmChange = self
-        if (work_on_copy):
-            osmChange = deepcopy(self)
-        if (make_osmChange_valid):
-            OsmChange._make_osmChange_valid(osmChange)
+        if work_on_copy: osmChange = deepcopy(self)
+        if make_osmChange_valid: OsmChange._make_osmChange_valid(osmChange)
 
         return OsmChange._to_xml(osmChange, changeset_id)
 

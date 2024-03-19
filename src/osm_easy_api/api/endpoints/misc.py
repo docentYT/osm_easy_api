@@ -1,12 +1,12 @@
-from typing import TYPE_CHECKING, Generator
-if TYPE_CHECKING: # pragma: no cover
+from typing import TYPE_CHECKING, Generator, cast
+if TYPE_CHECKING:
     from xml.etree import ElementTree
-    from ... import Node, Way, Relation
-    from ... import Api
+    from ...data_classes import Node, Way, Relation
+    from ...api import Api
 
 from ...api import exceptions
 # TODO: Update OsmChange_parser_generator to have more general usage
-from ...diff.diff_parser import OsmChange_parser_generator
+from ...diff.diff_parser import _OsmChange_parser_generator
 
 class Misc_Container:
         def __init__(self, outer):
@@ -16,16 +16,16 @@ class Misc_Container:
             """Returns API versions supported by this instance.
 
             Raises:
-                ValueError: [ERROR::API::MISC::versions] CAN'T FIND version
+                ValueError: [ERROR::API::MISC::versions] CAN'T FIND version.
 
             Returns:
                 list: List of supported versions by instance.
             """
-            gen: Generator['ElementTree.Element', None, None] = self.outer._get_generator(self.outer._url.misc["versions"])
+            gen: Generator['ElementTree.Element', None, None] = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=self.outer._url.misc["versions"])
             versions = []
             for element in gen:
                 if element.tag == "version": versions.append(element.text)
-            if len(versions) == 0: raise ValueError("[ERROR::API::MISC::versions] CAN'T FIND version")
+            if len(versions) == 0: raise ValueError("[ERROR::API::MISC::versions] CAN'T FIND version.")
             return versions
         
         def capabilities(self) -> dict:
@@ -55,7 +55,7 @@ class Misc_Container:
                             dict["policy"]["imagery"]["blacklist_regex"].append(blacklist.attrib["regex"])
 
             HEAD_TAGS = ("osm", "api", "policy")
-            gen: Generator['ElementTree.Element', None, None] = self.outer._get_generator(self.outer._url.misc["capabilities"])
+            gen: Generator['ElementTree.Element', None, None] = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=self.outer._url.misc["capabilities"])
             return_dict = {}
 
             for element in gen:
@@ -68,7 +68,7 @@ class Misc_Container:
 
             return return_dict
 
-        def get_map_in_bbox(self, left: float, bottom: float, right: float, top: float) -> Generator["Node | Way | Relation | str", None, None]:
+        def get_map_in_bbox(self, left: float, bottom: float, right: float, top: float) -> Generator["Node | Way | Relation", None, None]:
             """Returns generator of map data in border box. See https://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_map_data_by_bounding_box:_GET_/api/0.6/map for more info. 
 
             Args:
@@ -82,23 +82,19 @@ class Misc_Container:
             """
             response = self.outer._request(method=self.outer._RequestMethods.GET,
                 url=self.outer._url.misc["map"].format(left=left, bottom=bottom, right=right, top=top),
-                auth_requirement=self.outer._Requirement.OPTIONAL,
                 stream=True,
-                auto_status_code_handling=False
+                custom_status_code_exceptions={
+                    400: exceptions.LimitsExceeded("You are trying to download too much data."),
+                    509: exceptions.LimitsExceeded("You have downloaded too much data. Please try again later. See https://wiki.openstreetmap.org/wiki/Developer_FAQ#I've_been_blocked_from_the_API_for_downloading_too_much._Now_what?")
+                }
             )
-
-            match response.status_code:
-                case 200: pass
-                case 400: raise exceptions.LimitsExceeded("You are trying to download too much data.")
-                case 509: raise exceptions.LimitsExceeded("You have downloaded too much data. Please try again later. See https://wiki.openstreetmap.org/wiki/Developer_FAQ#I've_been_blocked_from_the_API_for_downloading_too_much._Now_what?")
-                case _: assert False, f"Unexpected response status code {response.status_code}. Please report it on github." # pragma: no cover
 
             response.raw.decode_content = True
             def generator():
-                gen = OsmChange_parser_generator(response.raw, None)
+                gen = _OsmChange_parser_generator(response.raw, None)
                 next(gen) # for meta data
                 for action, element in gen: # type: ignore
-                    yield element           # type: ignore
+                    yield cast("Node | Way | Relation", element)
             return generator()
 
         def permissions(self) -> list:
@@ -107,7 +103,7 @@ class Misc_Container:
             Returns:
                 list: List of permissions names.
             """
-            gen = self.outer._get_generator(self.outer._url.misc["permissions"])
+            gen = self.outer._request_generator(method=self.outer._RequestMethods.GET, url=self.outer._url.misc["permissions"])
             return_permission_list = []
 
             for element in gen:
