@@ -12,4 +12,4 @@ def element_to_osm_object(element: 'Element') -> Node | Way | Relation:
             return Way._from_xml(element)
         case "relation":
             return Relation._from_xml(element)
-        case _: assert False, f"[ERROR::DIFF_PARSER::_ELEMENT_TO_OSM_OBJECT] Unknown element tag: {element.tag}"
+        case _: assert False, f"[ERROR::DIFF_PARSER::_ELEMENT_TO_OSM_OBJECT] Unknown element tag: {element.tag}" # pragma: no cover

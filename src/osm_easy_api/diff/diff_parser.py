@@ -38,7 +38,7 @@ def _is_correct(element: ElementTree.Element, tags: Tags | str) -> bool:
                 matching_tags_counter += 1
         return matching_tags_counter == len(tags)
     
-    raise ValueError("[ERROR::DIFF_PARSER::_IS_CORRECT] Unexpected return.")
+    assert False, ValueError("[ERROR::DIFF_PARSER::_IS_CORRECT] Unexpected return.") # pragma: no cover
 
 def _OsmChange_parser_generator(file: "gzip.GzipFile", sequence_number: str | None, required_tags: Tags | str = Tags()) -> Generator[tuple[Action, Node | Way | Relation] | Meta, None, None]:
     """Generator with elements in diff file. First yield will be Meta namedtuple.
@@ -80,7 +80,7 @@ def _OsmChange_parser(file: "gzip.GzipFile", sequence_number: str | None, requir
     gen = _OsmChange_parser_generator(file, sequence_number, required_tags)
     # FIXME: Maybe OsmChange_parser_generator should return tuple(Meta, gen)? EDIT: I think Meta should be generated somewhere else
     meta = next(gen)
-    assert type(meta) == Meta, "[ERROR::DIFF_PARSER::OSMCHANGE_PARSER] meta type is not equal to Meta."
+    assert isinstance(meta, Meta), "[ERROR::DIFF_PARSER::OSMCHANGE_PARSER] meta type is not equal to Meta." # pragma: no cover
     osmChange = OsmChange(meta.version, meta.generator, meta.sequence_number)
     for action, element in gen: # type: ignore (Next gen elements must be proper tuple type.)
         element = cast(Node | Way | Relation, element)

@@ -33,7 +33,7 @@ def _xml_to_gpx_files(generator: Generator[ElementTree.Element, None, None]) -> 
             timestamp = element.get("timestamp")
             latitude = element.get("lat")
             longitude = element.get("lon")
-            assert name and visibility and timestamp and latitude and longitude and description, "[ERROR::API::ENDPOINTS::GPX::GET_DETAILS] missing members."
+            assert name and visibility and timestamp and latitude and longitude and description, "[ERROR::API::ENDPOINTS::GPX::GET_DETAILS] missing members." # pragma: no cover
             gpx_files.append(GpxFile(
                 id=id,
                 name=name,

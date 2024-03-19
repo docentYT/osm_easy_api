@@ -62,7 +62,7 @@ class Elements_Container:
                 object = element_to_osm_object(elem)
                 return cast(element_type, object)
         
-        assert False, "No objects to parse!"
+        assert False, "No objects to parse!" # pragma: no cover
     
     def update(self, element: Node | Way | Relation, changeset_id: int) -> int:
         """Updates data for existing element.
@@ -157,7 +157,7 @@ class Elements_Container:
         for elem in generator:
             if elem.tag in ("node", "way", "relation"):
                 return cast(Node_Way_Relation, element_to_osm_object(elem))
-        assert False, "[ERROR::API::ENDPOINTS::ELEMENTS::version] Cannot create an element."
+        assert False, "[ERROR::API::ENDPOINTS::ELEMENTS::version] Cannot create an element." # pragma: no cover
     
     def get_query(self, element_type: Type[Node_Way_Relation], ids: list[int]) -> list[Node_Way_Relation]:
         """Allows fetch multiple elements at once.
@@ -251,21 +251,21 @@ class Elements_Container:
         for elem in generator:
             if elem.tag == "node":
                 node = cast(Node, element_to_osm_object(elem))
-                assert node.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
+                assert node.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}" # pragma: no cover
                 nodes_dict.update({node.id: node})
             if elem.tag == "way":
                 way = cast(Way, element_to_osm_object(elem))
-                assert way.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
+                assert way.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}" # pragma: no cover
                 ways_dict.update({way.id: way})
             if elem.tag == "relation" and element_name == "relation":
                 relation = cast(Relation, element_to_osm_object(elem))
-                assert relation.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
+                assert relation.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}" # pragma: no cover
                 relations_dict.update({relation.id: relation})
         
         for way in ways_dict.values():
             for i in range(len(way.nodes)):
                 node_id = way.nodes[i].id
-                assert node_id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}"
+                assert node_id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {node}" # pragma: no cover
                 node = nodes_dict[node_id]
                 way.nodes[i] = deepcopy(node)
 
@@ -274,7 +274,7 @@ class Elements_Container:
                 members = relation.members
                 for i in range(len(members)):
                     element = members[i].element
-                    assert element.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {element}"
+                    assert element.id, f"[ERROR::API::ENDPOINTS::ELEMENTS::full] No id for {element}" # pragma: no cover
                     if isinstance(element, Node):
                         members[i] = Member(deepcopy(nodes_dict[element.id]), members[i].role)
                     elif isinstance(element, Way):

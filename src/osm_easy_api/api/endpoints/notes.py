@@ -21,7 +21,7 @@ class Notes_Container:
         for element in generator:
             match element.tag:
                 case "id":
-                    assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'"
+                    assert element.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No element.text in tag 'id'" # pragma: no cover
                     temp_note.id = int(element.text)
                 case "date_created":
                     temp_note.note_created_at = element.text
@@ -34,11 +34,11 @@ class Notes_Container:
                         for comment_tag in comment:
                             # Comment specific data
                             if comment_tag.tag == "date":
-                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'date'"
+                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'date'" # pragma: no cover
                                 temp_comment.comment_created_at = comment_tag.text
                             # User specific data
                             elif comment_tag.tag == "uid":
-                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'uid'"
+                                assert comment_tag.text, "[ERROR::API::ENDPOINTS::NOTE::_xml_to_note] No comment_tag.text in tag 'uid'" # pragma: no cover
                                 temp_user.id = int(comment_tag.text)
                             elif comment_tag.tag == "user":
                                 temp_user.display_name = comment_tag.text
