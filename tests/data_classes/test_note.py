@@ -2,6 +2,7 @@ import unittest
 
 from osm_easy_api.data_classes import Note, Comment, User
 from ..fixtures import sample_dataclasses
+from ..fixtures.stubs import note_stub
 
 class TestComment(unittest.TestCase):
     def test_basic_initalization(self):
@@ -13,6 +14,12 @@ class TestComment(unittest.TestCase):
         self.assertEqual(comment.action, "opened")
         self.assertEqual(comment.text, "ABC")
         self.assertEqual(comment.html, "ABC")
+
+    def test__str__(self):
+        comment = sample_dataclasses.comment("simple_1")
+
+        should_print = """Comment(comment_created_at = 123, user = User(id = 123, display_name = abc, account_created_at = None, description = None, contributor_terms_agreed = None, img_url = None, roles = None, changesets_count = None, traces_count = None, blocks = None, ), action = opened, text = ABC, html = ABC, )"""
+        self.assertEqual(comment.__str__(), should_print)
 
     def test_to_from_dict(self):
         comment = sample_dataclasses.comment("full_1")
@@ -48,11 +55,10 @@ class TestNote(unittest.TestCase):
         self.assertEqual(note.open, True)
         self.assertEqual(note.comments[0], comment)
 
-    def test_comment__str__(self):
-        comment = sample_dataclasses.comment("simple_1")
-
-        should_print = """Comment(comment_created_at = 123, user = User(id = 123, display_name = abc, account_created_at = None, description = None, contributor_terms_agreed = None, img_url = None, roles = None, changesets_count = None, traces_count = None, blocks = None, ), action = opened, text = ABC, html = ABC, )"""
-        self.assertEqual(comment.__str__(), should_print)
+    def test__str__(self):
+        note = note_stub.OBJECT
+        should_print = "Note(id = 37970, latitude = 52.2722000, longitude = 20.4660000, note_created_at = 2023-02-26 13:37:26 UTC, open = True, comments = [Comment(comment_created_at='2023-02-26 13:37:26 UTC', user=User(id=18179, display_name='kwiatek_123 bot', account_created_at=None, description=None, contributor_terms_agreed=None, img_url=None, roles=None, changesets_count=None, traces_count=None, blocks=None), action='opened', text='test', html='')], )"
+        self.assertEqual(str(note), should_print)
 
     def test_to_from_dict(self):
         note = sample_dataclasses.note("full_1")
