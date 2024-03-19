@@ -106,6 +106,7 @@ class Changeset_Container:
     time_one: str | None = None, time_two: str | None = None,
     open: bool = False, closed: bool = False,
     changesets_id: list[int] | None = None,
+    order: str = "newest",
     limit: int = 100
     ) -> list[Changeset]:
         """Get changesets with given criteria.
@@ -122,6 +123,7 @@ class Changeset_Container:
             open (bool, optional): Find only open changesets. Defaults to False.
             closed (bool, optional): Find only closed changesets. Defaults to False.
             changesets_id (list[int] | None, optional): List of ids to search for. Defaults to None.
+            order (str, optional): If 'newest', sort newest changesets first. If 'oldest', reverse order. Defaults to newest.
             limit (int, optional): Specifies the maximum number of changesets returned. Must be between 1 and 100. Defaults to 100.
 
         Custom exceptions:
@@ -144,7 +146,8 @@ class Changeset_Container:
             for id in changesets_id:
                 param += f",{id}"
             param += "&"
-        param+=f"limit={limit}"
+        param+=f"order={order}"
+        param+=f"&limit={limit}"
 
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,

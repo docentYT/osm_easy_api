@@ -66,7 +66,7 @@ class TestApiChangeset(unittest.TestCase):
         """
         responses.add(**{
             "method": responses.GET,
-            "url": "https://test.pl/api/0.6/changesets/?user=18179&changesets=111,222&limit=100",
+            "url": "https://test.pl/api/0.6/changesets/?user=18179&changesets=111,222&order=newest&limit=100",
             "body": body,
             "status": 200
         })
@@ -88,7 +88,7 @@ class TestApiChangeset(unittest.TestCase):
 
         responses.add(**{
             "method": responses.GET,
-            "url": "https://test.pl/api/0.6/changesets/?user=18179&limit=1",
+            "url": "https://test.pl/api/0.6/changesets/?user=18179&order=newest&limit=1",
             "body": body,
             "status": 200
         })
