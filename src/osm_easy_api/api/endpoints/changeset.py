@@ -242,7 +242,6 @@ class Changeset_Container:
             - **400 -> `osm_easy_api.api.exceptions.ErrorWhenParsingXML`:** Incorrect OsmChange object. Maybe missing elements attributes.
             - **404 -> `osm_easy_api.api.exceptions.IdNotFoundError`:** No changeset with provided ID or can't find element with ID in OsmChange.
             - **409 -> `osm_easy_api.api.exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor`:** Changeset already closed or you are not an author.
-            - **400 -> `osm_easy_api.api.exceptions.ErrorWhenParsingXML`:** Incorrect OsmChange object. Maybe missing elements attributes.
             OTHER -> ValueError: Unexpected but correct error.
         """
         self.outer._request(

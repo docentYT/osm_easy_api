@@ -5,8 +5,9 @@ from copy import copy
 from ..fixtures.default_variables import TOKEN
 
 from osm_easy_api.api import Api
-from osm_easy_api.data_classes import Changeset, Tags, Node
+from osm_easy_api.data_classes import Changeset, Tags, Node, OsmChange, Action
 from osm_easy_api.api import exceptions as ApiExceptions
+from ..fixtures import sample_dataclasses 
 
 class TestApiChangeset(unittest.TestCase):
 
@@ -21,6 +22,7 @@ class TestApiChangeset(unittest.TestCase):
 
         api = Api(url="https://test.pl", access_token=TOKEN)
         self.assertEqual(api.changeset.create("ABC"), 111)
+        self.assertEqual(api.changeset.create("ABC", tags=Tags({"alfa": "beta"})), 111)
 
     @responses.activate
     def test_get(self):
@@ -91,7 +93,7 @@ class TestApiChangeset(unittest.TestCase):
         """
         responses.add(**{
             "method": responses.GET,
-            "url": "https://test.pl/api/0.6/changesets/?user=18179&limit=100",
+            "url": "https://test.pl/api/0.6/changesets/?user=18179&changesets=111,222&limit=100",
             "body": body,
             "status": 200
         })
@@ -107,7 +109,7 @@ class TestApiChangeset(unittest.TestCase):
             Tags({"comment": "Upload relation test"})
         )
 
-        testing_changeset = api.changeset.get_query(user_id=18179)[1]
+        testing_changeset = api.changeset.get_query(user_id=18179, changesets_id=[111, 222])[1]
         self.assertEqual(testing_changeset.id, changeset.id)
         self.assertEqual(testing_changeset.timestamp, changeset.timestamp)
         self.assertEqual(testing_changeset.open, changeset.open)
@@ -324,3 +326,59 @@ class TestApiChangeset(unittest.TestCase):
             return api.changeset.download(111)
         
         self.assertRaises(ApiExceptions.IdNotFoundError, download)
+
+    @responses.activate
+    def test_upload(self):
+        URL = "https://test.pl/api/0.6/changeset/123/upload"
+
+        osmChange = OsmChange("0.1", "unittest", "123")
+        osmChange.add(sample_dataclasses.node("simple_1"))
+        should_print = "OsmChange(version=0.1, generator=unittest, sequence_number=123. Node: Create(0), Modify(0), Delete(0), None(1). Way: Create(0), Modify(0), Delete(0), None(0). Relation: Create(0), Modify(0), Delete(0), None(0)."
+        self.assertEqual(str(osmChange), should_print)
+        osmChange.add(sample_dataclasses.node("simple_2"), Action.MODIFY)
+        osmChange.add(sample_dataclasses.way("simple_1"), Action.MODIFY)
+
+        api = Api("https://test.pl")
+        def upload():
+            return api.changeset.upload(123, osmChange)
+        
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "body": None, # TODO: To be supported
+            "status": 200
+        })
+        upload()
+        self.assertTrue(responses.assert_call_count(URL, 1))
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 400
+        })
+        self.assertRaises(ApiExceptions.ErrorWhenParsingXML, upload)
+        self.assertTrue(responses.assert_call_count(URL, 2))
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 404
+        })
+        self.assertRaises(ApiExceptions.IdNotFoundError, upload)
+        self.assertTrue(responses.assert_call_count(URL, 3))
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 409
+        })
+        self.assertRaises(ApiExceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor, upload)
+        self.assertTrue(responses.assert_call_count(URL, 4))
+
+        responses.add(**{
+            "method": responses.POST,
+            "url": URL,
+            "status": 999
+        })
+        self.assertRaises(ValueError, upload)
+        self.assertTrue(responses.assert_call_count(URL, 5))
