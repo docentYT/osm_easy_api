@@ -19,10 +19,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
         with:
-          python-version: '3.11'
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
 
       # ADJUST THIS: install all dependencies (including pdoc)
       - run: python -m pip install --upgrade pip
@@ -32,9 +34,8 @@ jobs:
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
       - run: pdoc -o docs/ --docformat google --no-show-source osm_easy_api !osm_easy_api.utils
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages
           path: docs/
 
   # Deploy the artifact to GitHub pages.
