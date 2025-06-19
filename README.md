@@ -1,6 +1,6 @@
 <h1 align="center">osm_easy_api</h1>
 <p align="center">
-  <img src="https://github.com/docentYT/automated-python-tests-testing-repo/actions/workflows/tests.yaml/badge.svg" />
+  <img src="https://github.com/docentYT/osm_easy_api/actions/workflows/tests.yaml/badge.svg" />
   <img src="https://raw.githubusercontent.com/docentYT/osm_easy_api/main/coverage-badge.svg" />
   <a href="https://pypi.org/project/osm-easy-api/">
     <img src="https://img.shields.io/pypi/v/osm_easy_api" />

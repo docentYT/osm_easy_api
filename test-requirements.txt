@@ -1,4 +1,4 @@
-responses == 0.25.0
-tox == 4.15.0
-coverage == 7.5.1
+responses == 0.25.7
+tox == 4.27.0
+coverage == 7.9.1
 coverage-badge == 1.1.1
