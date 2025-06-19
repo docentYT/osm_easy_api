@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] - 2025-06-19
 ### Added
 - Support for python 3.13
+- Project urls for PyPI registry
 
 ### Changed
 - Development status set to 5 - Production/Stable
