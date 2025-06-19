@@ -32,7 +32,7 @@ jobs:
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
       - run: pdoc -o docs/ --docformat google --no-show-source osm_easy_api !osm_easy_api.utils
 
-      - uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: docs/
 
