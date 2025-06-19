@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Dependencies update
+- Tests passing badge in README.md
 
 ## [3.0.1] - 2024-05-21
 ### Added
