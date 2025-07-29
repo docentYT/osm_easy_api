@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Additional tests for `api._request()`
 
+### Changed
+- Exceptions for `notes.get_bbox()` (400 ValueError), `changeset.get_query()` (400 ValueError) and `changeset.upload()` (409 ChangesetAlreadyClosedOrUserIsNotAnAuthor) now will contain additional text returned by osm api
+
 ## [3.0.2] - 2025-06-19
 ### Added
 - Support for python 3.13

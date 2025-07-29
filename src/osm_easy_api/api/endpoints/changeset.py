@@ -152,7 +152,7 @@ class Changeset_Container:
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,
             url=join_url(self.outer._url.changeset["get_query"], param),
-            custom_status_code_exceptions={400: ValueError("Invalid arguments. See https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets for more info.")})
+            custom_status_code_exceptions={400: ValueError("Invalid arguments: {TEXT}")})
 
         return self._xml_to_changesets_list(generator)
     
@@ -254,7 +254,7 @@ class Changeset_Container:
             custom_status_code_exceptions= {
                 400: exceptions.ErrorWhenParsingXML("{TEXT}"),
                 404: exceptions.IdNotFoundError("{TEXT}"),
-                409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor(),
+                409: exceptions.ChangesetAlreadyClosedOrUserIsNotAnAuthor("{TEXT}"),
                 -1: ValueError("Unexpected but correct error. Status code: {CODE}")
             }
         )
