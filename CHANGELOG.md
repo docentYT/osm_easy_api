@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Additional tests for `api._request()`
+
 ### Changed
 - `NotImplemented` exception is now raised for unsupported http reponse status codes
 
