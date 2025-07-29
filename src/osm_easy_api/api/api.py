@@ -43,7 +43,6 @@ class Api():
         if response.status_code == 200: return response
 
         exception = custom_status_code_exceptions.get(response.status_code, None) or STATUS_CODE_EXCEPTIONS.get(response.status_code, None)
-        if not exception: exception = custom_status_code_exceptions.get(-1, None)
         if not exception: raise NotImplementedError(f"Invalid (and unexpected) response code {response.status_code} for {url}. Please report it on GitHub.")
         if str(exception): raise type(exception)(str(exception).format(TEXT=response.text, CODE=response.status_code)) from exception
         raise exception
