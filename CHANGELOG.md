@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- NotImplemented error is now raised for unsupported http reponse status codes
+- `NotImplemented` exception is now raised for unsupported http reponse status codes
 
 ## [3.0.2] - 2025-06-19
 ### Added
