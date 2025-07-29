@@ -248,5 +248,5 @@ class TestApiChangeset(unittest.TestCase):
             "url": URL,
             "status": 999
         })
-        self.assertRaises(NotImplementedError, upload)
+        self.assertRaises(ValueError, upload)
         self.assertTrue(responses.assert_call_count(URL, 5))
