@@ -102,7 +102,7 @@ class Notes_Container:
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,
             url=url,
-            custom_status_code_exceptions={400: ValueError("Limits exceeded")}
+            custom_status_code_exceptions={400: ValueError("Limits exceeded: {TEXT}")}
         )
 
         return self._xml_to_notes_list(generator)

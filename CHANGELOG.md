@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2025-10-08
+
+### Added
+- Additional tests for `api._request()`
+- Support for python 3.14
+
+### Changed
+- Exceptions for `notes.get_bbox()` (400 ValueError), `changeset.get_query()` (400 ValueError) and `changeset.upload()` (409 ChangesetAlreadyClosedOrUserIsNotAnAuthor) now will contain additional text returned by osm api [#35](https://github.com/docentYT/osm_easy_api/issues/35)
+- Use genbadge instead of coverage-badge
+
+### Fixed
+- Dependencies update
+
 ## [3.0.2] - 2025-06-19
 ### Added
 - Support for python 3.13

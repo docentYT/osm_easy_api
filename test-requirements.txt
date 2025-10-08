@@ -1,4 +1,4 @@
-responses == 0.25.7
-tox == 4.27.0
-coverage == 7.9.1
-coverage-badge == 1.1.1
+responses == 0.25.8
+tox == 4.30.3
+coverage == 7.9.2
+genbadge[coverage] == 1.1.2

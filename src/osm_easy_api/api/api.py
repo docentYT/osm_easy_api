@@ -39,6 +39,29 @@ class Api():
             self._headers.update({"User-Agent": user_agent})
 
     def _request(self, method: _RequestMethods, url: str, stream: bool = False, files: dict | None = None, custom_status_code_exceptions: dict = {int: Exception}, body = None) -> "Response":
+        """Sends an HTTP request and handles response status codes.
+
+        Args:
+            method (_RequestMethods): The HTTP method to use (e.g. GET, POST).
+            url (str): The URL to send the request to.
+            stream (bool, optional): Whether to stream the response content. Defaults to False.
+            files (dict | None, optional): Files to include in the request. Defaults to None.
+            custom_status_code_exceptions (dict, optional): A mapping of status codes to exception types
+                used to override default behavior. Provide `-1` code to raise for all not listed status codes. 
+            body (Any, optional): The body of the request. If provided, it will be encoded in UTF-8.
+
+        Returns:
+            Response: The HTTP response object if the request was successful (status code 200).
+
+        Raises:
+            ValueError: If a mapped exception type is set and contains a string template.
+            NotImplementedError: If the status code is unexpected and no mapped exception is found.
+            Exception: If the status code matches a mapped exception in the provided or default dictionary.
+
+        Notes:
+            The method uses `self._headers` for all requests.
+            Exceptions may include response content and status code via string formatting.
+        """
         response = requests.request(str(method), url, stream=stream, files=files, data=body.encode('utf-8') if body else None, headers=self._headers)
         if response.status_code == 200: return response
 

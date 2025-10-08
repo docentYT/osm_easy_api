@@ -167,7 +167,7 @@ class TestDiff(unittest.TestCase):
             "url": "https://test.pl/minute/state.txt",
             "body": f"""#Mon Mar 18 19:34:09 UTC 2024
 sequenceNumber={self.SEQUENCE_NUMBER}
-timestamp=2024-03-18T19\:33\:45Z""",
+timestamp=2024-03-18T19\\:33\\:45Z""",
             "status": 200
         })
 
