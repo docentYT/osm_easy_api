@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for python 3.14
 
 ### Changed
-- Exceptions for `notes.get_bbox()` (400 ValueError), `changeset.get_query()` (400 ValueError) and `changeset.upload()` (409 ChangesetAlreadyClosedOrUserIsNotAnAuthor) now will contain additional text returned by osm api
+- Exceptions for `notes.get_bbox()` (400 ValueError), `changeset.get_query()` (400 ValueError) and `changeset.upload()` (409 ChangesetAlreadyClosedOrUserIsNotAnAuthor) now will contain additional text returned by osm api [#35](https://github.com/docentYT/osm_easy_api/issues/35)
 
 ## [3.0.2] - 2025-06-19
 ### Added
