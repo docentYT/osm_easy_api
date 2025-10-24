@@ -95,6 +95,14 @@ class TestApiChangeset(unittest.TestCase):
         changeset_list = self.API.changeset.get_query(user_id=18179, limit=1)
         self.assertEqual(changeset_list.__len__(), 1)
 
+        responses.add(**{
+            "method": responses.GET,
+            "url": "https://test.pl/api/0.6/changesets/?display_name=Map_Rivers&time=1970-11-29%2016:30:00,2025-10-16%2014:24:23&order=newest&limit=100",
+            "body": body,
+            "status": 200
+        })
+        changeset_list = self.API.changeset.get_query(display_name="Map_Rivers", order="newest", time_one="1970-11-29 16:30:00", time_two="2025-10-16 14:24:23")
+
     @responses.activate
     def test_update(self):
         responses.add(**{
