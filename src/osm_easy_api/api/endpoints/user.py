@@ -78,10 +78,7 @@ class User_Container:
         Returns:
             list[User]: List of User objects.
         """
-        param = ""
-        for id in ids:
-            param += f"{id},"
-        param = param[:-1]
+        param = ",".join(map(str, ids))
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,
             url=self.outer._url.user["get_query"] + param)

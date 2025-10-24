@@ -132,28 +132,29 @@ class Changeset_Container:
         Returns:
             list[Changeset]: List of Changeset objects.
         """
-        param = "?"
-        if left or bottom or right or top: param += f"bbox={left},{bottom},{right},{top}&"
-        if user_id:         param += f"user={user_id}&"
-        if display_name:    param += f"display_name={display_name}&"
-        if time_one:        param += f"time={time_one}&"
-        if time_two:        param += f",{time_two}&"
-        if open:            param += f"open={open}&"
-        if closed:          param += f"closed={closed}&"
+        params = []
+        if left or bottom or right or top: params.append(f"bbox={left},{bottom},{right},{top}")
+        if user_id:         params.append(f"user={user_id}")
+        if display_name:    params.append(f"display_name={display_name}")
+        if time_one:
+            time_param = f"time={time_one}"
+            if time_two:
+                time_param += f",{time_two}"
+            params.append(time_param)
+            
+        if open:            params.append(f"open={open}")
+        if closed:          params.append(f"closed={closed}")
         if changesets_id:
-            param += f"changesets={changesets_id[0]}"
-            changesets_id.pop(0)
-            for id in changesets_id:
-                param += f",{id}"
-            param += "&"
-        param+=f"order={order}"
-        param+=f"&limit={limit}"
+            changesets = ",".join(map(str, changesets_id))
+            params.append(f"changesets={changesets}")
+
+        params.append(f"order={order}")
+        params.append(f"limit={limit}")
 
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,
-            url=join_url(self.outer._url.changeset["get_query"], param),
+            url=join_url(self.outer._url.changeset["get_query"], "?" + "&".join(params)),
             custom_status_code_exceptions={400: ValueError("Invalid arguments: {TEXT}")})
-
         return self._xml_to_changesets_list(generator)
     
     def update(self, id: int, comment: str | None = None, tags: Tags | None = None) -> Changeset:

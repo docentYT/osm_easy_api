@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1] - 2025-10-24
+
+### Changed
+- Better url parameters join in `changeset.get_query()`
+- Better url parameters join in `elements.get_query()`
+- Better url parameters join in `user.get_query()`
+
+### Fixed
+- `time_one` and `time_two` params for `changeset.get_query()` should not be joined with `&` [#37](https://github.com/docentYT/osm_easy_api/issues/37)
+
 ## [3.1.0] - 2025-10-08
 
 ### Added
