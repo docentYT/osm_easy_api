@@ -173,9 +173,7 @@ class Elements_Container:
             list[Node_Way_Relation]: List of elements you are looking for.
         """
         element_name = element_type.__name__.lower() + 's'
-        param = f"?{element_name}="
-        for id in ids: param += f"{id},"
-        param = param[:-1]
+        param = f"?{element_name}=" + ",".join(map(str, ids))
         url = self.outer._url.elements["multi_fetch"].format(element_type=element_name) + param
         generator = self.outer._request_generator(
             method=self.outer._RequestMethods.GET,

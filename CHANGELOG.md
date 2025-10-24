@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Better url parameters join in `changeset.get_query()`
+- Better url parameters join in `elements.get_query()`
 
 ### Fixed
 - `time_one` and `time_two` params for `changeset.get_query()` should not be joined with `&` [#37](https://github.com/docentYT/osm_easy_api/issues/37)
