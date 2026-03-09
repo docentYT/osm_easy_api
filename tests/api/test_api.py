@@ -1,6 +1,7 @@
 import unittest
 
 import responses
+import requests
 
 from osm_easy_api.api import Api
 
@@ -58,3 +59,33 @@ class TestApi(unittest.TestCase):
             api._request(method=Api._RequestMethods.POST, url="http://test.pl/")
 
         self.assertIn("BODY_FROM_RESPONSE", str(context.exception))
+
+    @responses.activate
+    def test__request_500(self):
+        api = Api()
+
+        responses.add(
+            **{
+                "method": responses.POST,
+                "url": "http://test.pl/",
+                "status": 500,
+            }
+        )
+
+        with self.assertRaises(requests.exceptions.HTTPError):
+            api._request(method=Api._RequestMethods.POST, url="http://test.pl/")
+
+    @responses.activate
+    def test__request_599(self):
+        api = Api()
+
+        responses.add(
+            **{
+                "method": responses.POST,
+                "url": "http://test.pl/",
+                "status": 599,
+            }
+        )
+
+        with self.assertRaises(requests.exceptions.HTTPError):
+            api._request(method=Api._RequestMethods.POST, url="http://test.pl/")
