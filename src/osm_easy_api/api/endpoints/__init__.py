@@ -2,7 +2,7 @@
 
 The module structure is based on the [official API specification](https://wiki.openstreetmap.org/wiki/API_v0.6).
 
-All endpoints may throw one of the exception from `osm_easy_api.api.exceptions.STATUS_CODE_EXCEPTIONS` (unless the endpoint documentation states otherwise).
+All endpoints may throw one of the exception from `osm_easy_api.api.exceptions.STATUS_CODE_EXCEPTIONS` or `requests.exceptions.HTTPError` for server errors (unless the endpoint documentation states otherwise).
 """
 from .misc import Misc_Container
 from .changeset import Changeset_Container
