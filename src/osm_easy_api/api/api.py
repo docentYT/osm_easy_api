@@ -22,7 +22,14 @@ class Api():
         def __str__(self):
             return self.name
 
-    def __init__(self, url: str = "https://master.apis.dev.openstreetmap.org", access_token: str | None = None, user_agent: str | None = None):
+    def __init__(self, user_agent: str, url: str = "https://master.apis.dev.openstreetmap.org", access_token: str | None = None):
+        """Class used to communicate with API.
+
+        Args:
+            user_agent (str): OSM API Usage Policy (https://operations.osmfoundation.org/policies/api/) requires user to provide valid user-agent identifying application and version.
+            url (str, optional): URL of the OSM API Server. Defaults to "https://master.apis.dev.openstreetmap.org".
+            access_token (str | None, optional): OSM API access token required by some endpoints. Defaults to None.
+        """
         self._url = URLs(url)
         self.misc = Misc_Container(self)
         self.changeset = Changeset_Container(self)
@@ -35,8 +42,7 @@ class Api():
         if access_token:
             self._headers.update({"Authorization": "Bearer {}".format(access_token)})
 
-        if user_agent:
-            self._headers.update({"User-Agent": user_agent})
+        self._headers.update({"User-Agent": user_agent})
 
     def _request(self, method: _RequestMethods, url: str, stream: bool = False, files: dict | None = None, custom_status_code_exceptions: dict = {int: Exception}, body = None) -> "Response":
         """Sends an HTTP request and handles response status codes.

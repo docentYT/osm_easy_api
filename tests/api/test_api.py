@@ -8,15 +8,7 @@ from osm_easy_api.api import Api
 
 class TestApi(unittest.TestCase):
     def test_initialize(self):
-        Api("https://test.pl")
-
-    def test_empty_headers(self):
-        api = Api()
-        self.assertEqual(api._headers, {})
-
-    def test_authorization_header(self):
-        api = Api(access_token="TOKEN")
-        self.assertEqual(api._headers, {"Authorization": "Bearer TOKEN"})
+        Api(user_agent="osm_easy_api test", url="https://test.pl")
 
     def test_user_agent_header(self):
         api = Api(user_agent="AGENT")
@@ -30,7 +22,7 @@ class TestApi(unittest.TestCase):
 
     @responses.activate
     def test__request_200(self):
-        api = Api()
+        api = Api(user_agent="osm_easy_api test")
 
         responses.add(
             **{
@@ -44,7 +36,7 @@ class TestApi(unittest.TestCase):
 
     @responses.activate
     def test__request_400(self):
-        api = Api()
+        api = Api(user_agent="osm_easy_api test")
 
         responses.add(
             **{
@@ -62,7 +54,7 @@ class TestApi(unittest.TestCase):
 
     @responses.activate
     def test__request_500(self):
-        api = Api()
+        api = Api(user_agent="osm_easy_api test")
 
         responses.add(
             **{
@@ -77,7 +69,7 @@ class TestApi(unittest.TestCase):
 
     @responses.activate
     def test__request_599(self):
-        api = Api()
+        api = Api(user_agent="osm_easy_api test")
 
         responses.add(
             **{

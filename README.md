@@ -92,7 +92,7 @@ Node(id = 10208486717, visible = None, version = 1, changeset_id = 129216075, ti
 from osm_easy_api.api import Api
 from osm_easy_api.data_classes import Node, Tags
 
-api = Api("https://master.apis.dev.openstreetmap.org", ACCESS_TOKEN)
+api = Api(USER_AGENT, "https://master.apis.dev.openstreetmap.org", ACCESS_TOKEN)
 
 node = api.elements.get(Node, 4296460336) # We are getting Node with id 4296460336 where we want to add a new tag to
 node.tags.add("wikidata", "Qexample") # Add a new tag to node.

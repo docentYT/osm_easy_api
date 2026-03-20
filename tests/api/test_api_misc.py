@@ -5,10 +5,10 @@ from osm_easy_api.api import Api
 from osm_easy_api.api import exceptions as ApiExceptions
 
 class TestApi(unittest.TestCase):
-    api = Api("https://test.pl")
+    api = Api(user_agent="osm_easy_api test", url="https://test.pl")
 
 class TestApiMisc(unittest.TestCase):
-    api = Api("https://test.pl")
+    api = Api(user_agent="osm_easy_api test", url="https://test.pl")
 
     @responses.activate
     def test_versions(self):
