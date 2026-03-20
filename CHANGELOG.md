@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-03-20
+### Changed
+- `user_agent` in `Api()` constructor is now required, because OSM API started to block default user-agents.
+- Order of `Api()` constructor arguments is changed, because `user_agent` started to be a required argument. 
+
 ## [3.2.0] - 2026-03-09
 ### Added
 - All api requests throw `requests.exceptions.HTTPError` for all server errors (If there is an exception to this rule, it should be documented in the method description).
