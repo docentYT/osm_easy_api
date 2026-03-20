@@ -14,7 +14,7 @@ from osm_easy_api.api import Api
 class TestApiGpx(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.API = Api(url="https://test.pl", access_token=TOKEN)
+        cls.API = Api(user_agent="osm_easy_api test", url="https://test.pl", access_token=TOKEN)
 
     @responses.activate
     def test_get_gps_points(self):

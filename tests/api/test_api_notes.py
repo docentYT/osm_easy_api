@@ -14,7 +14,7 @@ def _are_notes_equal(first: Note, second: Note):
 class TestApiNotes(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.API = Api(url="https://test.pl", access_token=TOKEN)
+        cls.API = Api(user_agent="osm_easy_api test", url="https://test.pl", access_token=TOKEN)
         cls.BODY = note_stub.XML_RESPONSE_BODY
 
     @responses.activate

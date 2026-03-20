@@ -16,7 +16,7 @@ def _are_changesets_equal(first: Changeset, second: Changeset):
 class TestApiChangeset(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.API = Api(url="https://test.pl", access_token=TOKEN)
+        cls.API = Api(user_agent="osm_easy_api test", url="https://test.pl", access_token=TOKEN)
 
     @responses.activate
     def test_create(self):
