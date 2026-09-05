@@ -81,6 +81,9 @@ class Gpx_Container:
 
         Returns:
             int: ID of the new trace.
+
+        Raises:
+            ValueError: When used visibility options is deprecated.
         """
 
         if (visibility == Visibility.PUBLIC or visibility == Visibility.PRIVATE):
