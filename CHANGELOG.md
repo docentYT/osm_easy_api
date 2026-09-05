@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+### Changed
+- `gpx.create()`throws `ValueError` when used with deprecated PUBLIC or PRIVATE `Visibility` option. [#42](https://github.com/docentYT/osm_easy_api/issues/42)
+
 ## [4.0.0] - 2026-03-20
 ### Changed
 - `user_agent` in `Api()` constructor is now required, because OSM API started to block default user-agents.
