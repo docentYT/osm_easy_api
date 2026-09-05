@@ -7,9 +7,9 @@ from dataclasses import dataclass
 class Visibility(Enum):
     """See https://wiki.openstreetmap.org/wiki/Visibility_of_GPS_traces for values meaning."""
     IDENTIFIABLE = "identifiable"
-    PUBLIC = "public"
+    PUBLIC = "public" # Deprecated
     TRACKABLE = "trackable"
-    PRIVATE = "private"
+    PRIVATE = "private" # Deprecated
 
 @dataclass
 class GpxFile():
