@@ -44,7 +44,7 @@ class TestApiGpx(unittest.TestCase):
                 {"file": f,
                 "description": (None, "desc"),
                 "tags": (None, "a,b"),
-                "visibility": (None, Visibility.PRIVATE.value)
+                "visibility": (None, Visibility.IDENTIFIABLE.value)
                 },
                 )
             
@@ -55,9 +55,43 @@ class TestApiGpx(unittest.TestCase):
                 "status": 200,
                 "match": [matcher]
             })
-            ID = self.API.gpx.create(F_FROM_PATH, "desc", Visibility.PRIVATE, ["a", "b"])
+            ID = self.API.gpx.create(F_FROM_PATH, "desc", Visibility.IDENTIFIABLE, ["a", "b"])
             self.assertTrue(responses.assert_call_count(URL, 1))
             self.assertEqual(ID, 1234)
+
+            matcherPUBLIC = multipart_matcher(
+                {"file": f,
+                "description": (None, "desc"),
+                "tags": (None, "a,b"),
+                "visibility": (None, Visibility.PUBLIC.value)
+                },
+            )
+            responses.add(**{
+                "method": responses.POST,
+                "url": URL,
+                "status": 400,
+                "match": [matcherPUBLIC]
+            })
+            def getPUBLIC():
+                return self.API.gpx.create(F_FROM_PATH, "desc", Visibility.PUBLIC, ["a", "b"])
+            self.assertRaises(ValueError, getPUBLIC)
+
+            matcherPRIVATE = multipart_matcher(
+                {"file": f,
+                "description": (None, "desc"),
+                "tags": (None, "a,b"),
+                "visibility": (None, Visibility.PRIVATE.value)
+                },
+            )
+            responses.add(**{
+                "method": responses.POST,
+                "url": URL,
+                "status": 400,
+                "match": [matcherPRIVATE]
+            })
+            def getPRIVATE():
+                return self.API.gpx.create(F_FROM_PATH, "desc", Visibility.PRIVATE, ["a", "b"])
+            self.assertRaises(ValueError, getPRIVATE)
 
     @responses.activate
     def test_update(self):

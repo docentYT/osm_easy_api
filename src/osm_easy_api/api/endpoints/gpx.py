@@ -81,7 +81,14 @@ class Gpx_Container:
 
         Returns:
             int: ID of the new trace.
+
+        Raises:
+            ValueError: When used visibility options is deprecated.
         """
+
+        if (visibility == Visibility.PUBLIC or visibility == Visibility.PRIVATE):
+            raise ValueError("[ERROR::API::GPX::create] Selected visibility option is deprecated and will result in http 400 error. See: https://community.openstreetmap.org/t/changes-coming-to-gps-trace-uploads/145728")
+
         with open(file_from, "rb") as f:
             tags_string = None
             if tags:
